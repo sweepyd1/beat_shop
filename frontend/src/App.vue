@@ -1,44 +1,6 @@
 <template>
   <div class="app">
-    <!-- Навигация -->
-    <nav class="navbar">
-      <div class="logo" @click="$router.push('/')">BeatMarket</div>
-      <div class="nav-links">
-        <router-link to="/" :class="{ active: $route.path === '/' }">
-          <i class="fas fa-home"></i>
-          <span>Главная</span>
-        </router-link>
-        <router-link
-          to="/search"
-          :class="{ active: $route.path === '/search' }"
-        >
-          <i class="fas fa-search"></i>
-          <span>Поиск</span>
-        </router-link>
-        <router-link
-          to="/artist/1"
-          :class="{ active: $route.path.startsWith('/artist') }"
-        >
-          <i class="fas fa-microphone-alt"></i>
-          <span>Артист</span>
-        </router-link>
-        <router-link
-          to="/collection/1"
-          :class="{ active: $route.path.startsWith('/collection') }"
-        >
-          <i class="fas fa-layer-group"></i>
-          <span>Коллекция</span>
-        </router-link>
-      </div>
-      <div class="user-menu">
-        <i class="fas fa-bell"></i>
-        <div class="avatar">
-          <i class="fas fa-user-circle"></i>
-        </div>
-      </div>
-    </nav>
-
-    <!-- Основной контент -->
+       <Header></Header>
     <main class="main-content">
       <router-view v-slot="{ Component }">
         <transition name="fade" mode="out-in">
@@ -56,7 +18,7 @@
 import { ref, provide, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import Player from "./components/Player.vue";
-
+import Header from "./components/Header.vue"
 const router = useRouter();
 const route = useRoute();
 
