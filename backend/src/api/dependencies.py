@@ -30,7 +30,7 @@ def get_auth_service(repo: UserRepository = Depends(get_user_repository)) -> Aut
 
 
 def get_track_service(repo: TrackRepository = Depends(get_track_repository)) -> TrackService:
-    return TrackService(repo)
+    return TrackService(repo=repo, file_service=get_file_service())
 
 
 # ---------- Текущий пользователь (из JWT) ----------

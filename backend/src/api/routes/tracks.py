@@ -29,7 +29,7 @@ async def create_track(
     track_data: TrackCreate,
     service: TrackService = Depends(get_track_service)
 ):
-    # Здесь можно добавить проверку прав администратора
+
     return await service.create_track(track_data)
 
 @router.put("/{track_id}", response_model=TrackResponse)

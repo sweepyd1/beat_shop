@@ -60,3 +60,6 @@ class TrackService:
         
         # Также нужно удалить зависимости (избранное, покупки, взаимодействия) – каскадно в БД
         return await self.repo.delete(track_id)
+    
+    async def get_track(self, track_id: int):
+        return await self.repo.get(id=track_id)
