@@ -43,7 +43,7 @@ class AppConfig(BaseModel):
     host: str = "0.0.0.0"
     port: int = 8000
     secret_key: str = Field(default_factory=lambda: os.getenv("SECRET_KEY", ""))
-    cors_origins: List[str] = ["http://localhost:3000"]
+    cors_origins: List[str] = ["http://localhost:5173"]
 
     @field_validator("secret_key")
     def validate_secret_key(cls, v: str, info) -> str:

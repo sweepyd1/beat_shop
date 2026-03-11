@@ -2,6 +2,8 @@ from typing import AsyncIterator
 from fastapi import Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.security import OAuth2PasswordBearer
+from core.repositories.genre import GenreRepository
+from core.services.genre import GenreService
 from database.models import User
 from core.repositories.user import UserRepository
 from core.services.auth import AuthService
@@ -19,6 +21,8 @@ async def get_db_session() -> AsyncIterator[AsyncSession]:
 def get_user_repository(session: AsyncSession = Depends(get_db_session)) -> UserRepository:
     return UserRepository(session)
 
+def get_genre_repository(session: AsyncSession = Depends(get_db_session)) -> GenreRepository:
+    return GenreRepository(session)
 
 def get_track_repository(session: AsyncSession = Depends(get_db_session)) -> TrackRepository:
     return TrackRepository(session)
@@ -32,6 +36,13 @@ def get_auth_service(repo: UserRepository = Depends(get_user_repository)) -> Aut
 def get_track_service(repo: TrackRepository = Depends(get_track_repository)) -> TrackService:
     return TrackService(repo=repo, file_service=get_file_service())
 
+def get_file_service() -> FileService:
+    return FileService()
+
+
+
+def get_genre_service(repo: GenreRepository = Depends(get_genre_repository)) -> GenreService:
+    return GenreService(repo)
 
 # ---------- Текущий пользователь (из JWT) ----------
 async def get_current_user(
@@ -101,5 +112,3 @@ async def get_current_admin(
 
 
 
-def get_file_service() -> FileService:
-    return FileService()

@@ -60,6 +60,7 @@ class Track(Base):
     added_date: Mapped[DateTime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     mp3_file_url: Mapped[str] = mapped_column(String(200), nullable=False)
     price: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    plays: Mapped[int] = mapped_column(Integer, nullable=False, default=0.0)
 
     # Внешние ключи
     genre_id: Mapped[int] = mapped_column(Integer, ForeignKey('genres.id'), nullable=False)

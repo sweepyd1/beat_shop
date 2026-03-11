@@ -79,35 +79,42 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import TrackCard from "../components/TrackCard.vue";
+import { ref, onMounted } from 'vue';
+import TrackCard from '../components/TrackCard.vue';
+import api from '../api';
 
-// Заглушка для изображений (можно заменить на градиент)
-const placeholderSVG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 24 24' fill='%23cccccc'%3E%3Cpath d='M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z'/%3E%3C/svg%3E";
+const popularTracks = ref([]);
+const newReleases = ref([]);
+const genreCollections = ref([]);
 
-const handleImageError = (e) => {
-  e.target.src = placeholderSVG;
+const fetchPopular = async () => {
+  const { data } = await api.get('/tracks/popular?limit=4');
+  popularTracks.value = data;
 };
 
-// Мок-данные
-const popularTracks = ref([
-  { id: 1, title: "Neon Dreams", artist: "Arctica Beats", cover: "https://picsum.photos/200/200?random=1", duration: 210, price: 1500, bpm: 128, plays: 12400 },
-  { id: 2, title: "Dark Alley", artist: "Phonk Lord", cover: "https://picsum.photos/200/200?random=2", duration: 185, price: 2000, bpm: 140, plays: 8700 },
-  { id: 3, title: "Sunset Vibes", artist: "Lo-fi Cat", cover: "https://picsum.photos/200/200?random=3", duration: 240, price: 1200, bpm: 90, plays: 5300 },
-  { id: 4, title: "Moscow Nights", artist: "Arctica Beats", cover: "https://picsum.photos/200/200?random=4", duration: 195, price: 1800, bpm: 110, plays: 3200 },
-]);
+const fetchNew = async () => {
+  const { data } = await api.get('/tracks/new?limit=4');
+  newReleases.value = data;
+};
 
-const newReleases = ref([
-  { id: 5, title: "Drill Szn", artist: "Glock Beats", cover: "https://picsum.photos/200/200?random=5", duration: 200, price: 2200, bpm: 150, plays: 800 },
-  { id: 6, title: "Lofi Dreams", artist: "Sleepy", cover: "https://picsum.photos/200/200?random=6", duration: 175, price: 1100, bpm: 85, plays: 1200 },
-]);
+const fetchGenres = async () => {
+  const { data } = await api.get('/genres');
+  // Преобразуем в формат коллекций (можно взять первые 4 жанра с картинками)
+  genreCollections.value = data.slice(0, 4).map(g => ({
+    id: g.id,
+    genre: g.name,
+    cover: `https://picsum.photos/300/300?random=${g.id}`, // временно, позже можно добавить поле обложки жанра
+    tracks: g.tracks_count
+  }));
+};
 
-const genreCollections = ref([
-  { id: 1, genre: "Trap", cover: "https://picsum.photos/300/300?random=10", tracks: 124 },
-  { id: 2, genre: "Drill", cover: "https://picsum.photos/300/300?random=11", tracks: 89 },
-  { id: 3, genre: "Lo-Fi", cover: "https://picsum.photos/300/300?random=12", tracks: 67 },
-  { id: 4, genre: "House", cover: "https://picsum.photos/300/300?random=13", tracks: 112 },
-]);
+onMounted(() => {
+  fetchPopular();
+  fetchNew();
+  fetchGenres();
+});
+
+
 </script>
 
 <style scoped>

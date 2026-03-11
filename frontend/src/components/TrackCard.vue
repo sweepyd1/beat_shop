@@ -1,7 +1,7 @@
 <template>
   <div class="track-card" @click="handleClick">
     <div class="cover-wrapper">
-      <img :src="track.cover" @error="$emit('image-error', $event)" />
+      <img :src="track.cover_url" class="cover" @error="$emit('image-error', $event)" />
       <button class="play-overlay" @click.stop="play">
         <i class="fas fa-play"></i>
       </button>

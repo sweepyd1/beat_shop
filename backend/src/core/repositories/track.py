@@ -30,3 +30,22 @@ class TrackRepository(BaseRepository[Track]):
             .limit(limit)
         )
         return result.scalars().all()
+    async def get_popular(self, limit: int):
+        """Возвращает популярные треки (по убыванию plays)."""
+        result = await self.session.execute(
+            select(Track)
+            .options(selectinload(Track.author), selectinload(Track.genre))
+            .order_by(Track.plays.desc())
+            .limit(limit)
+        )
+        return result.scalars().all()
+
+    async def get_new(self, limit: int):
+        """Возвращает новые треки (по убыванию added_date)."""
+        result = await self.session.execute(
+            select(Track)
+            .options(selectinload(Track.author), selectinload(Track.genre))
+            .order_by(Track.added_date.desc())
+            .limit(limit)
+        )
+        return result.scalars().all()

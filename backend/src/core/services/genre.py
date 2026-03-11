@@ -25,3 +25,15 @@ class GenreService:
         if genre.tracks:
             raise HTTPException(status_code=400, detail="Нельзя удалить жанр, к которому привязаны треки")
         return await self.repo.delete(genre_id)
+    
+    async def get_all_genres(self):
+        genres_with_counts = await self.repo.get_all_with_counts()
+        # Преобразуем в список словарей или Pydantic схем
+        result = []
+        for genre, count in genres_with_counts:
+            result.append({
+                "id": genre.id,
+                "name": genre.name,
+                "tracks_count": count
+            })
+        return result

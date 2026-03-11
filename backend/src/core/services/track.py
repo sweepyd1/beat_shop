@@ -63,3 +63,13 @@ class TrackService:
     
     async def get_track(self, track_id: int):
         return await self.repo.get(id=track_id)
+    
+    async def get_popular_tracks(self, limit: int):
+        """Бизнес-логика для популярных треков (может включать кэширование и т.п.)."""
+        tracks = await self.repo.get_popular(limit)
+        return tracks
+
+    async def get_new_tracks(self, limit: int):
+        """Бизнес-логика для новых треков."""
+        tracks = await self.repo.get_new(limit)
+        return tracks

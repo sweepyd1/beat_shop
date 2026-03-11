@@ -14,14 +14,26 @@
         <router-link to="/contacts" active-class="active">Контакты</router-link>
       </nav>
 
-      <div class="user-actions">
-        <router-link to="/cart" class="cart-icon">
-          <i class="fas fa-shopping-cart"></i>
-          <span v-if="cartCount > 0" class="badge">{{ cartCount }}</span>
-        </router-link>
-        <router-link to="/profile" class="profile-icon">
-          <i class="fas fa-user-circle"></i>
-        </router-link>
+     <div class="user-actions">
+        <!-- Если пользователь авторизован -->
+        <template v-if="user">
+          <router-link to="/cart" class="cart-icon">
+            <i class="fas fa-shopping-cart"></i>
+            <span v-if="cartCount > 0" class="badge">{{ cartCount }}</span>
+          </router-link>
+          <router-link to="/profile" class="profile-link">
+            <div class="avatar-circle">
+              {{ userInitial }}
+            </div>
+          </router-link>
+        </template>
+
+        <!-- Если не авторизован -->
+        <template v-else>
+          <router-link to="/login" class="btn-login">Войти</router-link>
+          <router-link to="/register" class="btn-register">Регистрация</router-link>
+        </template>
+
         <button class="menu-toggle" @click="menuOpen = !menuOpen" v-if="isMobile">
           <i :class="menuOpen ? 'fas fa-times' : 'fas fa-bars'"></i>
         </button>
@@ -32,10 +44,15 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
+import { useAuthStore } from '@/stores/auth';
+import { storeToRefs } from 'pinia';
 
 const menuOpen = ref(false);
 const isMobile = ref(window.innerWidth <= 768);
-const cartCount = ref(2); // пример, позже можно получать из стора
+const cartCount = ref(2); // пример, позже из стора
+
+const authStore = useAuthStore();
+const { user } = storeToRefs(authStore);
 
 const checkMobile = () => {
   isMobile.value = window.innerWidth <= 768;
@@ -50,6 +67,8 @@ onUnmounted(() => {
   window.removeEventListener('resize', checkMobile);
 });
 </script>
+
+
 
 <style scoped>
 .app-header {
@@ -133,6 +152,40 @@ onUnmounted(() => {
   gap: 1.2rem;
 }
 
+/* Стили для кнопок входа и регистрации */
+.btn-login,
+.btn-register {
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.5rem 1.2rem;
+  border-radius: 30px;
+  transition: all 0.2s;
+  font-size: 0.95rem;
+}
+
+.btn-login {
+  background: transparent;
+  border: 1px solid #a855f7;
+  color: #fff;
+}
+
+.btn-login:hover {
+  background: rgba(168, 85, 247, 0.1);
+  border-color: #c084fc;
+}
+
+.btn-register {
+  background: linear-gradient(45deg, #a855f7, #3b82f6);
+  border: none;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(168, 85, 247, 0.3);
+}
+
+.btn-register:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(168, 85, 247, 0.5);
+}
+
 .cart-icon, .profile-icon {
   color: #a0a0b0;
   font-size: 1.3rem;
@@ -170,6 +223,7 @@ onUnmounted(() => {
 @media (max-width: 768px) {
   .app-header { padding: 0.8rem 1rem; }
   .menu-toggle { display: block; }
+
   .nav-menu {
     position: fixed;
     top: 70px;
@@ -185,8 +239,23 @@ onUnmounted(() => {
     transition: transform 0.3s;
     border-bottom: 1px solid rgba(168, 85, 247, 0.2);
   }
+
   .nav-menu.active {
     transform: translateY(0);
+  }
+
+  .user-actions {
+    gap: 0.8rem;
+  }
+
+  .btn-login,
+  .btn-register {
+    padding: 0.4rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  .cart-icon, .profile-icon {
+    font-size: 1.2rem;
   }
 }
 </style>

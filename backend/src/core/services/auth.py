@@ -178,3 +178,46 @@ class AuthService:
             "refresh_token": refresh_token,
             "token_type": "bearer"
         }
+    async def authenticate(self, email: str, password: str) -> Optional[User]:
+        # Поиск пользователя по email или username
+        user = await self.repo.get_by_email(email=email)
+    
+        if not user or not self.verify_password(password, hashed_password=user.password_hash):
+            return None
+        return user
+
+    async def create_tokens(self, user_id: int):
+        access_token_expires = timedelta(days=30)
+        refresh_token_expires = timedelta(days=30)
+        
+        access_token = self._create_token(
+            data={"sub": str(user_id), "type": "access"},
+            expires_delta=access_token_expires
+        )
+        refresh_token = self._create_token(
+            data={"sub": str(user_id), "type": "refresh"},
+            expires_delta=refresh_token_expires
+        )
+        return {
+            "access_token": access_token,
+            "refresh_token": refresh_token,
+        }
+
+    def _create_token(self, data: dict, expires_delta: timedelta):
+        to_encode = data.copy()
+        expire = datetime.utcnow() + expires_delta
+        to_encode.update({"exp": expire})
+        return jwt.encode(to_encode, cfg.security.jwt_secret_key, algorithm=cfg.security.jwt_algorithm)
+
+    async def get_user_from_token(self, token: str, token_type: str = "access") -> Optional[User]:
+        try:
+            payload = jwt.decode(token, cfg.security.jwt_secret_key, algorithms=[cfg.security.jwt_algorithm])
+            if payload.get("type") != token_type:
+                return None
+            user_id = payload.get("sub")
+            if user_id is None:
+                return None
+        except JWTError:
+            return None
+        user = await self.repo.get(id=int(user_id))
+        return user

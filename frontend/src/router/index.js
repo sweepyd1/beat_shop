@@ -10,7 +10,8 @@ import Profile from '../views/Profile.vue'
 import Trends from '../views/Trends.vue'
 import About from '../views/About.vue'
 import Contacts from '../views/Contacts.vue'
-
+import Login from '@/views/Login.vue'
+import Register from '@/views/Register.vue'
 const routes = [
   { path: '/', component: Home },
   { path: '/search', component: Search },
@@ -23,6 +24,8 @@ const routes = [
   { path: '/trends', component: Trends },
   { path: '/about', component: About },
   { path: '/contacts', component: Contacts },
+  { path: '/login', component: Login },
+  { path: '/register', component: Register },
 ]
 
 const router = createRouter({

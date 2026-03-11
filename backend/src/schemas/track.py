@@ -1,6 +1,8 @@
 from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel, Field, ConfigDict
+from database.models import InteractionType
+from enum import Enum
 
 
 # ---------- Genre Schemas ----------
@@ -79,10 +81,11 @@ class TrackUpdate(BaseModel):
     genre_id: Optional[int] = Field(None, gt=0)
     author_id: Optional[int] = Field(None, gt=0)
 
-
 class TrackResponse(TrackBase):
     id: int
     added_date: datetime
+    plays: Optional[int] = 0        
+    bpm: Optional[int] = 0
     genre: Optional[GenreResponse] = None
     author: Optional[AuthorResponse] = None
 
@@ -175,8 +178,6 @@ class ContractResponse(BaseModel):
 
 
 # ---------- Interaction Schemas ----------
-from database.models import InteractionType
-from enum import Enum
 
 # Для совместимости с Pydantic v2 определим Enum строк
 class InteractionTypeEnum(str, Enum):
