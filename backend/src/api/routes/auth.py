@@ -96,6 +96,7 @@ async def get_me(
         raise HTTPException(status_code=401, detail="Not authenticated")
     
     user = await auth_service.get_user_from_token(access_token)
+
     if not user:
         raise HTTPException(status_code=401, detail="Invalid token")
     return user

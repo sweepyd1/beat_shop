@@ -23,6 +23,7 @@ class User(Base):
     password_hash: Mapped[str] = mapped_column(String(128), nullable=False)
     email: Mapped[str] = mapped_column(String(100), unique=True, nullable=False, index=True)
     registered_at: Mapped[DateTime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    avatar_url: Mapped[str | None] = mapped_column(String(200))
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
 
@@ -30,7 +31,21 @@ class User(Base):
     favorites = relationship("Favorite", back_populates="user", cascade="all, delete-orphan")
     purchases = relationship("Purchase", back_populates="user", cascade="all, delete-orphan")
     interactions = relationship("Interaction", back_populates="user", cascade="all, delete-orphan")
+    subscriptions = relationship("Subscription", back_populates="user", cascade="all, delete-orphan")
+class Subscription(Base):
+    __tablename__ = 'subscriptions'
 
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id'), nullable=False)
+    author_id: Mapped[int] = mapped_column(Integer, ForeignKey('authors.id'), nullable=False)
+    subscribed_at: Mapped[DateTime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+    user = relationship("User", back_populates="subscriptions")
+    author = relationship("Author", back_populates="subscribers")
+
+    __table_args__ = (
+        UniqueConstraint('user_id', 'author_id', name='unique_user_author_subscription'),
+    )
 class Author(Base):
     __tablename__ = 'authors'
 
@@ -40,6 +55,7 @@ class Author(Base):
     bio: Mapped[str | None] = mapped_column(Text)
 
     tracks = relationship("Track", back_populates="author", cascade="all, delete-orphan")
+    subscribers = relationship("Subscription", back_populates="author", cascade="all, delete-orphan")
 
 class Genre(Base):
     __tablename__ = 'genres'

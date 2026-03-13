@@ -2,110 +2,116 @@
   <div class="profile">
     <h1>Личный кабинет</h1>
 
-    <div class="profile-tabs">
-      <button :class="{ active: activeTab === 'info' }" @click="activeTab = 'info'">Мои данные</button>
-      <button :class="{ active: activeTab === 'purchases' }" @click="activeTab = 'purchases'">Мои покупки</button>
-      <button :class="{ active: activeTab === 'favorites' }" @click="activeTab = 'favorites'">Избранное</button>
-      <button :class="{ active: activeTab === 'subscriptions' }" @click="activeTab = 'subscriptions'">Подписки</button>
-    </div>
+    <div v-if="loading" class="loading">Загрузка...</div>
+    <div v-if="error" class="error">{{ error }}</div>
 
-    <div class="profile-content">
-      <!-- Информация о пользователе -->
-      <div v-if="activeTab === 'info'" class="tab-pane">
-        <div class="user-info">
-          <div class="avatar">
-            <img :src="user.avatar" alt="" />
-          </div>
-          <div class="details">
-            <p><strong>Имя:</strong> {{ user.name }}</p>
-            <p><strong>Email:</strong> {{ user.email }}</p>
-            <p><strong>Дата регистрации:</strong> {{ user.registered }}</p>
-            <button class="btn-secondary" @click="editProfile">Редактировать</button>
-          </div>
-        </div>
+    <template v-else>
+      <div class="profile-tabs">
+        <button :class="{ active: activeTab === 'info' }" @click="activeTab = 'info'">Мои данные</button>
+        <button :class="{ active: activeTab === 'purchases' }" @click="activeTab = 'purchases'">Мои покупки</button>
+        <button :class="{ active: activeTab === 'favorites' }" @click="activeTab = 'favorites'">Избранное</button>
+        <button :class="{ active: activeTab === 'subscriptions' }" @click="activeTab = 'subscriptions'">Подписки</button>
       </div>
 
-      <!-- Мои покупки -->
-      <div v-if="activeTab === 'purchases'" class="tab-pane">
-        <div v-if="purchases.length === 0" class="empty">
-          <p>У вас ещё нет покупок.</p>
-          <router-link to="/search" class="btn-primary">Найти биты</router-link>
-        </div>
-        <div v-else class="purchases-list">
-          <div v-for="item in purchases" :key="item.id" class="purchase-item">
-            <img :src="item.cover" alt="" />
-            <div class="info">
-              <h4>{{ item.title }}</h4>
-              <p>{{ item.artist }}</p>
+      <div class="profile-content">
+        <!-- Информация о пользователе -->
+        <div v-if="activeTab === 'info'" class="tab-pane">
+          <div class="user-info" v-if="user">
+            <div class="avatar">
+              <img :src="user.avatar" alt="" />
             </div>
-            <span class="date">{{ item.date }}</span>
-            <span class="price">{{ item.price }} ₽</span>
-            <button class="download-btn" @click="download(item)"><i class="fas fa-download"></i></button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Избранное -->
-      <div v-if="activeTab === 'favorites'" class="tab-pane">
-        <div class="track-grid">
-          <TrackCard
-            v-for="track in favorites"
-            :key="track.id"
-            :track="track"
-          />
-        </div>
-      </div>
-
-      <!-- Подписки на артистов -->
-      <div v-if="activeTab === 'subscriptions'" class="tab-pane">
-        <div class="artists-list">
-          <div v-for="artist in subscriptions" :key="artist.id" class="artist-sub">
-            <img :src="artist.avatar" alt="" />
-            <div class="info">
-              <h4>{{ artist.name }}</h4>
-              <p>{{ artist.followers }} подписчиков</p>
+            <div class="details">
+              <p><strong>Имя:</strong> {{ user.name }}</p>
+              <p><strong>Email:</strong> {{ user.email }}</p>
+              <p><strong>Дата регистрации:</strong> {{ formatDate(user.registered) }}</p>
+              <button class="btn-secondary" @click="openEditModal">Редактировать</button>
             </div>
-            <button class="unsubscribe" @click="unsubscribe(artist.id)">Отписаться</button>
+          </div>
+        </div>
+
+        <!-- Мои покупки -->
+        <div v-if="activeTab === 'purchases'" class="tab-pane">
+          <div v-if="purchases.length === 0" class="empty">
+            <p>У вас ещё нет покупок.</p>
+            <router-link to="/search" class="btn-primary">Найти биты</router-link>
+          </div>
+          <div v-else class="purchases-list">
+            <div v-for="item in purchases" :key="item.id" class="purchase-item">
+              <img :src="item.cover" alt="" />
+              <div class="info">
+                <h4>{{ item.title }}</h4>
+                <p>{{ item.artist }}</p>
+              </div>
+              <span class="date">{{ formatDate(item.purchase_date) }}</span>
+              <span class="price">{{ item.price }} ₽</span>
+              <button class="download-btn" @click="downloadTrack(item.id)"><i class="fas fa-download"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Избранное -->
+        <div v-if="activeTab === 'favorites'" class="tab-pane">
+          <div class="track-grid">
+            <TrackCard
+              v-for="track in favorites"
+              :key="track.id"
+              :track="track"
+            />
+          </div>
+        </div>
+
+        <!-- Подписки на артистов -->
+        <div v-if="activeTab === 'subscriptions'" class="tab-pane">
+          <div class="artists-list">
+            <div v-for="artist in subscriptions" :key="artist.id" class="artist-sub">
+              <img :src="artist.avatar" alt="" />
+              <div class="info">
+                <h4>{{ artist.name }}</h4>
+                <p>{{ artist.followers_count }} подписчиков</p>
+              </div>
+              <button class="unsubscribe" @click="unsubscribe(artist.id)">Отписаться</button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </template>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import TrackCard from '../components/TrackCard.vue';
+import { useProfile } from '../composables/useProfile';
 
 const activeTab = ref('info');
 
-// Мок-данные пользователя
-const user = ref({
-  name: 'Иван Петров',
-  email: 'ivan@example.com',
-  registered: '15.01.2025',
-  avatar: 'https://picsum.photos/100/100?random=42',
+const {
+  user,
+  purchases,
+  favorites,
+  subscriptions,
+  loading,
+  error,
+  fetchAll,
+  downloadTrack,
+  unsubscribe,
+} = useProfile();
+
+// Форматирование даты (пример)
+const formatDate = (dateString) => {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  return date.toLocaleDateString('ru-RU');
+};
+
+// Загружаем данные при монтировании
+onMounted(() => {
+  fetchAll();
 });
 
-const purchases = ref([
-  { id: 1, title: 'Neon Dreams', artist: 'Arctica', cover: 'https://picsum.photos/200/200?random=1', price: 1.99, date: '10.02.2025' },
-  { id: 2, title: 'Lost in Space', artist: 'Cosmic', cover: 'https://picsum.photos/200/200?random=2', price: 1.49, date: '12.02.2025' },
-]);
-
-const favorites = ref([
-  { id: 3, title: 'Echoes', artist: 'The Waves', cover: 'https://picsum.photos/200/200?random=3', price: 2.49, duration: 240 },
-  { id: 4, title: 'Midnight', artist: 'Luna', cover: 'https://picsum.photos/200/200?random=4', price: 1.79, duration: 200 },
-]);
-
-const subscriptions = ref([
-  { id: 1, name: 'Arctica Beats', avatar: 'https://picsum.photos/100/100?random=101', followers: 15400 },
-  { id: 2, name: 'Cosmic', avatar: 'https://picsum.photos/100/100?random=102', followers: 8700 },
-]);
-
-const editProfile = () => alert('Редактирование профиля (имитация)');
-const download = (item) => alert(`Скачивание ${item.title}`);
-const unsubscribe = (id) => {
-  subscriptions.value = subscriptions.value.filter(a => a.id !== id);
+// Редактирование профиля (можно реализовать модальное окно)
+const openEditModal = () => {
+  // ...
 };
 </script>
 
