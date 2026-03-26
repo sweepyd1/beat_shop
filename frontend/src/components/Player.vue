@@ -4,7 +4,9 @@
       <img :src="track.cover_url || '/default-cover.jpg'" :alt="track.title" class="cover" />
       <div class="details">
         <div class="title">{{ track.title }}</div>
-        <div class="artist">{{ track.artist || track.author?.name || 'Unknown Artist' }}</div>
+        <div class="artist">
+  {{ track.author.full_name || 'Unknown Artist' }}
+</div>
       </div>
     </div>
 
