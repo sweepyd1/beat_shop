@@ -20,6 +20,7 @@ const props = defineProps(["track"]);
 const { playTrack } = inject("player");
 
 const play = () => {
+  console.log('TrackCard play called', props.track);
   playTrack(props.track);
 };
 

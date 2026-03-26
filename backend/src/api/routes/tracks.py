@@ -1,5 +1,7 @@
+import os
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi.responses import FileResponse
 from schemas.track import TrackResponse, TrackCreate, TrackUpdate
 from core.services.track import TrackService
 from api.dependencies import get_track_service
@@ -96,3 +98,18 @@ async def delete_track(
     if not deleted:
         raise HTTPException(status_code=404, detail="Track not found")
     
+@router.get("/{track_id}/stream")
+async def stream_track(
+    track_id: int,
+    service: TrackService = Depends(get_track_service)
+):
+    track = await service.get_track(track_id)
+    if not track:
+        raise HTTPException(status_code=404, detail="Track not found")
+    
+    
+    file_path = track.mp3_file_url  
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail="Audio file not found")
+    
+    return FileResponse(file_path, media_type="audio/mpeg", filename=f"{track.title}.mp3")

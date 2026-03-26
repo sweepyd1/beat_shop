@@ -1,26 +1,19 @@
 <template>
   <div class="app">
-       <Header></Header>
+    <Header />
     <main class="main-content">
-      <router-view v-slot="{ Component }">
-        <transition name="fade" mode="out-in">
-          <component :is="Component" />
-        </transition>
-      </router-view>
+      <router-view />
     </main>
 
-    <!-- Глобальный плеер (будет отображаться только когда есть трек) -->
-    <Player v-if="currentTrack" :track="currentTrack" />
+    <!-- Глобальный плеер всегда здесь, но он сам решит, показываться или нет -->
+    <Player />
   </div>
 </template>
 
 <script setup>
-import { ref, provide, onMounted } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { ref, provide } from "vue";
 import Player from "./components/Player.vue";
-import Header from "./components/Header.vue"
-const router = useRouter();
-const route = useRoute();
+import Header from "./components/Header.vue";
 
 // Глобальное состояние плеера
 const currentTrack = ref(null);
@@ -30,6 +23,7 @@ const currentIndex = ref(0);
 
 // Функция для воспроизведения трека
 const playTrack = (track) => {
+  console.log("playTrack called", track);
   currentTrack.value = track;
   isPlaying.value = true;
 };
@@ -41,10 +35,7 @@ const addToPlaylist = (track) => {
 
 // Функции для управления плеером
 const nextTrack = () => {
-  if (
-    playlist.value.length > 0 &&
-    currentIndex.value < playlist.value.length - 1
-  ) {
+  if (playlist.value.length > 0 && currentIndex.value < playlist.value.length - 1) {
     currentIndex.value++;
     currentTrack.value = playlist.value[currentIndex.value];
   }
@@ -67,13 +58,7 @@ provide("player", {
   nextTrack,
   prevTrack,
 });
-
-// Для отладки
-onMounted(() => {
-  console.log("App mounted, current route:", route.path);
-});
 </script>
-
 <style>
 /* Глобальные стили */
 * {
