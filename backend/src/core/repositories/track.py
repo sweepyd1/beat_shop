@@ -1,7 +1,7 @@
 from typing import List, Optional
 from sqlalchemy import select, or_
 from sqlalchemy.orm import selectinload
-from database.models import Track
+from database.models import Author, Track
 from .base import BaseRepository
 
 class TrackRepository(BaseRepository[Track]):
@@ -48,4 +48,59 @@ class TrackRepository(BaseRepository[Track]):
             .order_by(Track.added_date.desc())
             .limit(limit)
         )
+        return result.scalars().all()
+    async def search(
+        self,
+        query: Optional[str] = None,
+        genre_ids: Optional[List[int]] = None,
+        bpm_min: Optional[int] = None,
+        bpm_max: Optional[int] = None,
+        duration_min: Optional[int] = None,  # в секундах
+        duration_max: Optional[int] = None,
+        sort_by: str = "popular",  # popular, newest, price_asc, price_desc
+        skip: int = 0,
+        limit: int = 20
+    ) -> List[Track]:
+        stmt = select(Track).options(
+            selectinload(Track.genre),
+            selectinload(Track.author)
+        )
+
+        # Фильтр по поисковому запросу (по названию трека или имени автора)
+        if query:
+            stmt = stmt.join(Track.author).where(
+                or_(
+                    Track.title.ilike(f"%{query}%"),
+                    Author.full_name.ilike(f"%{query}%")
+                )
+            )
+
+        # Фильтр по жанрам
+        if genre_ids:
+            stmt = stmt.where(Track.genre_id.in_(genre_ids))
+
+        # Фильтр по BPM
+        if bpm_min is not None:
+            stmt = stmt.where(Track.bpm >= bpm_min)
+        if bpm_max is not None:
+            stmt = stmt.where(Track.bpm <= bpm_max)
+
+        # Фильтр по длительности (в секундах)
+        if duration_min is not None:
+            stmt = stmt.where(Track.duration_seconds >= duration_min)
+        if duration_max is not None:
+            stmt = stmt.where(Track.duration_seconds <= duration_max)
+
+        # Сортировка
+        if sort_by == "newest":
+            stmt = stmt.order_by(Track.added_date.desc())
+        elif sort_by == "price_asc":
+            stmt = stmt.order_by(Track.price.asc())
+        elif sort_by == "price_desc":
+            stmt = stmt.order_by(Track.price.desc())
+        else:  # popular по умолчанию
+            stmt = stmt.order_by(Track.plays.desc())
+
+        stmt = stmt.offset(skip).limit(limit)
+        result = await self.session.execute(stmt)
         return result.scalars().all()

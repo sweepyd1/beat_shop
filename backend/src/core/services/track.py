@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional
+from typing import List, Optional
 from core.repositories.track import TrackRepository
 from core.services.file_service import FileService
 
@@ -73,3 +73,26 @@ class TrackService:
         """Бизнес-логика для новых треков."""
         tracks = await self.repo.get_new(limit)
         return tracks
+    async def search_tracks(
+        self,
+        query: Optional[str] = None,
+        genre_ids: Optional[List[int]] = None,
+        bpm_min: Optional[int] = None,
+        bpm_max: Optional[int] = None,
+        duration_min: Optional[int] = None,
+        duration_max: Optional[int] = None,
+        sort_by: str = "popular",
+        skip: int = 0,
+        limit: int = 20
+    ):
+        return await self.repo.search(
+            query=query,
+            genre_ids=genre_ids,
+            bpm_min=bpm_min,
+            bpm_max=bpm_max,
+            duration_min=duration_min,
+            duration_max=duration_max,
+            sort_by=sort_by,
+            skip=skip,
+            limit=limit
+        )

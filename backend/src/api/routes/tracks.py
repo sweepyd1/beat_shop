@@ -1,3 +1,4 @@
+from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query
 from schemas.track import TrackResponse, TrackCreate, TrackUpdate
 from core.services.track import TrackService
@@ -5,6 +6,32 @@ from api.dependencies import get_track_service
 
 router = APIRouter(prefix="/tracks", tags=["tracks"])
 
+@router.get("/search", response_model=list[TrackResponse])
+async def search_tracks(
+    query: Optional[str] = Query(None, description="Поисковый запрос"),
+    genre_ids: Optional[List[int]] = Query(None, description="ID жанров"),
+    bpm_min: Optional[int] = Query(None, ge=0, description="Минимальный BPM"),
+    bpm_max: Optional[int] = Query(None, ge=0, description="Максимальный BPM"),
+    duration_min: Optional[int] = Query(None, ge=0, description="Минимальная длительность в секундах"),
+    duration_max: Optional[int] = Query(None, ge=0, description="Максимальная длительность в секундах"),
+    sort_by: str = Query("popular", pattern="^(popular|newest|price_asc|price_desc)$"),
+    skip: int = Query(0, ge=0),
+    limit: int = Query(20, ge=1, le=100),
+    service: TrackService = Depends(get_track_service)
+):
+    """Поиск треков с фильтрацией и сортировкой"""
+    tracks = await service.search_tracks(
+        query=query,
+        genre_ids=genre_ids,
+        bpm_min=bpm_min,
+        bpm_max=bpm_max,
+        duration_min=duration_min,
+        duration_max=duration_max,
+        sort_by=sort_by,
+        skip=skip,
+        limit=limit
+    )
+    return tracks
 @router.get("/", response_model=list[TrackResponse])
 async def get_tracks(
     skip: int = 0,
