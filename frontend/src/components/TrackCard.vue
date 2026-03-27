@@ -1,7 +1,7 @@
 <template>
   <div class="track-card" @click="handleClick">
     <div class="cover-wrapper">
-      <img :src="track.cover_url" class="cover" @error="$emit('image-error', $event)" />
+      <img :src="coverUrl" class="cover" @error="$emit('image-error', $event)" />
       <button class="play-overlay" @click.stop="play">
         <i class="fas fa-play"></i>
       </button>
@@ -14,11 +14,17 @@
 </template>
 
 <script setup>
-import { inject } from "vue";
+import { inject, computed } from "vue";
 
 const props = defineProps(["track"]);
 const { playTrack } = inject("player");
-
+const coverUrl = computed(() => {
+  const url = props.track?.cover_url;
+  if (!url) return '/default-cover.jpg';
+  if (url.startsWith('http')) return url;
+  const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+  return `${baseUrl}${url}`;
+});
 const play = () => {
   console.log('TrackCard play called', props.track);
   playTrack(props.track);

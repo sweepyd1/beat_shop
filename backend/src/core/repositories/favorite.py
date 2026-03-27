@@ -1,8 +1,9 @@
 from typing import List, Optional
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.orm import selectinload
 from database.models import Favorite, Track
 from .base import BaseRepository
+
 
 class FavoriteRepository(BaseRepository[Favorite]):
     def __init__(self, session):
@@ -14,7 +15,8 @@ class FavoriteRepository(BaseRepository[Favorite]):
             select(Favorite)
             .where(Favorite.user_id == user_id)
             .options(
-                selectinload(Favorite.track).selectinload(Track.author)
+                selectinload(Favorite.track).selectinload(Track.author),
+                selectinload(Favorite.track).selectinload(Track.genre)
             )
             .order_by(Favorite.added_at.desc())
         )
@@ -28,3 +30,24 @@ class FavoriteRepository(BaseRepository[Favorite]):
             )
         )
         return result.scalar_one_or_none()
+    # async def get_user_favorites(self, user_id: int, skip: int = 0, limit: int = 100):
+    #     stmt = select(Favorite).where(Favorite.user_id == user_id).offset(skip).limit(limit)
+    #     result = await self.session.execute(stmt)
+    #     return result.scalars().all()
+
+    async def exists(self, user_id: int, track_id: int) -> bool:
+        stmt = select(Favorite).where(
+            Favorite.user_id == user_id,
+            Favorite.track_id == track_id
+        )
+        result = await self.session.execute(stmt)
+        return result.scalar_one_or_none() is not None
+
+    async def delete_by_user_track(self, user_id: int, track_id: int) -> bool:
+        stmt = delete(Favorite).where(
+            Favorite.user_id == user_id,
+            Favorite.track_id == track_id
+        ).returning(Favorite.id)
+        result = await self.session.execute(stmt)
+        await self.db.commit()
+        return result.scalar_one_or_none() is not None

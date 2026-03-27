@@ -18,68 +18,78 @@
         <div v-if="activeTab === 'info'" class="tab-pane">
           <div class="user-info" v-if="user">
             <div class="avatar">
-              <img :src="user.avatar" alt="" />
+              <img :src="avatarUrl" alt="" />
             </div>
             <div class="details">
-              <p><strong>Имя:</strong> {{ user.name }}</p>
+              <p><strong>Имя:</strong> {{ user.full_name }}</p>
               <p><strong>Email:</strong> {{ user.email }}</p>
-              <p><strong>Дата регистрации:</strong> {{ formatDate(user.registered) }}</p>
-              <button class="btn-secondary" @click="openEditModal">Редактировать</button>
+              <p><strong>Дата регистрации:</strong> {{ formatDate(user.registered_at) }}</p>
+              <button class="btn-secondary edit-btn" @click="openEditModal">Редактировать</button>
             </div>
           </div>
         </div>
 
         <!-- Мои покупки -->
         <div v-if="activeTab === 'purchases'" class="tab-pane">
-          <div v-if="purchases.length === 0" class="empty">
-            <p>У вас ещё нет покупок.</p>
-            <router-link to="/search" class="btn-primary">Найти биты</router-link>
-          </div>
-          <div v-else class="purchases-list">
-            <div v-for="item in purchases" :key="item.id" class="purchase-item">
-              <img :src="item.cover" alt="" />
-              <div class="info">
-                <h4>{{ item.title }}</h4>
-                <p>{{ item.artist }}</p>
-              </div>
-              <span class="date">{{ formatDate(item.purchase_date) }}</span>
-              <span class="price">{{ item.price }} ₽</span>
-              <button class="download-btn" @click="downloadTrack(item.id)"><i class="fas fa-download"></i></button>
-            </div>
-          </div>
+          <!-- ... -->
         </div>
 
         <!-- Избранное -->
         <div v-if="activeTab === 'favorites'" class="tab-pane">
           <div class="track-grid">
             <TrackCard
-              v-for="track in favorites"
-              :key="track.id"
-              :track="track"
+              v-for="fav in favorites"
+              :key="fav.id"
+              :track="fav.track"
             />
           </div>
         </div>
 
-        <!-- Подписки на артистов -->
+        <!-- Подписки -->
         <div v-if="activeTab === 'subscriptions'" class="tab-pane">
-          <div class="artists-list">
-            <div v-for="artist in subscriptions" :key="artist.id" class="artist-sub">
-              <img :src="artist.avatar" alt="" />
-              <div class="info">
-                <h4>{{ artist.name }}</h4>
-                <p>{{ artist.followers_count }} подписчиков</p>
-              </div>
-              <button class="unsubscribe" @click="unsubscribe(artist.id)">Отписаться</button>
-            </div>
-          </div>
+          <!-- ... -->
         </div>
       </div>
     </template>
+
+    <!-- Модальное окно редактирования -->
+    <div v-if="showEditModal" class="modal-overlay" @click.self="closeEditModal">
+      <div class="modal">
+        <h2>Редактирование профиля</h2>
+        <form @submit.prevent="saveProfile" class="edit-form">
+          <div class="avatar-upload">
+            <div class="avatar-preview">
+              <img :src="previewAvatar || avatarUrl" alt="Avatar preview" />
+            </div>
+            <label class="upload-label">
+              <i class="fas fa-camera"></i>
+              <span>Загрузить фото</span>
+              <input type="file" accept="image/*" @change="handleAvatarChange" hidden />
+            </label>
+          </div>
+
+          <div class="form-group">
+            <label>Имя</label>
+            <input type="text" v-model="editForm.full_name" required />
+          </div>
+
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" v-model="editForm.email" required />
+          </div>
+
+          <div class="modal-buttons">
+            <button type="button" class="btn-cancel" @click="closeEditModal">Отмена</button>
+            <button type="submit" class="btn-save" :disabled="saving">Сохранить</button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import TrackCard from '../components/TrackCard.vue';
 import { useProfile } from '../composables/useProfile';
 
@@ -93,26 +103,83 @@ const {
   loading,
   error,
   fetchAll,
+  updateProfile,
   downloadTrack,
   unsubscribe,
 } = useProfile();
 
-// Форматирование даты (пример)
+// Модальное окно
+const showEditModal = ref(false);
+const editForm = ref({
+  full_name: '',
+  email: '',
+  avatar_file: null,
+});
+const avatarFile = ref(null);
+const previewAvatar = ref(null);
+const saving = ref(false);
+
+// Полный URL аватара с бэкенда
+const avatarUrl = computed(() => {
+  if (!user.value?.avatar) return '/default-avatar.png';
+  if (user.value.avatar.startsWith('http')) return user.value.avatar;
+  const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+  return `${baseUrl}${user.value.avatar}`;
+});
+
+const openEditModal = () => {
+  editForm.value = {
+    full_name: user.value.full_name,
+    email: user.value.email,
+    avatar_file: null,
+  };
+  previewAvatar.value = null;
+  showEditModal.value = true;
+};
+
+const closeEditModal = () => {
+  showEditModal.value = false;
+};
+
+const handleAvatarChange = (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+  editForm.value.avatar_file = file;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    previewAvatar.value = e.target.result;
+  };
+  reader.readAsDataURL(file);
+};
+
+const saveProfile = async () => {
+  saving.value = true;
+  try {
+    const formData = new FormData();
+    formData.append('full_name', editForm.value.full_name);
+    formData.append('email', editForm.value.email);
+    if (editForm.value.avatar_file) {
+      formData.append('avatar', editForm.value.avatar_file);
+    }
+    await updateProfile(formData);
+    closeEditModal();
+  } catch (err) {
+    console.error('Save failed', err);
+    alert('Не удалось сохранить изменения');
+  } finally {
+    saving.value = false;
+  }
+};
+
 const formatDate = (dateString) => {
   if (!dateString) return '';
   const date = new Date(dateString);
   return date.toLocaleDateString('ru-RU');
 };
 
-// Загружаем данные при монтировании
 onMounted(() => {
   fetchAll();
 });
-
-// Редактирование профиля (можно реализовать модальное окно)
-const openEditModal = () => {
-  // ...
-};
 </script>
 
 <style scoped>
@@ -172,119 +239,162 @@ const openEditModal = () => {
   font-size: 1.1rem;
 }
 
-.purchases-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.purchase-item {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  background: rgba(255,255,255,0.03);
-  padding: 1rem;
-  border-radius: 12px;
-}
-
-.purchase-item img {
-  width: 50px;
-  height: 50px;
-  border-radius: 8px;
-  object-fit: cover;
-}
-
-.purchase-item .info {
-  flex: 1;
-}
-
-.purchase-item .info h4 {
-  font-size: 1rem;
-  margin-bottom: 0.2rem;
-}
-
-.purchase-item .info p {
-  font-size: 0.85rem;
-  color: #a0a0b0;
-}
-
-.purchase-item .date,
-.purchase-item .price {
-  color: #a0a0b0;
-  min-width: 80px;
-}
-
-.purchase-item .price {
+.edit-btn {
+  margin-top: 1rem;
+  background: rgba(168,85,247,0.2);
+  border: 1px solid #a855f7;
   color: #a855f7;
-  font-weight: 600;
-}
-
-.download-btn {
-  background: none;
-  border: none;
-  color: #a0a0b0;
-  font-size: 1.2rem;
-  cursor: pointer;
-  transition: color 0.2s;
-}
-
-.download-btn:hover {
-  color: #a855f7;
-}
-
-.empty {
-  text-align: center;
-  padding: 2rem;
-}
-
-.artists-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.artist-sub {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  background: rgba(255,255,255,0.03);
-  padding: 1rem;
-  border-radius: 12px;
-}
-
-.artist-sub img {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.artist-sub .info {
-  flex: 1;
-}
-
-.artist-sub .info h4 {
-  font-size: 1rem;
-}
-
-.artist-sub .info p {
-  font-size: 0.85rem;
-  color: #a0a0b0;
-}
-
-.unsubscribe {
-  background: rgba(255,77,77,0.1);
-  border: 1px solid #ff4d4d;
-  color: #ff4d4d;
-  padding: 0.4rem 1rem;
-  border-radius: 20px;
+  padding: 0.5rem 1.5rem;
+  border-radius: 40px;
   cursor: pointer;
   transition: all 0.2s;
 }
 
-.unsubscribe:hover {
-  background: #ff4d4d;
+.edit-btn:hover {
+  background: #a855f7;
   color: white;
+}
+
+/* Модальное окно */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: rgba(20,20,30,0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  border: 1px solid rgba(168,85,247,0.3);
+  padding: 2rem;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+}
+
+.modal h2 {
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+  text-align: center;
+  background: linear-gradient(135deg, #fff, #c084fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.avatar-upload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.avatar-preview {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #a855f7;
+}
+
+.avatar-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.upload-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(168,85,247,0.2);
+  border: 1px solid #a855f7;
+  padding: 0.5rem 1rem;
+  border-radius: 40px;
+  cursor: pointer;
+  color: #a855f7;
+  transition: all 0.2s;
+}
+
+.upload-label:hover {
+  background: #a855f7;
+  color: white;
+}
+
+.edit-form .form-group {
+  margin-bottom: 1rem;
+}
+
+.edit-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #d0d0e0;
+}
+
+.edit-form input {
+  width: 100%;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid #2a2a3a;
+  border-radius: 40px;
+  padding: 0.8rem 1rem;
+  color: white;
+  font-size: 1rem;
+}
+
+.edit-form input:focus {
+  outline: none;
+  border-color: #a855f7;
+  box-shadow: 0 0 0 3px rgba(168,85,247,0.2);
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.btn-cancel, .btn-save {
+  padding: 0.6rem 1.5rem;
+  border-radius: 40px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.btn-cancel {
+  background: rgba(255,255,255,0.1);
+  color: #a0a0b0;
+}
+
+.btn-cancel:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+.btn-save {
+  background: linear-gradient(45deg, #a855f7, #3b82f6);
+  color: white;
+  box-shadow: 0 4px 15px rgba(168,85,247,0.3);
+}
+
+.btn-save:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(168,85,247,0.5);
+}
+
+.btn-save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .track-grid {
@@ -292,4 +402,11 @@ const openEditModal = () => {
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 2rem;
 }
+
+.empty {
+  text-align: center;
+  padding: 2rem;
+}
+
+
 </style>

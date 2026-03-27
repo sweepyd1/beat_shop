@@ -1,10 +1,13 @@
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import api from '@/api/index';
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref(null);
   const isLoading = ref(false);
+
+  // Добавляем computed свойство isAuthenticated
+  const isAuthenticated = computed(() => !!user.value);
 
   // Получение данных текущего пользователя (проверка авторизации)
   const fetchUser = async () => {
@@ -12,8 +15,12 @@ export const useAuthStore = defineStore('auth', () => {
       isLoading.value = true;
       const response = await api.get('/auth/me');
       user.value = response.data;
+      console.log('fetchUser success:', user.value);
+      return true;
     } catch (error) {
+      console.error('fetchUser error:', error);
       user.value = null;
+      return false;
     } finally {
       isLoading.value = false;
     }
@@ -21,30 +28,55 @@ export const useAuthStore = defineStore('auth', () => {
 
   // Вход
   const login = async (credentials) => {
-    const formData = new FormData();
-    formData.append('username', credentials.login);
-    formData.append('password', credentials.password);
-    const response = await api.post('/auth/login', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    });
-    // После успешного входа сервер установил куки, получаем пользователя
-    await fetchUser();
-    return response;
+    try {
+      const formData = new FormData();
+      formData.append('username', credentials.login);
+      formData.append('password', credentials.password);
+      const response = await api.post('/auth/login', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      console.log('Login response:', response.data);
+      // После успешного входа сервер установил куки, получаем пользователя
+      await fetchUser();
+      return response;
+    } catch (error) {
+      console.error('Login error:', error);
+      throw error;
+    }
   };
 
   // Регистрация
   const register = async (userData) => {
-    const response = await api.post('/auth/register', userData);
-    // После регистрации сервер тоже устанавливает куки (автоматический вход)
-    await fetchUser();
-    return response;
+    try {
+      const response = await api.post('/auth/register', userData);
+      console.log('Register response:', response.data);
+      // После регистрации сервер тоже устанавливает куки (автоматический вход)
+      await fetchUser();
+      return response;
+    } catch (error) {
+      console.error('Register error:', error);
+      throw error;
+    }
   };
 
   // Выход
   const logout = async () => {
-    await api.post('/auth/logout');
-    user.value = null;
+    try {
+      await api.post('/auth/logout');
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      user.value = null;
+    }
   };
 
-  return { user, isLoading, fetchUser, login, register, logout };
+  return { 
+    user, 
+    isLoading, 
+    isAuthenticated,  // обязательно возвращаем!
+    fetchUser, 
+    login, 
+    register, 
+    logout 
+  };
 });

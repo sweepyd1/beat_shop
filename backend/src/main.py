@@ -11,7 +11,7 @@ from core.services.auth import AuthService
 from database.db_manager import db_manager
 from database.models import User
 from config import cfg, setup_environment
-from api.routes import auth, tracks, genres, user
+from api.routes import auth, tracks, genres, user, favorites
 from api.routes.admin import authors as admin_authors, genre as admin_genres, tracks as admin_tracks
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -69,6 +69,7 @@ app.include_router(auth.router)
 app.include_router(tracks.router)
 app.include_router(genres.router)
 app.include_router(user.router)
+app.include_router(favorites.router)
 # Админские роуты
 app.include_router(admin_authors.router)
 app.include_router(admin_genres.router)

@@ -1,13 +1,20 @@
 <template>
   <div v-if="track" class="player">
     <div class="track-info">
-      <img :src="track.cover_url || '/default-cover.jpg'" :alt="track.title" class="cover" />
+      <img
+        :src="track.cover_url || '/default-cover.jpg'"
+        :alt="track.title"
+        class="cover"
+      />
       <div class="details">
         <div class="title">{{ track.title }}</div>
         <div class="artist">
-  {{ track.author.full_name || 'Unknown Artist' }}
-</div>
+          {{ track.author.full_name || "Unknown Artist" }}
+        </div>
       </div>
+      <button  @click="toggleFavorite" class="favorite-btn" :class="{ active: isFavorite }">
+        <i :class="isFavorite ? 'fas fa-heart' : 'far fa-heart'"></i>
+      </button>
     </div>
 
     <div class="player-controls">
@@ -25,31 +32,86 @@
     <div class="progress-area">
       <span class="time">{{ formatTime(currentTime) }}</span>
       <div class="progress-bar" ref="progressBar" @click="seek">
-        <div class="progress-fill" :style="{ width: progressPercent + '%' }"></div>
+        <div
+          class="progress-fill"
+          :style="{ width: progressPercent + '%' }"
+        ></div>
       </div>
       <span class="time">{{ formatTime(duration) }}</span>
     </div>
 
     <div class="volume-control">
       <i class="fas fa-volume-up"></i>
-      <input type="range" min="0" max="1" step="0.01" v-model="volume" @input="updateVolume" />
+      <input
+        type="range"
+        min="0"
+        max="1"
+        step="0.01"
+        v-model="volume"
+        @input="updateVolume"
+      />
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onUnmounted, watch, inject } from 'vue';
+import { useRouter } from 'vue-router';
+
+import api from '../api/index.js';
+import { storeToRefs } from 'pinia';
+import { useAuthStore } from '@/stores/auth';
+
+const authStore = useAuthStore();
+const { isAuthenticated, user } = storeToRefs(authStore);
+
+const router = useRouter();
+
 
 // Получаем глобальное состояние
-const player = inject('player');
+const player = inject("player");
 if (!player) {
-  console.error('Player: no player injected');
+  console.error("Player: no player injected");
 }
 const { currentTrack, isPlaying, nextTrack, prevTrack } = player || {};
 
 // Локальный трек (реактивный)
 const track = computed(() => currentTrack?.value);
 
+// Состояние избранного
+const isFavorite = ref(false);
+const isLoggedIn = isAuthenticated;
+
+// Проверка, добавлен ли трек в избранное
+const checkFavorite = async () => {
+  if (!track.value?.id || !isLoggedIn.value) return;
+  try {
+    const { data } = await api.get(`/favorites`);
+    isFavorite.value = data.some(fav => fav.track_id === track.value.id);
+  } catch (err) {
+    console.error('Failed to check favorite', err);
+  }
+};
+
+// Добавить/удалить из избранного
+const toggleFavorite = async () => {
+  if (!track.value?.id) return;
+  if (!isLoggedIn.value) {
+    router.push('/login');
+    return;
+  }
+  try {
+    if (isFavorite.value) {
+      await api.delete(`/favorites/${track.value.id}`);
+      isFavorite.value = false;
+    } else {
+      await api.post(`/favorites/${track.value.id}`);
+      isFavorite.value = true;
+    }
+  } catch (err) {
+    console.error('Failed to toggle favorite', err);
+  }
+};
 // Локальное состояние
 const currentTime = ref(0);
 const duration = ref(0);
@@ -62,27 +124,27 @@ let audio = null;
 const initAudio = () => {
   if (audio) {
     audio.pause();
-    audio.removeEventListener('timeupdate', updateTime);
-    audio.removeEventListener('ended', next);
+    audio.removeEventListener("timeupdate", updateTime);
+    audio.removeEventListener("ended", next);
   }
   if (!track.value) return;
 
   // Используем прямой URL к mp3 из трека
   const streamUrl = track.value.mp3_file_url;
   if (!streamUrl) {
-    console.error('Player: no mp3_file_url for track', track.value);
+    console.error("Player: no mp3_file_url for track", track.value);
     return;
   }
-  console.log('Player: loading audio from', streamUrl);
+  console.log("Player: loading audio from", streamUrl);
   audio = new Audio(streamUrl);
   audio.volume = volume.value;
-  audio.addEventListener('loadedmetadata', () => {
+  audio.addEventListener("loadedmetadata", () => {
     duration.value = audio.duration;
-    console.log('Player: duration', duration.value);
+    console.log("Player: duration", duration.value);
   });
-  audio.addEventListener('timeupdate', updateTime);
-  audio.addEventListener('ended', () => {
-    console.log('Player: track ended');
+  audio.addEventListener("timeupdate", updateTime);
+  audio.addEventListener("ended", () => {
+    console.log("Player: track ended");
     nextTrack();
   });
 };
@@ -93,10 +155,11 @@ const updateTime = () => {
 
 // Следим за сменой трека
 watch(track, (newTrack, oldTrack) => {
-  console.log('Player: track changed', newTrack);
+  console.log("Player: track changed", newTrack);
   if (newTrack) {
     initAudio();
-    if (isPlaying?.value) audio?.play().catch(e => console.error('Play error:', e));
+    if (isPlaying?.value)
+      audio?.play().catch((e) => console.error("Play error:", e));
   } else {
     if (audio) {
       audio.pause();
@@ -109,7 +172,7 @@ watch(track, (newTrack, oldTrack) => {
 watch(isPlaying, (playing) => {
   if (!audio) return;
   if (playing) {
-    audio.play().catch(e => console.error('Play error:', e));
+    audio.play().catch((e) => console.error("Play error:", e));
   } else {
     audio.pause();
   }
@@ -119,8 +182,8 @@ watch(isPlaying, (playing) => {
 onUnmounted(() => {
   if (audio) {
     audio.pause();
-    audio.removeEventListener('timeupdate', updateTime);
-    audio.removeEventListener('ended', next);
+    audio.removeEventListener("timeupdate", updateTime);
+    audio.removeEventListener("ended", next);
     audio = null;
   }
 });
@@ -130,9 +193,11 @@ const togglePlay = () => {
 };
 
 const formatTime = (sec) => {
-  if (isNaN(sec)) return '0:00';
+  if (isNaN(sec)) return "0:00";
   const minutes = Math.floor(sec / 60);
-  const seconds = Math.floor(sec % 60).toString().padStart(2, '0');
+  const seconds = Math.floor(sec % 60)
+    .toString()
+    .padStart(2, "0");
   return `${minutes}:${seconds}`;
 };
 
@@ -196,6 +261,21 @@ const prev = () => {
 .details .artist {
   font-size: 0.85rem;
   color: #a0a0b0;
+}
+.favorite-btn {
+  background: none;
+  border: none;
+  color: #a0a0b0;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: color 0.2s;
+  margin-left: 0.5rem;
+}
+.favorite-btn.active {
+  color: #ff4d4d;
+}
+.favorite-btn:hover {
+  color: #ff4d4d;
 }
 .player-controls {
   display: flex;

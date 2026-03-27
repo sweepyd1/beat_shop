@@ -9,7 +9,7 @@ from typing import Any
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 # Конфигурация кук (в реальном проекте вынесите в .env)
-ACCESS_TOKEN_EXPIRE = 3600  # 1 час
+ACCESS_TOKEN_EXPIRE = 360000  # 1 час
 REFRESH_TOKEN_EXPIRE = 86400 * 7  # 7 дней
 COOKIE_SECURE = False  # В production установите True (для HTTPS)
 COOKIE_SAMESITE = "lax"

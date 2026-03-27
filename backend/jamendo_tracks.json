@@ -1,0 +1,3360 @@
+[
+  {
+    "id": "168",
+    "name": "J'm'e FPM",
+    "duration": 183,
+    "artist_id": "7",
+    "artist_name": "TriFace",
+    "artist_idstr": "triface",
+    "album_name": "Premiers Jets",
+    "album_id": "24",
+    "license_ccurl": "",
+    "position": 1,
+    "releasedate": "2004-12-17",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=24&width=300&trackid=168",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=168&format=mp32&from=uoJW%2BQsOWe72QyezCHQM9w%3D%3D%7C0LMs3jgoyZgeNwMhjdy2JA%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/168/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/168",
+    "shareurl": "https://www.jamendo.com/track/168",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=24&width=300&trackid=168",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "gender": "male",
+      "speed": "medium",
+      "tags": {
+        "genres": [
+          "rock",
+          "metal",
+          "hardcore"
+        ],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "169",
+    "name": "Trio HxC",
+    "duration": 101,
+    "artist_id": "7",
+    "artist_name": "TriFace",
+    "artist_idstr": "triface",
+    "album_name": "Premiers Jets",
+    "album_id": "24",
+    "license_ccurl": "",
+    "position": 2,
+    "releasedate": "2004-12-17",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=24&width=300&trackid=169",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=169&format=mp32&from=RCnfxFevyfoUaTkuQ1E9sg%3D%3D%7CWvpIt9VMpbWJnKh9Yr026w%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/169/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/169",
+    "shareurl": "https://www.jamendo.com/track/169",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=24&width=300&trackid=169",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "gender": "male",
+      "speed": "medium",
+      "tags": {
+        "genres": [
+          "metal",
+          "hardcore",
+          "alternativerock"
+        ],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "170",
+    "name": "Un Poil De Relifion",
+    "duration": 207,
+    "artist_id": "7",
+    "artist_name": "TriFace",
+    "artist_idstr": "triface",
+    "album_name": "Premiers Jets",
+    "album_id": "24",
+    "license_ccurl": "",
+    "position": 3,
+    "releasedate": "2004-12-17",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=24&width=300&trackid=170",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=170&format=mp32&from=rMP%2F6%2BvNSjTnjBSy7m4jmg%3D%3D%7CCQdRjtP4FNfQjWX1YOD4gw%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/170/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/170",
+    "shareurl": "https://www.jamendo.com/track/170",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=24&width=300&trackid=170",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "gender": "male",
+      "speed": "high",
+      "tags": {
+        "genres": [
+          "metal",
+          "hardcore",
+          "electronic"
+        ],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "171",
+    "name": "Apologies",
+    "duration": 145,
+    "artist_id": "7",
+    "artist_name": "TriFace",
+    "artist_idstr": "triface",
+    "album_name": "Premiers Jets",
+    "album_id": "24",
+    "license_ccurl": "",
+    "position": 4,
+    "releasedate": "2004-12-17",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=24&width=300&trackid=171",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=171&format=mp32&from=aektjEL%2Fq4cOlDqMTr%2B%2BFw%3D%3D%7Cst2gkX5TmsuJfmf9nUX%2BCQ%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/171/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/171",
+    "shareurl": "https://www.jamendo.com/track/171",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=24&width=300&trackid=171",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "gender": "male",
+      "speed": "high",
+      "tags": {
+        "genres": [
+          "rock",
+          "metal",
+          "hardcore"
+        ],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "172",
+    "name": "Je Vomis Comme Je Chante",
+    "duration": 177,
+    "artist_id": "7",
+    "artist_name": "TriFace",
+    "artist_idstr": "triface",
+    "album_name": "Premiers Jets",
+    "album_id": "24",
+    "license_ccurl": "",
+    "position": 5,
+    "releasedate": "2004-12-17",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=24&width=300&trackid=172",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=172&format=mp32&from=ToA9moyLoy%2BFnpRTCKTZ6A%3D%3D%7CtcMLNQ7b0CzI74BXTr9byw%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/172/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/172",
+    "shareurl": "https://www.jamendo.com/track/172",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=24&width=300&trackid=172",
+    "musicinfo": {
+      "vocalinstrumental": "instrumental",
+      "speed": "medium",
+      "tags": {
+        "genres": [
+          "rock",
+          "metal",
+          "hardcore"
+        ],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "174",
+    "name": "Mind Asylum",
+    "duration": 183,
+    "artist_id": "9",
+    "artist_name": "Skaut",
+    "artist_idstr": "skaut",
+    "album_name": "Mind Asylum",
+    "album_id": "25",
+    "license_ccurl": "",
+    "position": 1,
+    "releasedate": "2004-12-18",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=25&width=300&trackid=174",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=174&format=mp32&from=afUooCmTq3fo0HhPXgAXTg%3D%3D%7CoJH237xDTooHroVuPILIoQ%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/174/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/174",
+    "shareurl": "https://www.jamendo.com/track/174",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=25&width=300&trackid=174",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "speed": "high",
+      "tags": {
+        "genres": [
+          "rock",
+          "hardcore"
+        ],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "175",
+    "name": "You Don't Know",
+    "duration": 322,
+    "artist_id": "9",
+    "artist_name": "Skaut",
+    "artist_idstr": "skaut",
+    "album_name": "Mind Asylum",
+    "album_id": "25",
+    "license_ccurl": "",
+    "position": 2,
+    "releasedate": "2004-12-18",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=25&width=300&trackid=175",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=175&format=mp32&from=RpV07ipm9EHCTlgD0vK%2BAw%3D%3D%7CoMZKSB%2BVQo9iFZK5DJ5JMQ%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/175/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/175",
+    "shareurl": "https://www.jamendo.com/track/175",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=25&width=300&trackid=175",
+    "musicinfo": {
+      "vocalinstrumental": "instrumental",
+      "speed": "medium",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "176",
+    "name": "Overcome",
+    "duration": 292,
+    "artist_id": "9",
+    "artist_name": "Skaut",
+    "artist_idstr": "skaut",
+    "album_name": "Mind Asylum",
+    "album_id": "25",
+    "license_ccurl": "",
+    "position": 3,
+    "releasedate": "2004-12-18",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=25&width=300&trackid=176",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=176&format=mp32&from=hN4aqfHaByEO2TD9koQS2g%3D%3D%7Ceb4%2FuLDVr6XjGBlSasradA%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/176/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/176",
+    "shareurl": "https://www.jamendo.com/track/176",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=25&width=300&trackid=176",
+    "musicinfo": {
+      "vocalinstrumental": "instrumental",
+      "speed": "high",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "198",
+    "name": "Trois Saucisses Dans Une Bulle",
+    "duration": 33,
+    "artist_id": "7",
+    "artist_name": "TriFace",
+    "artist_idstr": "triface",
+    "album_name": "3 Saucisses Dans Une Bulle",
+    "album_id": "28",
+    "license_ccurl": "",
+    "position": 1,
+    "releasedate": "2004-12-21",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=28&width=300&trackid=198",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=198&format=mp32&from=0zqT9cw1QOm1Fxyq929DGQ%3D%3D%7CL2y8MFODj9M%2FJJv2ZAh87w%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/198/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/198",
+    "shareurl": "https://www.jamendo.com/track/198",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=28&width=300&trackid=198",
+    "musicinfo": {
+      "vocalinstrumental": "instrumental",
+      "lang": "fr",
+      "speed": "medium",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": [
+          "neutral"
+        ]
+      }
+    }
+  },
+  {
+    "id": "199",
+    "name": "New Bitch",
+    "duration": 171,
+    "artist_id": "7",
+    "artist_name": "TriFace",
+    "artist_idstr": "triface",
+    "album_name": "3 Saucisses Dans Une Bulle",
+    "album_id": "28",
+    "license_ccurl": "",
+    "position": 2,
+    "releasedate": "2004-12-21",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=28&width=300&trackid=199",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=199&format=mp32&from=TU9skogafcdGDjLsubfkUw%3D%3D%7CaEQ5SfS4S3n1CZnX%2F8nUyA%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/199/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/199",
+    "shareurl": "https://www.jamendo.com/track/199",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=28&width=300&trackid=199",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "gender": "male",
+      "speed": "veryhigh",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "200",
+    "name": "Papy HxC",
+    "duration": 173,
+    "artist_id": "7",
+    "artist_name": "TriFace",
+    "artist_idstr": "triface",
+    "album_name": "3 Saucisses Dans Une Bulle",
+    "album_id": "28",
+    "license_ccurl": "",
+    "position": 3,
+    "releasedate": "2004-12-21",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=28&width=300&trackid=200",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=200&format=mp32&from=LAwaINWqBIWFbbtK7h%2BHeg%3D%3D%7Ctj%2Bth0aLH%2BytU32Zsb4T7w%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/200/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/200",
+    "shareurl": "https://www.jamendo.com/track/200",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=28&width=300&trackid=200",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "gender": "male",
+      "speed": "veryhigh",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "201",
+    "name": "I Love You Heroes",
+    "duration": 114,
+    "artist_id": "7",
+    "artist_name": "TriFace",
+    "artist_idstr": "triface",
+    "album_name": "3 Saucisses Dans Une Bulle",
+    "album_id": "28",
+    "license_ccurl": "",
+    "position": 4,
+    "releasedate": "2004-12-21",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=28&width=300&trackid=201",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=201&format=mp32&from=Hq0SNT3aK2hXUJaeJEXGbg%3D%3D%7CDrnIf%2ByOVMiN7%2BgSxBBZXg%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/201/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/201",
+    "shareurl": "https://www.jamendo.com/track/201",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=28&width=300&trackid=201",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "gender": "male",
+      "speed": "veryhigh",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "202",
+    "name": "Le démarrage de Mark",
+    "duration": 70,
+    "artist_id": "7",
+    "artist_name": "TriFace",
+    "artist_idstr": "triface",
+    "album_name": "3 Saucisses Dans Une Bulle",
+    "album_id": "28",
+    "license_ccurl": "",
+    "position": 5,
+    "releasedate": "2004-12-21",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=28&width=300&trackid=202",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=202&format=mp32&from=hEihA0THcjLpATMsjTU4fg%3D%3D%7CnVRMbuTC1lOwii9f0HTVAg%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/202/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/202",
+    "shareurl": "https://www.jamendo.com/track/202",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=28&width=300&trackid=202",
+    "musicinfo": {
+      "vocalinstrumental": "instrumental",
+      "speed": "medium",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "203",
+    "name": "Mark Dabord",
+    "duration": 258,
+    "artist_id": "7",
+    "artist_name": "TriFace",
+    "artist_idstr": "triface",
+    "album_name": "3 Saucisses Dans Une Bulle",
+    "album_id": "28",
+    "license_ccurl": "",
+    "position": 6,
+    "releasedate": "2004-12-21",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=28&width=300&trackid=203",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=203&format=mp32&from=Cl0UWeZsW4CLgdTc6ynUpQ%3D%3D%7C1O8%2BzWKYzjI043oVeNri7w%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/203/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/203",
+    "shareurl": "https://www.jamendo.com/track/203",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=28&width=300&trackid=203",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "gender": "male",
+      "speed": "high",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "204",
+    "name": "LVOHC",
+    "duration": 200,
+    "artist_id": "7",
+    "artist_name": "TriFace",
+    "artist_idstr": "triface",
+    "album_name": "3 Saucisses Dans Une Bulle",
+    "album_id": "28",
+    "license_ccurl": "",
+    "position": 7,
+    "releasedate": "2004-12-21",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=28&width=300&trackid=204",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=204&format=mp32&from=75iAIb4fz%2BK9b4oSVJVHyw%3D%3D%7Cm4wTJh%2FsVpUIfLcLiuc%2BLQ%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/204/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/204",
+    "shareurl": "https://www.jamendo.com/track/204",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=28&width=300&trackid=204",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "gender": "male",
+      "speed": "medium",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "206",
+    "name": "Un Poil De Relifion (Acous)",
+    "duration": 145,
+    "artist_id": "7",
+    "artist_name": "TriFace",
+    "artist_idstr": "triface",
+    "album_name": "3 Saucisses Dans Une Bulle",
+    "album_id": "28",
+    "license_ccurl": "",
+    "position": 8,
+    "releasedate": "2004-12-21",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=28&width=300&trackid=206",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=206&format=mp32&from=XLIelPZYsEVb6MatYjTf9Q%3D%3D%7CxNRjFzgmSjyrGrgQFsF2QQ%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/206/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/206",
+    "shareurl": "https://www.jamendo.com/track/206",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=28&width=300&trackid=206",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "gender": "male",
+      "speed": "medium",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "214",
+    "name": "Intro chiante",
+    "duration": 124,
+    "artist_id": "14",
+    "artist_name": "David TMX",
+    "artist_idstr": "david.tmx",
+    "album_name": "Pouce !",
+    "album_id": "31",
+    "license_ccurl": "",
+    "position": 1,
+    "releasedate": "2004-12-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=31&width=300&trackid=214",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=214&format=mp32&from=Zsg4Qp3QOHmtJhL%2BCxghSQ%3D%3D%7CdOHbYQRvRSRoY4EXXUkE6A%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/214/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/214",
+    "shareurl": "https://www.jamendo.com/track/214",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=31&width=300&trackid=214",
+    "musicinfo": {
+      "vocalinstrumental": "instrumental",
+      "acousticelectric": "electric",
+      "speed": "medium",
+      "tags": {
+        "genres": [
+          "punk"
+        ],
+        "instruments": [],
+        "vartags": [
+          "neutral"
+        ]
+      }
+    }
+  },
+  {
+    "id": "215",
+    "name": "Aide toi...",
+    "duration": 151,
+    "artist_id": "14",
+    "artist_name": "David TMX",
+    "artist_idstr": "david.tmx",
+    "album_name": "Pouce !",
+    "album_id": "31",
+    "license_ccurl": "",
+    "position": 2,
+    "releasedate": "2004-12-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=31&width=300&trackid=215",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=215&format=mp32&from=09FA7fgFaJKRMwNAIra7aQ%3D%3D%7CZwoy%2BAMA%2FhElLPWdB09ntA%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/215/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/215",
+    "shareurl": "https://www.jamendo.com/track/215",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=31&width=300&trackid=215",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "lang": "fr",
+      "gender": "male",
+      "acousticelectric": "electric",
+      "speed": "veryhigh",
+      "tags": {
+        "genres": [
+          "metal"
+        ],
+        "instruments": [
+          "electricguitar",
+          "electroamplified"
+        ],
+        "vartags": [
+          "action",
+          "energetic"
+        ]
+      }
+    }
+  },
+  {
+    "id": "216",
+    "name": "Une charogne",
+    "duration": 234,
+    "artist_id": "14",
+    "artist_name": "David TMX",
+    "artist_idstr": "david.tmx",
+    "album_name": "Pouce !",
+    "album_id": "31",
+    "license_ccurl": "",
+    "position": 3,
+    "releasedate": "2004-12-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=31&width=300&trackid=216",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=216&format=mp32&from=P4Qhe6rsIM6cmZ%2B95i6O8A%3D%3D%7CgFBvIr%2B%2Fcm9xXJDgGicYGA%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/216/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/216",
+    "shareurl": "https://www.jamendo.com/track/216",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=31&width=300&trackid=216",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "gender": "male",
+      "acousticelectric": "electric",
+      "speed": "high",
+      "tags": {
+        "genres": [
+          "metal"
+        ],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "217",
+    "name": "Aimons nous...",
+    "duration": 127,
+    "artist_id": "14",
+    "artist_name": "David TMX",
+    "artist_idstr": "david.tmx",
+    "album_name": "Pouce !",
+    "album_id": "31",
+    "license_ccurl": "",
+    "position": 4,
+    "releasedate": "2004-12-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=31&width=300&trackid=217",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=217&format=mp32&from=vo2y5UIMpFFH1Z8WmwVUgQ%3D%3D%7Cae3WAAfzm8IwxEYVBZbcpg%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/217/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/217",
+    "shareurl": "https://www.jamendo.com/track/217",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=31&width=300&trackid=217",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "gender": "male",
+      "acousticelectric": "electric",
+      "speed": "veryhigh",
+      "tags": {
+        "genres": [
+          "metal"
+        ],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "218",
+    "name": "Jouvencelle",
+    "duration": 180,
+    "artist_id": "14",
+    "artist_name": "David TMX",
+    "artist_idstr": "david.tmx",
+    "album_name": "Pouce !",
+    "album_id": "31",
+    "license_ccurl": "",
+    "position": 5,
+    "releasedate": "2004-12-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=31&width=300&trackid=218",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=218&format=mp32&from=IQF0Ty9vs%2BD0iUQPzFShMA%3D%3D%7Cf%2F90afORffLWSJnU8Sg6zA%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/218/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/218",
+    "shareurl": "https://www.jamendo.com/track/218",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=31&width=300&trackid=218",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "lang": "fr",
+      "gender": "male",
+      "acousticelectric": "electric",
+      "speed": "medium",
+      "tags": {
+        "genres": [
+          "punk"
+        ],
+        "instruments": [],
+        "vartags": [
+          "neutral"
+        ]
+      }
+    }
+  },
+  {
+    "id": "219",
+    "name": "L'homme pouce",
+    "duration": 199,
+    "artist_id": "14",
+    "artist_name": "David TMX",
+    "artist_idstr": "david.tmx",
+    "album_name": "Pouce !",
+    "album_id": "31",
+    "license_ccurl": "",
+    "position": 6,
+    "releasedate": "2004-12-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=31&width=300&trackid=219",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=219&format=mp32&from=M1nWmhWwAevN222EgrwvkQ%3D%3D%7CyGOFwMwTraLPVfPnSlgRmQ%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/219/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/219",
+    "shareurl": "https://www.jamendo.com/track/219",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=31&width=300&trackid=219",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "gender": "male",
+      "acousticelectric": "electric",
+      "speed": "medium",
+      "tags": {
+        "genres": [
+          "metal"
+        ],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "220",
+    "name": "Y'a un truc",
+    "duration": 174,
+    "artist_id": "14",
+    "artist_name": "David TMX",
+    "artist_idstr": "david.tmx",
+    "album_name": "Pouce !",
+    "album_id": "31",
+    "license_ccurl": "",
+    "position": 7,
+    "releasedate": "2004-12-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=31&width=300&trackid=220",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=220&format=mp32&from=szczrT7E1TFtbFNyOoiLRw%3D%3D%7CgMnzXN5mcci46WBTUTNL%2FQ%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/220/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/220",
+    "shareurl": "https://www.jamendo.com/track/220",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=31&width=300&trackid=220",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "lang": "fr",
+      "gender": "male",
+      "acousticelectric": "electric",
+      "speed": "medium",
+      "tags": {
+        "genres": [
+          "punk"
+        ],
+        "instruments": [],
+        "vartags": [
+          "neutral"
+        ]
+      }
+    }
+  },
+  {
+    "id": "221",
+    "name": "LVO Hardcore",
+    "duration": 224,
+    "artist_id": "14",
+    "artist_name": "David TMX",
+    "artist_idstr": "david.tmx",
+    "album_name": "Pouce !",
+    "album_id": "31",
+    "license_ccurl": "",
+    "position": 8,
+    "releasedate": "2004-12-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=31&width=300&trackid=221",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=221&format=mp32&from=Fr7JgesjlQVFui033OPkkg%3D%3D%7CFZalMei4MFxghOm8dwrcAw%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/221/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/221",
+    "shareurl": "https://www.jamendo.com/track/221",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=31&width=300&trackid=221",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "gender": "male",
+      "acousticelectric": "electric",
+      "speed": "medium",
+      "tags": {
+        "genres": [
+          "punk"
+        ],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "222",
+    "name": "Que du naturel",
+    "duration": 161,
+    "artist_id": "14",
+    "artist_name": "David TMX",
+    "artist_idstr": "david.tmx",
+    "album_name": "Pouce !",
+    "album_id": "31",
+    "license_ccurl": "",
+    "position": 9,
+    "releasedate": "2004-12-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=31&width=300&trackid=222",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=222&format=mp32&from=%2BAkto9kkm9cPCt7UNBRxNQ%3D%3D%7CjkG1uo5mf6HhRy86suxukw%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/222/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/222",
+    "shareurl": "https://www.jamendo.com/track/222",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=31&width=300&trackid=222",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "gender": "male",
+      "acousticelectric": "electric",
+      "speed": "medium",
+      "tags": {
+        "genres": [
+          "punk",
+          "hardcorepunk"
+        ],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "223",
+    "name": "Voici le gala",
+    "duration": 217,
+    "artist_id": "14",
+    "artist_name": "David TMX",
+    "artist_idstr": "david.tmx",
+    "album_name": "Pouce !",
+    "album_id": "31",
+    "license_ccurl": "",
+    "position": 10,
+    "releasedate": "2004-12-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=31&width=300&trackid=223",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=223&format=mp32&from=eIlSrStXe%2FUVmYFOoXj%2BZA%3D%3D%7C%2BCPOKiAIgdNfraRo5hDUWw%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/223/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/223",
+    "shareurl": "https://www.jamendo.com/track/223",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=31&width=300&trackid=223",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "lang": "fr",
+      "gender": "male",
+      "acousticelectric": "electric",
+      "speed": "high",
+      "tags": {
+        "genres": [
+          "metal"
+        ],
+        "instruments": [],
+        "vartags": [
+          "neutral"
+        ]
+      }
+    }
+  },
+  {
+    "id": "224",
+    "name": "Croquemitaine",
+    "duration": 109,
+    "artist_id": "14",
+    "artist_name": "David TMX",
+    "artist_idstr": "david.tmx",
+    "album_name": "Pouce !",
+    "album_id": "31",
+    "license_ccurl": "",
+    "position": 11,
+    "releasedate": "2004-12-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=31&width=300&trackid=224",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=224&format=mp32&from=XHVYqYR05ERzO7e0It49LA%3D%3D%7C1k9UOopqzIjgu%2BYIeBgDag%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/224/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/224",
+    "shareurl": "https://www.jamendo.com/track/224",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=31&width=300&trackid=224",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "gender": "male",
+      "acousticelectric": "electric",
+      "speed": "veryhigh",
+      "tags": {
+        "genres": [
+          "rock",
+          "punk"
+        ],
+        "instruments": [],
+        "vartags": [
+          "neutral"
+        ]
+      }
+    }
+  },
+  {
+    "id": "225",
+    "name": "Histoire de grouin",
+    "duration": 205,
+    "artist_id": "14",
+    "artist_name": "David TMX",
+    "artist_idstr": "david.tmx",
+    "album_name": "Pouce !",
+    "album_id": "31",
+    "license_ccurl": "",
+    "position": 12,
+    "releasedate": "2004-12-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=31&width=300&trackid=225",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=225&format=mp32&from=yl40eCc5Agr6kkjUAyOPRA%3D%3D%7CjJwKoFq8iCZUdp%2F21HYKAQ%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/225/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/225",
+    "shareurl": "https://www.jamendo.com/track/225",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=31&width=300&trackid=225",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "gender": "male",
+      "acousticelectric": "electric",
+      "speed": "medium",
+      "tags": {
+        "genres": [
+          "punk"
+        ],
+        "instruments": [],
+        "vartags": [
+          "neutral"
+        ]
+      }
+    }
+  },
+  {
+    "id": "226",
+    "name": "JLP vs momomatic",
+    "duration": 222,
+    "artist_id": "14",
+    "artist_name": "David TMX",
+    "artist_idstr": "david.tmx",
+    "album_name": "Pouce !",
+    "album_id": "31",
+    "license_ccurl": "",
+    "position": 13,
+    "releasedate": "2004-12-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=31&width=300&trackid=226",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=226&format=mp32&from=4BqU%2FQ%2BXVD%2F4hJe%2FUfQBGg%3D%3D%7C5wynuwSImH6tlDtdLVOiuQ%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/226/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/226",
+    "shareurl": "https://www.jamendo.com/track/226",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=31&width=300&trackid=226",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "lang": "fr",
+      "gender": "male",
+      "acousticelectric": "electric",
+      "speed": "medium",
+      "tags": {
+        "genres": [
+          "metal"
+        ],
+        "instruments": [],
+        "vartags": [
+          "neutral"
+        ]
+      }
+    }
+  },
+  {
+    "id": "227",
+    "name": "Légionnaire zoophile",
+    "duration": 245,
+    "artist_id": "14",
+    "artist_name": "David TMX",
+    "artist_idstr": "david.tmx",
+    "album_name": "Pouce !",
+    "album_id": "31",
+    "license_ccurl": "",
+    "position": 14,
+    "releasedate": "2004-12-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=31&width=300&trackid=227",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=227&format=mp32&from=K7SniO08XkSQR9ynRDibaA%3D%3D%7CT%2B3u7MXtkJULjTTsfo1ZdQ%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/227/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/227",
+    "shareurl": "https://www.jamendo.com/track/227",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=31&width=300&trackid=227",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "gender": "male",
+      "acousticelectric": "electric",
+      "speed": "high",
+      "tags": {
+        "genres": [
+          "metal"
+        ],
+        "instruments": [],
+        "vartags": [
+          "neutral"
+        ]
+      }
+    }
+  },
+  {
+    "id": "228",
+    "name": "La frontière",
+    "duration": 190,
+    "artist_id": "14",
+    "artist_name": "David TMX",
+    "artist_idstr": "david.tmx",
+    "album_name": "Pouce !",
+    "album_id": "31",
+    "license_ccurl": "",
+    "position": 15,
+    "releasedate": "2004-12-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=31&width=300&trackid=228",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=228&format=mp32&from=racPCLlnjzdXl6xpJFTHow%3D%3D%7C2Ec0nHWe2pXZdfbieFLl0w%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/228/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/228",
+    "shareurl": "https://www.jamendo.com/track/228",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=31&width=300&trackid=228",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "lang": "fr",
+      "gender": "male",
+      "acousticelectric": "electric",
+      "speed": "high",
+      "tags": {
+        "genres": [
+          "rock"
+        ],
+        "instruments": [],
+        "vartags": [
+          "neutral"
+        ]
+      }
+    }
+  },
+  {
+    "id": "229",
+    "name": "Headbanger",
+    "duration": 180,
+    "artist_id": "14",
+    "artist_name": "David TMX",
+    "artist_idstr": "david.tmx",
+    "album_name": "Pouce !",
+    "album_id": "31",
+    "license_ccurl": "",
+    "position": 16,
+    "releasedate": "2004-12-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=31&width=300&trackid=229",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=229&format=mp32&from=H4xlBC61TbZw0LPiOnhg%2Fw%3D%3D%7ClU%2BlvECAc6Zqb6gI4rbA%2Fg%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/229/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/229",
+    "shareurl": "https://www.jamendo.com/track/229",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=31&width=300&trackid=229",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "gender": "male",
+      "acousticelectric": "electric",
+      "speed": "medium",
+      "tags": {
+        "genres": [
+          "metal"
+        ],
+        "instruments": [],
+        "vartags": [
+          "neutral"
+        ]
+      }
+    }
+  },
+  {
+    "id": "230",
+    "name": "Noxious",
+    "duration": 124,
+    "artist_id": "14",
+    "artist_name": "David TMX",
+    "artist_idstr": "david.tmx",
+    "album_name": "Pouce !",
+    "album_id": "31",
+    "license_ccurl": "",
+    "position": 17,
+    "releasedate": "2004-12-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=31&width=300&trackid=230",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=230&format=mp32&from=4yFBb9t3Z7nnD4ebr7BrOA%3D%3D%7COvKYBa4dBenlR5YRFnebeg%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/230/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/230",
+    "shareurl": "https://www.jamendo.com/track/230",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=31&width=300&trackid=230",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "gender": "male",
+      "acousticelectric": "electric",
+      "speed": "high",
+      "tags": {
+        "genres": [
+          "metal"
+        ],
+        "instruments": [],
+        "vartags": [
+          "neutral"
+        ]
+      }
+    }
+  },
+  {
+    "id": "231",
+    "name": "Ralalalatouf",
+    "duration": 276,
+    "artist_id": "14",
+    "artist_name": "David TMX",
+    "artist_idstr": "david.tmx",
+    "album_name": "Pouce !",
+    "album_id": "31",
+    "license_ccurl": "",
+    "position": 18,
+    "releasedate": "2004-12-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=31&width=300&trackid=231",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=231&format=mp32&from=1L5tlqKPHdDhY5A8WnCx9g%3D%3D%7C0iFiWFWt8cjT7BTMDuQlpg%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/231/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/231",
+    "shareurl": "https://www.jamendo.com/track/231",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=31&width=300&trackid=231",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "gender": "male",
+      "acousticelectric": "electric",
+      "speed": "medium",
+      "tags": {
+        "genres": [
+          "metal"
+        ],
+        "instruments": [],
+        "vartags": [
+          "neutral"
+        ]
+      }
+    }
+  },
+  {
+    "id": "232",
+    "name": "EHMA - Pizzicato",
+    "duration": 212,
+    "artist_id": "15",
+    "artist_name": "Various Artists",
+    "artist_idstr": "va",
+    "album_name": "CD KDO-PYLEFT",
+    "album_id": "32",
+    "license_ccurl": "",
+    "position": 1,
+    "releasedate": "2004-12-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=32&width=300&trackid=232",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=232&format=mp32&from=2LXFmxdR9zpp%2BRGkefFe0A%3D%3D%7Ciy0RL1Zqgeao0UUpX4VB9Q%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/232/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/232",
+    "shareurl": "https://www.jamendo.com/track/232",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=32&width=300&trackid=232",
+    "musicinfo": {
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "233",
+    "name": "Les Bernardo - Joyeux Noël",
+    "duration": 236,
+    "artist_id": "15",
+    "artist_name": "Various Artists",
+    "artist_idstr": "va",
+    "album_name": "CD KDO-PYLEFT",
+    "album_id": "32",
+    "license_ccurl": "",
+    "position": 2,
+    "releasedate": "2004-12-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=32&width=300&trackid=233",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=233&format=mp32&from=Z6FkNwFH78Nac15qaHRRgA%3D%3D%7CDEHNV8OWJ1kPbPgcLxFnRA%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/233/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/233",
+    "shareurl": "https://www.jamendo.com/track/233",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=32&width=300&trackid=233",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "gender": "male",
+      "speed": "medium",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "234",
+    "name": "Mérinos - Suite andropause Part 1",
+    "duration": 379,
+    "artist_id": "15",
+    "artist_name": "Various Artists",
+    "artist_idstr": "va",
+    "album_name": "CD KDO-PYLEFT",
+    "album_id": "32",
+    "license_ccurl": "",
+    "position": 3,
+    "releasedate": "2004-12-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=32&width=300&trackid=234",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=234&format=mp32&from=xE52XOwK7SGpjmjBTNx3pw%3D%3D%7CLqlzDSWJ5cjJzAamgw%2FDYQ%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/234/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/234",
+    "shareurl": "https://www.jamendo.com/track/234",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=32&width=300&trackid=234",
+    "musicinfo": {
+      "vocalinstrumental": "instrumental",
+      "speed": "medium",
+      "tags": {
+        "genres": [
+          "folk",
+          "newage",
+          "classical"
+        ],
+        "instruments": [
+          "strings",
+          "acousticguitar"
+        ],
+        "vartags": [
+          "emotional"
+        ]
+      }
+    }
+  },
+  {
+    "id": "235",
+    "name": "Natural Sheen - What's your opinion?",
+    "duration": 216,
+    "artist_id": "15",
+    "artist_name": "Various Artists",
+    "artist_idstr": "va",
+    "album_name": "CD KDO-PYLEFT",
+    "album_id": "32",
+    "license_ccurl": "",
+    "position": 4,
+    "releasedate": "2004-12-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=32&width=300&trackid=235",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=235&format=mp32&from=7%2BuRgHG5z%2BAAzq1T780PIg%3D%3D%7C7ut5quA44ZNm4XIRWnNr3g%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/235/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/235",
+    "shareurl": "https://www.jamendo.com/track/235",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=32&width=300&trackid=235",
+    "musicinfo": {
+      "vocalinstrumental": "instrumental",
+      "speed": "medium",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "236",
+    "name": "Neos - UNESCO",
+    "duration": 182,
+    "artist_id": "15",
+    "artist_name": "Various Artists",
+    "artist_idstr": "va",
+    "album_name": "CD KDO-PYLEFT",
+    "album_id": "32",
+    "license_ccurl": "",
+    "position": 5,
+    "releasedate": "2004-12-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=32&width=300&trackid=236",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=236&format=mp32&from=eBq%2Bin%2B%2Bj9ixC7lYPfBppw%3D%3D%7CoEK1lRQ6oJ8VAwjei2QBIg%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/236/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/236",
+    "shareurl": "https://www.jamendo.com/track/236",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=32&width=300&trackid=236",
+    "musicinfo": {
+      "vocalinstrumental": "instrumental",
+      "speed": "medium",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "237",
+    "name": "Orco - Snow in my TV",
+    "duration": 239,
+    "artist_id": "15",
+    "artist_name": "Various Artists",
+    "artist_idstr": "va",
+    "album_name": "CD KDO-PYLEFT",
+    "album_id": "32",
+    "license_ccurl": "",
+    "position": 6,
+    "releasedate": "2004-12-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=32&width=300&trackid=237",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=237&format=mp32&from=HvlzXnD30qee%2FGz%2BVYBjhw%3D%3D%7CGJxi0nyhbevbE7v5%2BTouEA%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/237/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/237",
+    "shareurl": "https://www.jamendo.com/track/237",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=32&width=300&trackid=237",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "gender": "male",
+      "speed": "medium",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "238",
+    "name": "Realaze - Must wake up",
+    "duration": 394,
+    "artist_id": "15",
+    "artist_name": "Various Artists",
+    "artist_idstr": "va",
+    "album_name": "CD KDO-PYLEFT",
+    "album_id": "32",
+    "license_ccurl": "",
+    "position": 7,
+    "releasedate": "2004-12-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=32&width=300&trackid=238",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=238&format=mp32&from=ts4zvE6LHIlpadt%2FMryYhA%3D%3D%7CtvpRW36B0Lb95N4gbHxwkA%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/238/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/238",
+    "shareurl": "https://www.jamendo.com/track/238",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=32&width=300&trackid=238",
+    "musicinfo": {
+      "vocalinstrumental": "instrumental",
+      "speed": "medium",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "239",
+    "name": "Silence - Electro 2",
+    "duration": 223,
+    "artist_id": "15",
+    "artist_name": "Various Artists",
+    "artist_idstr": "va",
+    "album_name": "CD KDO-PYLEFT",
+    "album_id": "32",
+    "license_ccurl": "",
+    "position": 8,
+    "releasedate": "2004-12-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=32&width=300&trackid=239",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=239&format=mp32&from=5hLOTH%2BPonYcg4G%2FmYBiZg%3D%3D%7CuGrlR6Zo39YUh%2FJIWVQr6g%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/239/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/239",
+    "shareurl": "https://www.jamendo.com/track/239",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=32&width=300&trackid=239",
+    "musicinfo": {
+      "vocalinstrumental": "instrumental",
+      "speed": "medium",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "240",
+    "name": "Lacrymosa Industry - Vampyre's son",
+    "duration": 233,
+    "artist_id": "15",
+    "artist_name": "Various Artists",
+    "artist_idstr": "va",
+    "album_name": "CD KDO-PYLEFT",
+    "album_id": "32",
+    "license_ccurl": "",
+    "position": 9,
+    "releasedate": "2004-12-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=32&width=300&trackid=240",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=240&format=mp32&from=NcFtFBROMWxpEiiI1SpRCA%3D%3D%7CRTPBDvOywUiPQMTwxG4OUg%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/240/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/240",
+    "shareurl": "https://www.jamendo.com/track/240",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=32&width=300&trackid=240",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "gender": "female",
+      "speed": "medium",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "241",
+    "name": "Simple Exercice",
+    "duration": 340,
+    "artist_id": "5",
+    "artist_name": "Both",
+    "artist_idstr": "both",
+    "album_name": "Simple Exercice",
+    "album_id": "33",
+    "license_ccurl": "",
+    "position": 1,
+    "releasedate": "2004-12-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=33&width=300&trackid=241",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=241&format=mp32&from=nLSkHg3hZz%2FgQBpecLNhGA%3D%3D%7CdsD%2BX7Vauc1MWV1IwZaTzw%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/241/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/241",
+    "shareurl": "https://www.jamendo.com/track/241",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=33&width=300&trackid=241",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "lang": "en",
+      "gender": "male",
+      "acousticelectric": "electric",
+      "speed": "medium",
+      "tags": {
+        "genres": [
+          "rock"
+        ],
+        "instruments": [],
+        "vartags": [
+          "happy"
+        ]
+      }
+    }
+  },
+  {
+    "id": "242",
+    "name": "Réveille le Hippie",
+    "duration": 248,
+    "artist_id": "5",
+    "artist_name": "Both",
+    "artist_idstr": "both",
+    "album_name": "Simple Exercice",
+    "album_id": "33",
+    "license_ccurl": "",
+    "position": 2,
+    "releasedate": "2004-12-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=33&width=300&trackid=242",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=242&format=mp32&from=T4JBRlf30xOe7BL%2BT5PlcA%3D%3D%7CeHsgTIP0ULZoDZy5UUnGbA%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/242/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/242",
+    "shareurl": "https://www.jamendo.com/track/242",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=33&width=300&trackid=242",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "lang": "fr",
+      "gender": "male",
+      "acousticelectric": "electric",
+      "speed": "medium",
+      "tags": {
+        "genres": [
+          "rock"
+        ],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "243",
+    "name": "The Monster",
+    "duration": 249,
+    "artist_id": "5",
+    "artist_name": "Both",
+    "artist_idstr": "both",
+    "album_name": "Simple Exercice",
+    "album_id": "33",
+    "license_ccurl": "",
+    "position": 3,
+    "releasedate": "2004-12-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=33&width=300&trackid=243",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=243&format=mp32&from=cHB%2BNJb7mBs4BT0Pyh%2BrFA%3D%3D%7CmvbWxylXzlS6ufkxF7CgZg%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/243/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/243",
+    "shareurl": "https://www.jamendo.com/track/243",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=33&width=300&trackid=243",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "gender": "female",
+      "speed": "medium",
+      "tags": {
+        "genres": [
+          "rock"
+        ],
+        "instruments": [],
+        "vartags": [
+          "neutral",
+          "undefined"
+        ]
+      }
+    }
+  },
+  {
+    "id": "244",
+    "name": "Qui Déchante",
+    "duration": 270,
+    "artist_id": "5",
+    "artist_name": "Both",
+    "artist_idstr": "both",
+    "album_name": "Simple Exercice",
+    "album_id": "33",
+    "license_ccurl": "",
+    "position": 4,
+    "releasedate": "2004-12-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=33&width=300&trackid=244",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=244&format=mp32&from=xUe8ZiXtRZ3qlCjKKWT6Gg%3D%3D%7CvGIS89lYjm%2FjvqhT7kKXlg%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/244/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/244",
+    "shareurl": "https://www.jamendo.com/track/244",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=33&width=300&trackid=244",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "gender": "female",
+      "acousticelectric": "electric",
+      "speed": "high",
+      "tags": {
+        "genres": [
+          "rock"
+        ],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "245",
+    "name": "J.E.T. Apostrophe A.I.M.E",
+    "duration": 155,
+    "artist_id": "5",
+    "artist_name": "Both",
+    "artist_idstr": "both",
+    "album_name": "Simple Exercice",
+    "album_id": "33",
+    "license_ccurl": "",
+    "position": 5,
+    "releasedate": "2004-12-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=33&width=300&trackid=245",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=245&format=mp32&from=yt2jbqYU2CzoTeECehuW2A%3D%3D%7CXvJ2aybrtOVBzm2DnE5oCw%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/245/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/245",
+    "shareurl": "https://www.jamendo.com/track/245",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=33&width=300&trackid=245",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "lang": "fr",
+      "gender": "male",
+      "acousticelectric": "electric",
+      "speed": "medium",
+      "tags": {
+        "genres": [
+          "rock"
+        ],
+        "instruments": [],
+        "vartags": [
+          "neutral",
+          "undefined"
+        ]
+      }
+    }
+  },
+  {
+    "id": "246",
+    "name": "Take Up Arms",
+    "duration": 239,
+    "artist_id": "5",
+    "artist_name": "Both",
+    "artist_idstr": "both",
+    "album_name": "Simple Exercice",
+    "album_id": "33",
+    "license_ccurl": "",
+    "position": 6,
+    "releasedate": "2004-12-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=33&width=300&trackid=246",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=246&format=mp32&from=RIhQyGqsXb%2FmQ7KlGpXiPw%3D%3D%7CMevfoAtJPgeZ%2FoENv773mw%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/246/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/246",
+    "shareurl": "https://www.jamendo.com/track/246",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=33&width=300&trackid=246",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "gender": "female",
+      "acousticelectric": "electric",
+      "speed": "medium",
+      "tags": {
+        "genres": [
+          "rock"
+        ],
+        "instruments": [],
+        "vartags": [
+          "neutral",
+          "undefined"
+        ]
+      }
+    }
+  },
+  {
+    "id": "247",
+    "name": "Je le veux aussi",
+    "duration": 85,
+    "artist_id": "5",
+    "artist_name": "Both",
+    "artist_idstr": "both",
+    "album_name": "Simple Exercice",
+    "album_id": "33",
+    "license_ccurl": "",
+    "position": 7,
+    "releasedate": "2004-12-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=33&width=300&trackid=247",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=247&format=mp32&from=5%2B9F72SFB5nmAAjt%2FbU4%2Bw%3D%3D%7Cvuf%2FBwm%2BCkfAreaDpKiINg%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/247/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/247",
+    "shareurl": "https://www.jamendo.com/track/247",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=33&width=300&trackid=247",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "lang": "fr",
+      "gender": "male",
+      "acousticelectric": "acoustic",
+      "speed": "medium",
+      "tags": {
+        "genres": [
+          "pop",
+          "rock"
+        ],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "271",
+    "name": "Beastie Boys - Now Get Busy",
+    "duration": 146,
+    "artist_id": "15",
+    "artist_name": "Various Artists",
+    "artist_idstr": "va",
+    "album_name": "The WIRED CD : Rip. Sample. Mash. Share.",
+    "album_id": "35",
+    "license_ccurl": "",
+    "position": 1,
+    "releasedate": "2005-01-09",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=35&width=300&trackid=271",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=271&format=mp32&from=FC1S0BhQmKM4MqiIZXIZ6Q%3D%3D%7CpqoCL1OpygyQJs24%2Fls5hw%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/271/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/271",
+    "shareurl": "https://www.jamendo.com/track/271",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=35&width=300&trackid=271",
+    "musicinfo": {
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "272",
+    "name": "David Byrne - My Fair Lady",
+    "duration": 211,
+    "artist_id": "15",
+    "artist_name": "Various Artists",
+    "artist_idstr": "va",
+    "album_name": "The WIRED CD : Rip. Sample. Mash. Share.",
+    "album_id": "35",
+    "license_ccurl": "",
+    "position": 2,
+    "releasedate": "2005-01-09",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=35&width=300&trackid=272",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=272&format=mp32&from=Yc%2BkdiHYKgfMILV36cBrwg%3D%3D%7CR0s5Kh2qWfeZ9jaAlhsOGQ%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/272/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/272",
+    "shareurl": "https://www.jamendo.com/track/272",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=35&width=300&trackid=272",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "gender": "male",
+      "speed": "high",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "273",
+    "name": "Zap Mama - Wadidyusay?",
+    "duration": 201,
+    "artist_id": "15",
+    "artist_name": "Various Artists",
+    "artist_idstr": "va",
+    "album_name": "The WIRED CD : Rip. Sample. Mash. Share.",
+    "album_id": "35",
+    "license_ccurl": "",
+    "position": 3,
+    "releasedate": "2005-01-09",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=35&width=300&trackid=273",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=273&format=mp32&from=s5UkFNObv1ZBCqxOxfb%2FFg%3D%3D%7CPv1xEjdC9dxyGz%2FPEfVPWw%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/273/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/273",
+    "shareurl": "https://www.jamendo.com/track/273",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=35&width=300&trackid=273",
+    "musicinfo": {
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "274",
+    "name": "My Morning Jacket - One Big Holiday",
+    "duration": 321,
+    "artist_id": "15",
+    "artist_name": "Various Artists",
+    "artist_idstr": "va",
+    "album_name": "The WIRED CD : Rip. Sample. Mash. Share.",
+    "album_id": "35",
+    "license_ccurl": "",
+    "position": 4,
+    "releasedate": "2005-01-09",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=35&width=300&trackid=274",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=274&format=mp32&from=vne06xAw9TBJW4Nygzv2LA%3D%3D%7C3s%2BcFH%2BWiRVuqOOP0rJveA%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/274/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/274",
+    "shareurl": "https://www.jamendo.com/track/274",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=35&width=300&trackid=274",
+    "musicinfo": {
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "275",
+    "name": "Spoon - Revenge!",
+    "duration": 148,
+    "artist_id": "15",
+    "artist_name": "Various Artists",
+    "artist_idstr": "va",
+    "album_name": "The WIRED CD : Rip. Sample. Mash. Share.",
+    "album_id": "35",
+    "license_ccurl": "",
+    "position": 5,
+    "releasedate": "2005-01-09",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=35&width=300&trackid=275",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=275&format=mp32&from=%2BPFJiv62xLPctpUd94A%2F4g%3D%3D%7CSWxYtEecQ%2FCTH8Guk7F0pQ%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/275/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/275",
+    "shareurl": "https://www.jamendo.com/track/275",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=35&width=300&trackid=275",
+    "musicinfo": {
+      "vocalinstrumental": "instrumental",
+      "speed": "medium",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "276",
+    "name": "Gilberto Gil - Oslodum",
+    "duration": 238,
+    "artist_id": "15",
+    "artist_name": "Various Artists",
+    "artist_idstr": "va",
+    "album_name": "The WIRED CD : Rip. Sample. Mash. Share.",
+    "album_id": "35",
+    "license_ccurl": "",
+    "position": 6,
+    "releasedate": "2005-01-09",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=35&width=300&trackid=276",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=276&format=mp32&from=X2F8m%2BAah4nDIfeoy7j6OA%3D%3D%7CSxvcX%2BrnlC7i0h1WRjd0qw%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/276/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/276",
+    "shareurl": "https://www.jamendo.com/track/276",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=35&width=300&trackid=276",
+    "musicinfo": {
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "277",
+    "name": "Dan The Automator - Relaxation Spa Treatment",
+    "duration": 205,
+    "artist_id": "15",
+    "artist_name": "Various Artists",
+    "artist_idstr": "va",
+    "album_name": "The WIRED CD : Rip. Sample. Mash. Share.",
+    "album_id": "35",
+    "license_ccurl": "",
+    "position": 7,
+    "releasedate": "2005-01-09",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=35&width=300&trackid=277",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=277&format=mp32&from=BFUOw8sZoY5E%2BbAA3HaTvg%3D%3D%7ClKW3AYkNmeJxZBY33hCl8Q%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/277/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/277",
+    "shareurl": "https://www.jamendo.com/track/277",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=35&width=300&trackid=277",
+    "musicinfo": {
+      "vocalinstrumental": "instrumental",
+      "speed": "medium",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "278",
+    "name": "Thievery Corporation - DC 3000",
+    "duration": 267,
+    "artist_id": "15",
+    "artist_name": "Various Artists",
+    "artist_idstr": "va",
+    "album_name": "The WIRED CD : Rip. Sample. Mash. Share.",
+    "album_id": "35",
+    "license_ccurl": "",
+    "position": 8,
+    "releasedate": "2005-01-09",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=35&width=300&trackid=278",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=278&format=mp32&from=Qd8BEU2qkefAjlAFfLoPDQ%3D%3D%7CLxcv%2FDdXMnLDjO0x%2BsYC7A%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/278/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/278",
+    "shareurl": "https://www.jamendo.com/track/278",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=35&width=300&trackid=278",
+    "musicinfo": {
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "279",
+    "name": "Le Tigre - Fake French",
+    "duration": 172,
+    "artist_id": "15",
+    "artist_name": "Various Artists",
+    "artist_idstr": "va",
+    "album_name": "The WIRED CD : Rip. Sample. Mash. Share.",
+    "album_id": "35",
+    "license_ccurl": "",
+    "position": 9,
+    "releasedate": "2005-01-09",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=35&width=300&trackid=279",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=279&format=mp32&from=p%2B4I%2BtihBjr%2BxC4Fy%2F22xA%3D%3D%7Cm6XRjIE7bGCiK7SoThpHfg%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/279/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/279",
+    "shareurl": "https://www.jamendo.com/track/279",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=35&width=300&trackid=279",
+    "musicinfo": {
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "280",
+    "name": "Paul Westerberg - Looking Up In Heaven",
+    "duration": 192,
+    "artist_id": "15",
+    "artist_name": "Various Artists",
+    "artist_idstr": "va",
+    "album_name": "The WIRED CD : Rip. Sample. Mash. Share.",
+    "album_id": "35",
+    "license_ccurl": "",
+    "position": 10,
+    "releasedate": "2005-01-09",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=35&width=300&trackid=280",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=280&format=mp32&from=CQHDdEKHr3nemntz5MlMHQ%3D%3D%7CSninPLMi3oynoG8u5INdlw%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/280/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/280",
+    "shareurl": "https://www.jamendo.com/track/280",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=35&width=300&trackid=280",
+    "musicinfo": {
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "281",
+    "name": "Chuck D With Fine Arts Militia  - No Meaning No",
+    "duration": 192,
+    "artist_id": "15",
+    "artist_name": "Various Artists",
+    "artist_idstr": "va",
+    "album_name": "The WIRED CD : Rip. Sample. Mash. Share.",
+    "album_id": "35",
+    "license_ccurl": "",
+    "position": 11,
+    "releasedate": "2005-01-09",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=35&width=300&trackid=281",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=281&format=mp32&from=mWm2RjS4lBmQqmYbtoV7mw%3D%3D%7CHWfmLQFzlpJ2w4GjBCpmbQ%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/281/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/281",
+    "shareurl": "https://www.jamendo.com/track/281",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=35&width=300&trackid=281",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "gender": "male",
+      "speed": "medium",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "282",
+    "name": "The Rapture - Sister Saviour (Blackstrobe Remix)",
+    "duration": 425,
+    "artist_id": "15",
+    "artist_name": "Various Artists",
+    "artist_idstr": "va",
+    "album_name": "The WIRED CD : Rip. Sample. Mash. Share.",
+    "album_id": "35",
+    "license_ccurl": "",
+    "position": 12,
+    "releasedate": "2005-01-09",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=35&width=300&trackid=282",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=282&format=mp32&from=pvJmG3rIQLobk1QM8k%2BYPw%3D%3D%7C0AW7lFok8Cv4LfAk1qYxoQ%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/282/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/282",
+    "shareurl": "https://www.jamendo.com/track/282",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=35&width=300&trackid=282",
+    "musicinfo": {
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "283",
+    "name": "Cornelius - Wataridori 2",
+    "duration": 429,
+    "artist_id": "15",
+    "artist_name": "Various Artists",
+    "artist_idstr": "va",
+    "album_name": "The WIRED CD : Rip. Sample. Mash. Share.",
+    "album_id": "35",
+    "license_ccurl": "",
+    "position": 13,
+    "releasedate": "2005-01-09",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=35&width=300&trackid=283",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=283&format=mp32&from=lEsQn3M9ZHarfokA5%2BT9IQ%3D%3D%7CRxjxsr7IpcsR%2BmZx5YaQPw%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/283/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/283",
+    "shareurl": "https://www.jamendo.com/track/283",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=35&width=300&trackid=283",
+    "musicinfo": {
+      "vocalinstrumental": "instrumental",
+      "speed": "medium",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "285",
+    "name": "Zé Glisse",
+    "duration": 226,
+    "artist_id": "17",
+    "artist_name": "Alchimie",
+    "artist_idstr": "alchimie",
+    "album_name": "Adversité",
+    "album_id": "36",
+    "license_ccurl": "",
+    "position": 1,
+    "releasedate": "2005-03-24",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=36&width=300&trackid=285",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=285&format=mp32&from=9O1qnjEEd5jfqeJygtU%2Bsw%3D%3D%7CgSU%2BeXJ%2Fk9fs5Rf%2F%2Bd9ytg%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/285/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/285",
+    "shareurl": "https://www.jamendo.com/track/285",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=36&width=300&trackid=285",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "gender": "male",
+      "speed": "medium",
+      "tags": {
+        "genres": [
+          "pop",
+          "rock"
+        ],
+        "instruments": [],
+        "vartags": [
+          "engage"
+        ]
+      }
+    }
+  },
+  {
+    "id": "286",
+    "name": "Terroriste terrorisé",
+    "duration": 305,
+    "artist_id": "17",
+    "artist_name": "Alchimie",
+    "artist_idstr": "alchimie",
+    "album_name": "Adversité",
+    "album_id": "36",
+    "license_ccurl": "",
+    "position": 2,
+    "releasedate": "2005-03-24",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=36&width=300&trackid=286",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=286&format=mp32&from=PKAMSFSKX3u5iSRrKhpT0Q%3D%3D%7CALYXk5OXgPdqdr2dg2XXVA%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/286/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/286",
+    "shareurl": "https://www.jamendo.com/track/286",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=36&width=300&trackid=286",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "gender": "male",
+      "speed": "medium",
+      "tags": {
+        "genres": [
+          "pop",
+          "rock"
+        ],
+        "instruments": [],
+        "vartags": [
+          "engage"
+        ]
+      }
+    }
+  },
+  {
+    "id": "287",
+    "name": "Portées Disparues (Femmes sans visage)",
+    "duration": 197,
+    "artist_id": "17",
+    "artist_name": "Alchimie",
+    "artist_idstr": "alchimie",
+    "album_name": "Adversité",
+    "album_id": "36",
+    "license_ccurl": "",
+    "position": 3,
+    "releasedate": "2005-03-24",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=36&width=300&trackid=287",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=287&format=mp32&from=s%2FC6KSbsdv7f3A78K0HvBQ%3D%3D%7CzSSg5GVeJOiRtcbtmoaGYw%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/287/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/287",
+    "shareurl": "https://www.jamendo.com/track/287",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=36&width=300&trackid=287",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "gender": "male",
+      "speed": "medium",
+      "tags": {
+        "genres": [
+          "pop",
+          "rock"
+        ],
+        "instruments": [],
+        "vartags": [
+          "engage"
+        ]
+      }
+    }
+  },
+  {
+    "id": "338",
+    "name": "Flight Club",
+    "duration": 446,
+    "artist_id": "16",
+    "artist_name": "Godon",
+    "artist_idstr": "godon",
+    "album_name": "Armagodon",
+    "album_id": "43",
+    "license_ccurl": "",
+    "position": 1,
+    "releasedate": "2005-01-21",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=43&width=300&trackid=338",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=338&format=mp32&from=djtGY9vSPog8vHlrmQzs8Q%3D%3D%7CfsIlzDPxiJ8u5ssM3JvYVg%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/338/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/338",
+    "shareurl": "https://www.jamendo.com/track/338",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=43&width=300&trackid=338",
+    "musicinfo": {
+      "vocalinstrumental": "instrumental",
+      "speed": "medium",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "339",
+    "name": "Etinamu",
+    "duration": 275,
+    "artist_id": "16",
+    "artist_name": "Godon",
+    "artist_idstr": "godon",
+    "album_name": "Armagodon",
+    "album_id": "43",
+    "license_ccurl": "",
+    "position": 2,
+    "releasedate": "2005-01-21",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=43&width=300&trackid=339",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=339&format=mp32&from=2TCsf6ADQKSgv8dtKKUMIQ%3D%3D%7CNvjdziVZFy29gQZg9mon3w%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/339/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/339",
+    "shareurl": "https://www.jamendo.com/track/339",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=43&width=300&trackid=339",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "gender": "male",
+      "speed": "medium",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "340",
+    "name": "Démoncratie",
+    "duration": 199,
+    "artist_id": "16",
+    "artist_name": "Godon",
+    "artist_idstr": "godon",
+    "album_name": "Armagodon",
+    "album_id": "43",
+    "license_ccurl": "",
+    "position": 3,
+    "releasedate": "2005-01-21",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=43&width=300&trackid=340",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=340&format=mp32&from=mybD9n82sU8Bcrz2QfZ8BQ%3D%3D%7C56aYJPd9doJzmlKrcw7j%2Bg%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/340/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/340",
+    "shareurl": "https://www.jamendo.com/track/340",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=43&width=300&trackid=340",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "gender": "male",
+      "speed": "medium",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "341",
+    "name": "Mastodonte",
+    "duration": 325,
+    "artist_id": "16",
+    "artist_name": "Godon",
+    "artist_idstr": "godon",
+    "album_name": "Armagodon",
+    "album_id": "43",
+    "license_ccurl": "",
+    "position": 4,
+    "releasedate": "2005-01-21",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=43&width=300&trackid=341",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=341&format=mp32&from=eTyYGM8vWURZ3WmeP2rxiQ%3D%3D%7CSx74ib2WXdLMavdL9sUBmw%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/341/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/341",
+    "shareurl": "https://www.jamendo.com/track/341",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=43&width=300&trackid=341",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "lang": "fr",
+      "gender": "male",
+      "acousticelectric": "electric",
+      "speed": "medium",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "342",
+    "name": "Controverse",
+    "duration": 306,
+    "artist_id": "16",
+    "artist_name": "Godon",
+    "artist_idstr": "godon",
+    "album_name": "Armagodon",
+    "album_id": "43",
+    "license_ccurl": "",
+    "position": 5,
+    "releasedate": "2005-01-21",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=43&width=300&trackid=342",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=342&format=mp32&from=yLAG1ezn6qCVLP3UFvz0AQ%3D%3D%7C5UrCEWgUCGoxx526il%2B3Vw%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/342/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/342",
+    "shareurl": "https://www.jamendo.com/track/342",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=43&width=300&trackid=342",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "speed": "medium",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "343",
+    "name": "Soul Power",
+    "duration": 199,
+    "artist_id": "16",
+    "artist_name": "Godon",
+    "artist_idstr": "godon",
+    "album_name": "Armagodon",
+    "album_id": "43",
+    "license_ccurl": "",
+    "position": 6,
+    "releasedate": "2005-01-21",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=43&width=300&trackid=343",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=343&format=mp32&from=Jl16ru6BcBjD1McANJnnTg%3D%3D%7CYbJpExDhTNi2GNfNysX11Q%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/343/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/343",
+    "shareurl": "https://www.jamendo.com/track/343",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=43&width=300&trackid=343",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "gender": "male",
+      "speed": "medium",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "344",
+    "name": "Roots",
+    "duration": 280,
+    "artist_id": "16",
+    "artist_name": "Godon",
+    "artist_idstr": "godon",
+    "album_name": "Armagodon",
+    "album_id": "43",
+    "license_ccurl": "",
+    "position": 7,
+    "releasedate": "2005-01-21",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=43&width=300&trackid=344",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=344&format=mp32&from=lomv4a1s3mj5%2FxXV4MWeDQ%3D%3D%7ChM8m5JbcVVQ%2FQTJugU3aeA%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/344/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/344",
+    "shareurl": "https://www.jamendo.com/track/344",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=43&width=300&trackid=344",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "gender": "male",
+      "speed": "medium",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "345",
+    "name": "Le Glas Du Paf",
+    "duration": 177,
+    "artist_id": "16",
+    "artist_name": "Godon",
+    "artist_idstr": "godon",
+    "album_name": "Armagodon",
+    "album_id": "43",
+    "license_ccurl": "",
+    "position": 8,
+    "releasedate": "2005-01-21",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=43&width=300&trackid=345",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=345&format=mp32&from=ohK%2B%2Bz%2BGyiXKxdB0jyKDVQ%3D%3D%7CumAFwLRPDLyyJTreIAkImQ%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/345/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/345",
+    "shareurl": "https://www.jamendo.com/track/345",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=43&width=300&trackid=345",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "gender": "male",
+      "speed": "medium",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "346",
+    "name": "Oil",
+    "duration": 270,
+    "artist_id": "16",
+    "artist_name": "Godon",
+    "artist_idstr": "godon",
+    "album_name": "Armagodon",
+    "album_id": "43",
+    "license_ccurl": "",
+    "position": 9,
+    "releasedate": "2005-01-21",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=43&width=300&trackid=346",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=346&format=mp32&from=BP2WZ3LubihDCPwwKn%2Fv0w%3D%3D%7CC2VyCZp%2FSo8L7lVpMpgrFQ%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/346/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/346",
+    "shareurl": "https://www.jamendo.com/track/346",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=43&width=300&trackid=346",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "gender": "male",
+      "speed": "medium",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "347",
+    "name": "Transitions",
+    "duration": 342,
+    "artist_id": "16",
+    "artist_name": "Godon",
+    "artist_idstr": "godon",
+    "album_name": "Armagodon",
+    "album_id": "43",
+    "license_ccurl": "",
+    "position": 10,
+    "releasedate": "2005-01-21",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=43&width=300&trackid=347",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=347&format=mp32&from=QaZvyKy201FTayBmfjj9mA%3D%3D%7CNE16gdGggZub2xo9oyS6FQ%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/347/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/347",
+    "shareurl": "https://www.jamendo.com/track/347",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=43&width=300&trackid=347",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "gender": "male",
+      "speed": "medium",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "348",
+    "name": "Roads Of Life",
+    "duration": 276,
+    "artist_id": "19",
+    "artist_name": "DJ Epsilon",
+    "artist_idstr": "djepsilon",
+    "album_name": "Music For Ever",
+    "album_id": "44",
+    "license_ccurl": "",
+    "position": 1,
+    "releasedate": "2005-01-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=44&width=300&trackid=348",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=348&format=mp32&from=FZkmzj5h%2FfLrTYFBTbv2Rg%3D%3D%7CJ2OmKmvvbYQb6LKB4yKQrg%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/348/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/348",
+    "shareurl": "https://www.jamendo.com/track/348",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=44&width=300&trackid=348",
+    "musicinfo": {
+      "vocalinstrumental": "instrumental",
+      "speed": "medium",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "349",
+    "name": "Space Sailors",
+    "duration": 225,
+    "artist_id": "19",
+    "artist_name": "DJ Epsilon",
+    "artist_idstr": "djepsilon",
+    "album_name": "Music For Ever",
+    "album_id": "44",
+    "license_ccurl": "",
+    "position": 2,
+    "releasedate": "2005-01-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=44&width=300&trackid=349",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=349&format=mp32&from=K4tQA8AaCThQEKIhKcZrcA%3D%3D%7CmivpnsMlK9HzMJUrtTFBqw%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/349/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/349",
+    "shareurl": "https://www.jamendo.com/track/349",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=44&width=300&trackid=349",
+    "musicinfo": {
+      "vocalinstrumental": "instrumental",
+      "speed": "medium",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "350",
+    "name": "Steel BlackSmith",
+    "duration": 250,
+    "artist_id": "19",
+    "artist_name": "DJ Epsilon",
+    "artist_idstr": "djepsilon",
+    "album_name": "Music For Ever",
+    "album_id": "44",
+    "license_ccurl": "",
+    "position": 3,
+    "releasedate": "2005-01-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=44&width=300&trackid=350",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=350&format=mp32&from=USABaXA3bogqLSi0tPK2FQ%3D%3D%7CySaTED%2BC4P3j1wXJk1C2PQ%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/350/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/350",
+    "shareurl": "https://www.jamendo.com/track/350",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=44&width=300&trackid=350",
+    "musicinfo": {
+      "vocalinstrumental": "instrumental",
+      "speed": "medium",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "351",
+    "name": "The Message",
+    "duration": 322,
+    "artist_id": "19",
+    "artist_name": "DJ Epsilon",
+    "artist_idstr": "djepsilon",
+    "album_name": "Music For Ever",
+    "album_id": "44",
+    "license_ccurl": "",
+    "position": 4,
+    "releasedate": "2005-01-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=44&width=300&trackid=351",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=351&format=mp32&from=EDUm%2FtWoDwHCPxJH6OMbcQ%3D%3D%7CjXyfGpb1mI%2Fv5O5sM7wbEQ%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/351/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/351",
+    "shareurl": "https://www.jamendo.com/track/351",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=44&width=300&trackid=351",
+    "musicinfo": {
+      "vocalinstrumental": "instrumental",
+      "speed": "medium",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "352",
+    "name": "The Project",
+    "duration": 240,
+    "artist_id": "19",
+    "artist_name": "DJ Epsilon",
+    "artist_idstr": "djepsilon",
+    "album_name": "Music For Ever",
+    "album_id": "44",
+    "license_ccurl": "",
+    "position": 5,
+    "releasedate": "2005-01-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=44&width=300&trackid=352",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=352&format=mp32&from=ga8%2FKL5I6I%2BV%2BNLws3%2BwQA%3D%3D%7C5AZIaaKF5EI6Phbi7c1ugQ%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/352/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/352",
+    "shareurl": "https://www.jamendo.com/track/352",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=44&width=300&trackid=352",
+    "musicinfo": {
+      "vocalinstrumental": "instrumental",
+      "speed": "medium",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "353",
+    "name": "Voltigeur",
+    "duration": 294,
+    "artist_id": "19",
+    "artist_name": "DJ Epsilon",
+    "artist_idstr": "djepsilon",
+    "album_name": "Music For Ever",
+    "album_id": "44",
+    "license_ccurl": "",
+    "position": 6,
+    "releasedate": "2005-01-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=44&width=300&trackid=353",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=353&format=mp32&from=kCGVeGGIZEE57rH2yKy0ow%3D%3D%7Cdg7toipPg%2FI7BvX1O5Nzvg%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/353/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/353",
+    "shareurl": "https://www.jamendo.com/track/353",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=44&width=300&trackid=353",
+    "musicinfo": {
+      "vocalinstrumental": "instrumental",
+      "speed": "medium",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "354",
+    "name": "Warrior Of Pluto",
+    "duration": 188,
+    "artist_id": "19",
+    "artist_name": "DJ Epsilon",
+    "artist_idstr": "djepsilon",
+    "album_name": "Music For Ever",
+    "album_id": "44",
+    "license_ccurl": "",
+    "position": 7,
+    "releasedate": "2005-01-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=44&width=300&trackid=354",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=354&format=mp32&from=x8tYfuAiEylWGPDEdACYzQ%3D%3D%7CWug188rhVyFdCz6DuUiNTQ%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/354/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/354",
+    "shareurl": "https://www.jamendo.com/track/354",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=44&width=300&trackid=354",
+    "musicinfo": {
+      "vocalinstrumental": "instrumental",
+      "speed": "medium",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "355",
+    "name": "Melefic Star",
+    "duration": 217,
+    "artist_id": "19",
+    "artist_name": "DJ Epsilon",
+    "artist_idstr": "djepsilon",
+    "album_name": "Music For Ever",
+    "album_id": "44",
+    "license_ccurl": "",
+    "position": 8,
+    "releasedate": "2005-01-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=44&width=300&trackid=355",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=355&format=mp32&from=z1W9fiM%2BGUbGa4owjKY4mw%3D%3D%7ClL%2B0N5MIDg5V7gev0Zr%2FkQ%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/355/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/355",
+    "shareurl": "https://www.jamendo.com/track/355",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=44&width=300&trackid=355",
+    "musicinfo": {
+      "vocalinstrumental": "instrumental",
+      "speed": "medium",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "356",
+    "name": "Sensual Cloud",
+    "duration": 250,
+    "artist_id": "19",
+    "artist_name": "DJ Epsilon",
+    "artist_idstr": "djepsilon",
+    "album_name": "Music For Ever",
+    "album_id": "44",
+    "license_ccurl": "",
+    "position": 9,
+    "releasedate": "2005-01-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=44&width=300&trackid=356",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=356&format=mp32&from=bgGuGiSytHRaO9KEx5kbjw%3D%3D%7CdIPPrmGR6Q4xJuKWX1yEDg%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/356/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/356",
+    "shareurl": "https://www.jamendo.com/track/356",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=44&width=300&trackid=356",
+    "musicinfo": {
+      "vocalinstrumental": "instrumental",
+      "speed": "medium",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "357",
+    "name": "Reverse Evening",
+    "duration": 195,
+    "artist_id": "19",
+    "artist_name": "DJ Epsilon",
+    "artist_idstr": "djepsilon",
+    "album_name": "Music For Ever",
+    "album_id": "44",
+    "license_ccurl": "",
+    "position": 10,
+    "releasedate": "2005-01-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=44&width=300&trackid=357",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=357&format=mp32&from=7jHwqSMlmzTNXI7Jm9UYXA%3D%3D%7CUTJlUqSJL93FBnznqkD4zg%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/357/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/357",
+    "shareurl": "https://www.jamendo.com/track/357",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=44&width=300&trackid=357",
+    "musicinfo": {
+      "vocalinstrumental": "instrumental",
+      "speed": "medium",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "358",
+    "name": "Second Chance",
+    "duration": 283,
+    "artist_id": "19",
+    "artist_name": "DJ Epsilon",
+    "artist_idstr": "djepsilon",
+    "album_name": "Music For Ever",
+    "album_id": "44",
+    "license_ccurl": "",
+    "position": 11,
+    "releasedate": "2005-01-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=44&width=300&trackid=358",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=358&format=mp32&from=EtE9FSVMcu%2Blcu3sAZe1fQ%3D%3D%7Ck1fdbte4ZKVZanl0N3IaOw%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/358/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/358",
+    "shareurl": "https://www.jamendo.com/track/358",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=44&width=300&trackid=358",
+    "musicinfo": {
+      "vocalinstrumental": "instrumental",
+      "speed": "high",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "359",
+    "name": "Insane",
+    "duration": 168,
+    "artist_id": "19",
+    "artist_name": "DJ Epsilon",
+    "artist_idstr": "djepsilon",
+    "album_name": "Music For Ever",
+    "album_id": "44",
+    "license_ccurl": "",
+    "position": 12,
+    "releasedate": "2005-01-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=44&width=300&trackid=359",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=359&format=mp32&from=S3i6mDmUGrnQkWrvNNr5kg%3D%3D%7CLwc3jkTNOCWTiVkzNbuEZQ%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/359/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/359",
+    "shareurl": "https://www.jamendo.com/track/359",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=44&width=300&trackid=359",
+    "musicinfo": {
+      "vocalinstrumental": "instrumental",
+      "speed": "high",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "360",
+    "name": "Something Special",
+    "duration": 206,
+    "artist_id": "19",
+    "artist_name": "DJ Epsilon",
+    "artist_idstr": "djepsilon",
+    "album_name": "Music For Ever",
+    "album_id": "44",
+    "license_ccurl": "",
+    "position": 13,
+    "releasedate": "2005-01-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=44&width=300&trackid=360",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=360&format=mp32&from=qkRP3ObQLjGu3QsY7D5TIg%3D%3D%7CNjJmD%2BL1upI1JwlAC2u2aQ%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/360/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/360",
+    "shareurl": "https://www.jamendo.com/track/360",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=44&width=300&trackid=360",
+    "musicinfo": {
+      "vocalinstrumental": "instrumental",
+      "speed": "medium",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "361",
+    "name": "Incantation Critique",
+    "duration": 341,
+    "artist_id": "19",
+    "artist_name": "DJ Epsilon",
+    "artist_idstr": "djepsilon",
+    "album_name": "Music For Ever",
+    "album_id": "44",
+    "license_ccurl": "",
+    "position": 14,
+    "releasedate": "2005-01-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=44&width=300&trackid=361",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=361&format=mp32&from=i%2BXBvIOk%2FDtYrRdoKPTUHA%3D%3D%7C4gYBRbwqXDA9%2FEH5Ff%2BGHg%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/361/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/361",
+    "shareurl": "https://www.jamendo.com/track/361",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=44&width=300&trackid=361",
+    "musicinfo": {
+      "vocalinstrumental": "instrumental",
+      "speed": "high",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "362",
+    "name": "Another Dimension",
+    "duration": 270,
+    "artist_id": "19",
+    "artist_name": "DJ Epsilon",
+    "artist_idstr": "djepsilon",
+    "album_name": "Music For Ever",
+    "album_id": "44",
+    "license_ccurl": "",
+    "position": 15,
+    "releasedate": "2005-01-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=44&width=300&trackid=362",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=362&format=mp32&from=3NO%2Bee%2FA9gL1Sv2ICqtyqA%3D%3D%7CQMWKyxSGuEr5MDrnTyaoEw%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/362/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/362",
+    "shareurl": "https://www.jamendo.com/track/362",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=44&width=300&trackid=362",
+    "musicinfo": {
+      "vocalinstrumental": "instrumental",
+      "speed": "high",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "363",
+    "name": "Raving Melodies",
+    "duration": 296,
+    "artist_id": "19",
+    "artist_name": "DJ Epsilon",
+    "artist_idstr": "djepsilon",
+    "album_name": "Music For Ever",
+    "album_id": "44",
+    "license_ccurl": "",
+    "position": 16,
+    "releasedate": "2005-01-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=44&width=300&trackid=363",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=363&format=mp32&from=DEjv2w%2BRLureQ4Io%2Fukerw%3D%3D%7C4Eqk8PR9QR1VLd1GQMvWeA%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/363/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/363",
+    "shareurl": "https://www.jamendo.com/track/363",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=44&width=300&trackid=363",
+    "musicinfo": {
+      "vocalinstrumental": "instrumental",
+      "speed": "high",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "364",
+    "name": "Unreal Attack",
+    "duration": 296,
+    "artist_id": "19",
+    "artist_name": "DJ Epsilon",
+    "artist_idstr": "djepsilon",
+    "album_name": "Music For Ever",
+    "album_id": "44",
+    "license_ccurl": "",
+    "position": 17,
+    "releasedate": "2005-01-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=44&width=300&trackid=364",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=364&format=mp32&from=70ntUVOwSGcV7Z6mec5cdw%3D%3D%7C%2BCmnOgZLTp8CScrQYkfkJw%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/364/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/364",
+    "shareurl": "https://www.jamendo.com/track/364",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=44&width=300&trackid=364",
+    "musicinfo": {
+      "vocalinstrumental": "instrumental",
+      "speed": "medium",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "365",
+    "name": "Digital Peace",
+    "duration": 303,
+    "artist_id": "19",
+    "artist_name": "DJ Epsilon",
+    "artist_idstr": "djepsilon",
+    "album_name": "Music For Ever",
+    "album_id": "44",
+    "license_ccurl": "",
+    "position": 18,
+    "releasedate": "2005-01-28",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=44&width=300&trackid=365",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=365&format=mp32&from=Y0XPHDZ51SEFLx0ionOUQw%3D%3D%7C671EgHr%2Buk%2Bli4T%2FZMTcjg%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/365/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/365",
+    "shareurl": "https://www.jamendo.com/track/365",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=44&width=300&trackid=365",
+    "musicinfo": {
+      "vocalinstrumental": "instrumental",
+      "speed": "medium",
+      "tags": {
+        "genres": [],
+        "instruments": [],
+        "vartags": []
+      }
+    }
+  },
+  {
+    "id": "381",
+    "name": "Go down Moses (Negro Spiritual)",
+    "duration": 182,
+    "artist_id": "20",
+    "artist_name": "Les Petits Chanteurs de Montigny",
+    "artist_idstr": "pcmontigny",
+    "album_name": "Compilation classique",
+    "album_id": "46",
+    "license_ccurl": "",
+    "position": 1,
+    "releasedate": "2005-02-08",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=46&width=300&trackid=381",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=381&format=mp32&from=w%2BdADniPSmK7ebEwMnPdVA%3D%3D%7CFf3s8LfccEKH8bV9cqNXzw%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/381/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/381",
+    "shareurl": "https://www.jamendo.com/track/381",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=46&width=300&trackid=381",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "lang": "en",
+      "gender": "male",
+      "acousticelectric": "acoustic",
+      "speed": "medium",
+      "tags": {
+        "genres": [
+          "classical"
+        ],
+        "instruments": [],
+        "vartags": [
+          "neutral",
+          "chorale"
+        ]
+      }
+    }
+  },
+  {
+    "id": "382",
+    "name": "Soon and Very Soon (Negro Spiritual)",
+    "duration": 211,
+    "artist_id": "20",
+    "artist_name": "Les Petits Chanteurs de Montigny",
+    "artist_idstr": "pcmontigny",
+    "album_name": "Compilation classique",
+    "album_id": "46",
+    "license_ccurl": "",
+    "position": 2,
+    "releasedate": "2005-02-08",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=46&width=300&trackid=382",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=382&format=mp32&from=mvgl5PZnTmoJAClyG0xuJg%3D%3D%7CcU91Uhlfxq5puVTqO99rEA%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/382/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/382",
+    "shareurl": "https://www.jamendo.com/track/382",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=46&width=300&trackid=382",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "lang": "en",
+      "acousticelectric": "acoustic",
+      "speed": "medium",
+      "tags": {
+        "genres": [
+          "choral"
+        ],
+        "instruments": [
+          "piano",
+          "strings"
+        ],
+        "vartags": [
+          "spiritual",
+          "peaceful"
+        ]
+      }
+    }
+  },
+  {
+    "id": "383",
+    "name": "Go tell it on the mountain (Negro Spiritual)",
+    "duration": 113,
+    "artist_id": "20",
+    "artist_name": "Les Petits Chanteurs de Montigny",
+    "artist_idstr": "pcmontigny",
+    "album_name": "Compilation classique",
+    "album_id": "46",
+    "license_ccurl": "",
+    "position": 3,
+    "releasedate": "2005-02-08",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=46&width=300&trackid=383",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=383&format=mp32&from=zKUFp6Kd4sUIoUeyIsLE0Q%3D%3D%7Cj734lG2iEKUy11jAjX7Ypg%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/383/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/383",
+    "shareurl": "https://www.jamendo.com/track/383",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=46&width=300&trackid=383",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "speed": "medium",
+      "tags": {
+        "genres": [
+          "choral"
+        ],
+        "instruments": [],
+        "vartags": [
+          "acappella",
+          "peaceful"
+        ]
+      }
+    }
+  },
+  {
+    "id": "384",
+    "name": "Let us break bread (Negro Spiritual)",
+    "duration": 115,
+    "artist_id": "20",
+    "artist_name": "Les Petits Chanteurs de Montigny",
+    "artist_idstr": "pcmontigny",
+    "album_name": "Compilation classique",
+    "album_id": "46",
+    "license_ccurl": "",
+    "position": 4,
+    "releasedate": "2005-02-08",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=46&width=300&trackid=384",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=384&format=mp32&from=28o2fI4oP7a0Z1hkroKwSA%3D%3D%7CN67OJu%2BfPNy%2BbVzhrGeC%2Fw%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/384/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/384",
+    "shareurl": "https://www.jamendo.com/track/384",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=46&width=300&trackid=384",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "lang": "en",
+      "speed": "medium",
+      "tags": {
+        "genres": [
+          "classical",
+          "choral"
+        ],
+        "instruments": [],
+        "vartags": [
+          "acappella",
+          "peaceful"
+        ]
+      }
+    }
+  },
+  {
+    "id": "385",
+    "name": "Ave Maria (Sylvain Zimmer)",
+    "duration": 177,
+    "artist_id": "20",
+    "artist_name": "Les Petits Chanteurs de Montigny",
+    "artist_idstr": "pcmontigny",
+    "album_name": "Compilation classique",
+    "album_id": "46",
+    "license_ccurl": "",
+    "position": 5,
+    "releasedate": "2005-02-08",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=46&width=300&trackid=385",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=385&format=mp32&from=31GI5qX%2F4WDgB%2BcoAIpEDA%3D%3D%7C16YOUpL8HYUhBCM6BHPr4w%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/385/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/385",
+    "shareurl": "https://www.jamendo.com/track/385",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=46&width=300&trackid=385",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "gender": "male",
+      "acousticelectric": "electric",
+      "speed": "medium",
+      "tags": {
+        "genres": [
+          "classical"
+        ],
+        "instruments": [],
+        "vartags": [
+          "sad",
+          "chorale"
+        ]
+      }
+    }
+  },
+  {
+    "id": "386",
+    "name": "Cantate Domino (Johann Crüger)",
+    "duration": 103,
+    "artist_id": "20",
+    "artist_name": "Les Petits Chanteurs de Montigny",
+    "artist_idstr": "pcmontigny",
+    "album_name": "Compilation classique",
+    "album_id": "46",
+    "license_ccurl": "",
+    "position": 6,
+    "releasedate": "2005-02-08",
+    "album_image": "https://usercontent.jamendo.com?type=album&id=46&width=300&trackid=386",
+    "audio": "https://prod-1.storage.jamendo.com/?trackid=386&format=mp32&from=MQNr32jZMLQM%2B3azJZuHKw%3D%3D%7C4T4ZIYwHiAlj4Z5TEgzvMQ%3D%3D",
+    "audiodownload": "https://prod-1.storage.jamendo.com/download/track/386/mp32/",
+    "prourl": "",
+    "shorturl": "https://jamen.do/t/386",
+    "shareurl": "https://www.jamendo.com/track/386",
+    "audiodownload_allowed": true,
+    "content_id_free": false,
+    "image": "https://usercontent.jamendo.com?type=album&id=46&width=300&trackid=386",
+    "musicinfo": {
+      "vocalinstrumental": "vocal",
+      "gender": "female",
+      "acousticelectric": "acoustic",
+      "speed": "medium",
+      "tags": {
+        "genres": [
+          "classical",
+          "choral"
+        ],
+        "instruments": [],
+        "vartags": [
+          "acappella",
+          "peaceful",
+          "chorale"
+        ]
+      }
+    }
+  }
+]

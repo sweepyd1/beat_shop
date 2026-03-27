@@ -4,15 +4,19 @@
       <h1 class="auth-title">Вход в BeatMarket</h1>
       <p class="auth-subtitle">Рады видеть вас снова!</p>
 
+      <div v-if="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+
       <form @submit.prevent="handleLogin" class="auth-form">
         <div class="form-group">
-          <label for="email">Email</label>
+          <label for="email">Email или логин</label>
           <div class="input-wrapper">
             <i class="fas fa-envelope"></i>
             <input
-              type="email"
+              type="text"
               id="email"
-              v-model="email"
+              v-model="login"
               placeholder="your@email.com"
               required
             />
@@ -43,7 +47,9 @@
           </router-link>
         </div>
 
-        <button type="submit" class="auth-button">Войти</button>
+        <button type="submit" class="auth-button" :disabled="loading">
+          {{ loading ? 'Вход...' : 'Войти' }}
+        </button>
       </form>
 
       <div class="auth-footer">
@@ -55,23 +61,48 @@
 </template>
 
 <script setup>
+import { ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
 
 const authStore = useAuthStore();
 const router = useRouter();
 
+const login = ref('');
+const password = ref('');
+const remember = ref(false);
+const loading = ref(false);
+const errorMessage = ref('');
+
 const handleLogin = async () => {
+  if (!login.value || !password.value) {
+    errorMessage.value = 'Заполните все поля';
+    return;
+  }
+  
+  loading.value = true;
+  errorMessage.value = '';
+  
   try {
-    await authStore.login({ login: email.value, password: password.value });
-    router.push('/'); // или на страницу, с которой пришли
+    await authStore.login({ login: login.value, password: password.value });
+    console.log('Login successful, redirecting...');
+    // Перенаправляем на главную
+    router.push('/');
   } catch (error) {
-    // обработка ошибки
+    console.error('Login error:', error);
+    if (error.response?.status === 401) {
+      errorMessage.value = 'Неверный логин или пароль';
+    } else {
+      errorMessage.value = error.response?.data?.detail || 'Ошибка при входе';
+    }
+  } finally {
+    loading.value = false;
   }
 };
 </script>
 
 <style scoped>
+/* Ваши стили остаются */
 .auth-page {
   min-height: calc(100vh - 80px);
   display: flex;
@@ -112,6 +143,17 @@ const handleLogin = async () => {
   color: #a0a0b0;
   margin-bottom: 2rem;
   font-size: 1rem;
+}
+
+.error-message {
+  background: rgba(255, 0, 0, 0.1);
+  border: 1px solid rgba(255, 0, 0, 0.3);
+  border-radius: 8px;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  color: #ff6b6b;
+  font-size: 0.9rem;
+  text-align: center;
 }
 
 .auth-form {
@@ -214,9 +256,14 @@ const handleLogin = async () => {
   margin-top: 0.5rem;
 }
 
-.auth-button:hover {
+.auth-button:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(168, 85, 247, 0.5);
+}
+
+.auth-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 .auth-footer {

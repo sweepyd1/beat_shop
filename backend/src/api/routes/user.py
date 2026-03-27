@@ -17,7 +17,7 @@ from schemas.purchase import PurchaseResponse
 from schemas.favorite import FavoriteResponse
 from schemas.subscription import SubscriptionResponse
 from database.models import User
-
+from api.dependencies import get_favorite_service
 router = APIRouter(prefix="/users", tags=["users"])
 
 # Зависимости для получения сервисов
@@ -30,9 +30,7 @@ async def get_purchase_service(session: AsyncSession = Depends(get_db_session)) 
     repo = PurchaseRepository(session)
     return PurchaseService(repo)
 
-async def get_favorite_service(session: AsyncSession = Depends(get_db_session)) -> FavoriteService:
-    repo = FavoriteRepository(session)
-    return FavoriteService(repo)
+
 
 async def get_subscription_service(session: AsyncSession = Depends(get_db_session)) -> SubscriptionService:
     repo = SubscriptionRepository(session)

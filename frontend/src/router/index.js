@@ -26,6 +26,10 @@ const routes = [
   { path: '/contacts', component: Contacts },
   { path: '/login', component: Login },
   { path: '/register', component: Register },
+  {path: '/admin/tracks',name: 'AdminTracks',
+  component: () => import('@/views/AdminTracks.vue'),
+  // meta: { requiresAdmin: true }
+}
 ]
 
 const router = createRouter({

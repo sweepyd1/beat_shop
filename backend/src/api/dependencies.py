@@ -1,15 +1,17 @@
 from typing import AsyncIterator
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.security import OAuth2PasswordBearer
 from core.repositories.genre import GenreRepository
 from core.services.genre import GenreService
 from database.models import User
 from core.repositories.user import UserRepository
+from core.repositories.favorite import FavoriteRepository
 from core.services.auth import AuthService
 from core.repositories.track import TrackRepository
 from core.services.track import TrackService
 from core.services.file_service import FileService
+from core.services.favorite import FavoriteService
 from database.db_manager import db_manager
 from fastapi import status
 
@@ -27,6 +29,8 @@ def get_genre_repository(session: AsyncSession = Depends(get_db_session)) -> Gen
 def get_track_repository(session: AsyncSession = Depends(get_db_session)) -> TrackRepository:
     return TrackRepository(session)
 
+def get_favorite_repository(session: AsyncSession = Depends(get_db_session)) -> FavoriteRepository:
+    return FavoriteRepository(session)
 
 # ---------- Сервисы ----------
 def get_auth_service(repo: UserRepository = Depends(get_user_repository)) -> AuthService:
@@ -39,6 +43,11 @@ def get_track_service(repo: TrackRepository = Depends(get_track_repository)) -> 
 def get_file_service() -> FileService:
     return FileService()
 
+def get_favorite_service(
+    repo: FavoriteRepository = Depends(get_favorite_repository),
+    track_repo: TrackRepository = Depends(get_track_repository)
+) -> FavoriteService:
+    return FavoriteService(repo, track_repo)
 
 
 def get_genre_service(repo: GenreRepository = Depends(get_genre_repository)) -> GenreService:
@@ -46,18 +55,18 @@ def get_genre_service(repo: GenreRepository = Depends(get_genre_repository)) -> 
 
 # ---------- Текущий пользователь (из JWT) ----------
 async def get_current_user(
-    token: str = Depends(oauth2_scheme),
+    request: Request,
     auth_service: AuthService = Depends(get_auth_service),
     user_repo: UserRepository = Depends(get_user_repository)
 ):
-    """Получение текущего аутентифицированного пользователя"""
-    if not token:
+    access_token = request.cookies.get("access_token")
+    if not access_token:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Не авторизован"
         )
     
-    user_id = await auth_service.verify_token(token)
+    user_id = await auth_service.verify_token(access_token)
     if not user_id:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

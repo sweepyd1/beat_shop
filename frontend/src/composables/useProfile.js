@@ -72,6 +72,18 @@ export function useProfile() {
       error.value = err.response?.data?.detail || 'Ошибка редактирования';
     }
   };
+   const updateProfile = async (formData) => {
+    try {
+      const response = await api.put('/users/me', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      user.value = response.data;
+      return response.data;
+    } catch (err) {
+      console.error('Update profile error', err);
+      throw err;
+    }
+  };
 
   const downloadTrack = async (trackId) => {
     try {
@@ -112,5 +124,6 @@ export function useProfile() {
     editProfile,
     downloadTrack,
     unsubscribe,
+    updateProfile
   };
 }

@@ -12,6 +12,7 @@
         <router-link to="/trends" active-class="active">Тренды</router-link>
         <router-link to="/about" active-class="active">О нас</router-link>
         <router-link to="/contacts" active-class="active">Контакты</router-link>
+         <router-link to="/profile" active-class="active">Профиль</router-link>
       </nav>
 
      <div class="user-actions">
