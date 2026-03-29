@@ -1,12 +1,65 @@
 from datetime import datetime
 from typing import List, Optional
+
+from fastapi import HTTPException, UploadFile
+from core.services.author import AuthorService
+from core.services.genre import GenreService
+from database.models import Track, User
 from core.repositories.track import TrackRepository
 from core.services.file_service import FileService
 
 class TrackService:
-    def __init__(self, repo: TrackRepository, file_service: FileService):
-        self.repo = repo
+    def __init__(
+        self,
+        track_repo: TrackRepository,
+        author_service: AuthorService,
+        genre_service: GenreService,
+        file_service: FileService
+    ):
+        self.repo = track_repo
+        self.author_service = author_service
+        self.genre_service = genre_service
         self.file_service = file_service
+
+    async def create_track(
+        self,
+        user: User,
+        title: str,
+        genre_id: int,
+        price: float,
+        cover: UploadFile,
+        mp3: UploadFile,
+        bpm: Optional[int] = None
+    ) -> Track:
+        # 1. Проверяем, что пользователь является автором
+        author = await self.author_service.get_author_by_user_id(user.id)
+        if not author:
+            raise HTTPException(status_code=403, detail="Только авторы могут загружать треки")
+
+        # 2. Проверяем существование жанра
+        genre = await self.genre_service.get_genre(genre_id)
+        if not genre:
+            raise HTTPException(status_code=404, detail="Жанр не найден")
+
+        # 3. Сохраняем файлы
+        try:
+            cover_url = await self.file_service.save_cover(cover)
+            mp3_url = await self.file_service.save_track(mp3)
+        except HTTPException as e:
+            raise e
+
+        # 4. Создаём трек
+        track = await self.repo.create(
+            title=title,
+            genre_id=genre_id,
+            author_id=author.id,
+            price=price,
+            bpm=bpm,
+            cover_url=cover_url,
+            mp3_file_url=mp3_url,
+            plays=0
+        )
+        return track
 
     def _make_naive(self, dt: Optional[datetime]) -> Optional[datetime]:
         """Убирает часовой пояс из datetime, если он есть."""
@@ -14,16 +67,6 @@ class TrackService:
             return dt.replace(tzinfo=None)
         return dt
     
-    async def create_track(self, **kwargs):
-       
-        if "created_date" in kwargs:
-            kwargs["created_date"] = self._make_naive(kwargs["created_date"])
-        track = await self.repo.create(**kwargs)
-    
-
-        track_with_relations = await self.repo.get(track.id)
-        return track_with_relations 
-
     async def update_track(self, track_id: int, update_data: dict, cover_file=None, mp3_file=None):
 
         if "created_date" in update_data:
@@ -96,3 +139,13 @@ class TrackService:
             skip=skip,
             limit=limit
         )
+    async def get_tracks_by_user(self, user_id: int) -> List[Track]:
+        """Получение треков текущего автора по user_id"""
+        # Получаем автора по user_id
+        author = await self.author_service.get_author_by_user_id(user_id)
+        if not author:
+            return []
+        
+        # Получаем треки автора с подгрузкой жанра
+        tracks = await self.repo.get_by_author_id(author.id)
+        return tracks

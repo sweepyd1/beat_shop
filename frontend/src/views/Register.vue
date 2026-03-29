@@ -60,7 +60,19 @@
             />
           </div>
         </div>
-
+         <div class="form-group">
+          <label>Роль</label>
+          <div class="role-selector">
+            <label class="role-option">
+              <input type="radio" value="user" v-model="role" />
+              <span>Покупатель</span>
+            </label>
+            <label class="role-option">
+              <input type="radio" value="author" v-model="role" />
+              <span>Автор</span>
+            </label>
+          </div>
+        </div>
         <div class="form-options">
           <label class="checkbox">
             <input type="checkbox" v-model="agree" required />
@@ -80,38 +92,48 @@
 </template>
 
 <script setup>
+import { ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
 
 const authStore = useAuthStore();
 const router = useRouter();
-const handleRegister = async () => {
-  try {
-    // Проверка совпадения паролей (можно добавить)
-    if (password.value !== confirmPassword.value) {
-      // показать ошибку
-      return;
-    }
-    
-    await authStore.register({
-        full_name: username.value, // или full_name: "Имя Фамилия" - но нужен полный формат
-        login: username.value, // используем username как login
-        email: email.value,
-        password: password.value
-        });
-    
-    router.push('/'); // или на страницу профиля /profile
-  } catch (error) {
-    // обработка ошибки (например, email уже занят)
-    console.error('Registration error:', error.response?.data?.detail || error.message);
-  }
-}
 
+const username = ref('');
+const email = ref('');
+const password = ref('');
+const confirmPassword = ref('');
+const role = ref('user');      // по умолчанию "Покупатель"
+const agree = ref(false);
+
+const handleRegister = async () => {
+  if (password.value !== confirmPassword.value) {
+    alert('Пароли не совпадают');
+    return;
+  }
+  if (!agree.value) {
+    alert('Примите условия использования');
+    return;
+  }
+
+  try {
+    await authStore.register({
+      full_name: username.value,
+      login: username.value,
+      email: email.value,
+      password: password.value,
+      role: role.value
+    });
+    router.push('/');
+  } catch (error) {
+    console.error('Registration error:', error.response?.data?.detail || error.message);
+    alert('Ошибка регистрации: ' + (error.response?.data?.detail || 'Неизвестная ошибка'));
+  }
+};
 </script>
 
 <style scoped>
-/* Те же самые стили, что и в Login.vue, можно вынести в общий файл, 
-   но для примера дублируем с небольшими отличиями (например, если нужно) */
+
 .auth-page {
   min-height: calc(100vh - 80px);
   display: flex;

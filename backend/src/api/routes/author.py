@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.schemas.author import AuthorResponse, AuthorDetailResponse
-from src.core.repositories.author import AuthorRepository
-from src.api.dependencies import get_db_session
+from src.database.models import User
+from schemas.author import AuthorResponse, AuthorDetailResponse
+from core.repositories.author import AuthorRepository
+from api.dependencies import get_current_user, get_db_session
 
 router = APIRouter(prefix="/authors", tags=["authors"])
 
@@ -30,3 +31,16 @@ async def get_author(
     response = AuthorDetailResponse.model_validate(author)
     response.tracks_count = tracks_count
     return response
+
+@router.get("/me", response_model=AuthorDetailResponse)
+async def get_my_author_profile(
+    current_user: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_db_session)
+):
+    if current_user.role != "author":
+        raise HTTPException(403, "Пользователь не является автором")
+    repo = AuthorRepository(session)
+    author = await repo.get_by_user_id(current_user.id)
+    if not author:
+        raise HTTPException(404, "Профиль автора не найден")
+    return author

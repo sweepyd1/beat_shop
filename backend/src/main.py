@@ -8,41 +8,45 @@ from sqlalchemy import select
 import uvicorn
 from core.repositories.user import UserRepository
 from core.services.auth import AuthService
+from core.repositories.author import AuthorRepository
+from core.services.author import AuthorService
 from database.db_manager import db_manager
 from database.models import User
 from config import cfg, setup_environment
 from api.routes import auth, tracks, genres, user, favorites
 from api.routes.admin import authors as admin_authors, genre as admin_genres, tracks as admin_tracks
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # Действия при старте
-    async with db_manager.get_session() as session:
-        repo = UserRepository(session)
-        auth_service = AuthService(repo)
+# @asynccontextmanager
+# async def lifespan(app: FastAPI):
+#     # Действия при старте
+#     async with db_manager.get_session() as session:
+#         repo = UserRepository(session)
+#         author_repo = AuthorRepository(session)
+#         author_service = AuthorService(repo=author_repo)
+#         auth_service = AuthService(repo, author_repo)
         
-        # Проверяем, есть ли администратор
-        result = await session.execute(select(User).where(User.is_admin == True))
-        admin = result.scalar_one_or_none()
+#         # Проверяем, есть ли администратор
+#         result = await session.execute(select(User).where(User.is_admin == True))
+#         admin = result.scalar_one_or_none()
         
-        if not admin:
-            # Создаём администратора
-            hashed = auth_service.get_password_hash(cfg.admin.password)
-            admin = User(
-                full_name="Administrator",
-                login=cfg.admin.login,
-                email=cfg.admin.email,
-                password_hash=hashed,
-                is_admin=True
-            )
-            session.add(admin)
-            await session.commit()
-            print(f"Admin user created: {cfg.admin.login}")
-        else:
-            print("Admin user already exists")
+#         if not admin:
+#             # Создаём администратора
+#             hashed = auth_service.get_password_hash(cfg.admin.password)
+#             admin = User(
+#                 full_name="Administrator",
+#                 login=cfg.admin.login,
+#                 email=cfg.admin.email,
+#                 password_hash=hashed,
+#                 is_admin=True
+#             )
+#             session.add(admin)
+#             await session.commit()
+#             print(f"Admin user created: {cfg.admin.login}")
+#         else:
+#             print("Admin user already exists")
     
-    yield
-    # Действия при выключении (опционально)
-    pass
+#     yield
+#     # Действия при выключении (опционально)
+#     pass
 setup_environment()
 storage_path = Path("storage")
 covers_path = storage_path / "covers"
@@ -53,7 +57,7 @@ app = FastAPI(
     title=cfg.app.name,
     version=cfg.app.version,
     debug=cfg.app.debug,
-    lifespan=lifespan
+    # lifespan=lifespan
 )
 
 app.add_middleware(

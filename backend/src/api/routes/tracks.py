@@ -1,13 +1,31 @@
 import os
 from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, Request, UploadFile
 from fastapi.responses import FileResponse
+from core.services.auth import AuthService
+from database.models import User
 from schemas.track import TrackResponse, TrackCreate, TrackUpdate
 from core.services.track import TrackService
-from api.dependencies import get_track_service
+from api.dependencies import get_auth_service, get_track_service
 
 router = APIRouter(prefix="/tracks", tags=["tracks"])
+@router.get("/me", response_model=List[TrackResponse])
+async def get_my_tracks(
+    request:Request,
+    track_service: TrackService = Depends(get_track_service),
+    auth_service: AuthService = Depends(get_auth_service),
 
+):
+
+    access_token = request.cookies.get("access_token")
+    if not access_token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    user = await auth_service.get_user_from_token(access_token)
+    print(user.role.name)
+    if user.role.name != "author":
+        raise HTTPException(status_code=403, detail="Только авторы могут просматривать свои треки")
+    tracks = await track_service.get_tracks_by_user(user.id)
+    return tracks
 @router.get("/search", response_model=list[TrackResponse])
 async def search_tracks(
     query: Optional[str] = Query(None, description="Поисковый запрос"),
@@ -70,13 +88,34 @@ async def get_track(
         raise HTTPException(status_code=404, detail="Track not found")
     return track
 
-@router.post("/", response_model=TrackResponse, status_code=201)
+@router.post("/")
 async def create_track(
-    track_data: TrackCreate,
-    service: TrackService = Depends(get_track_service)
+    request: Request,
+    title: str = Form(..., min_length=1, max_length=200),
+    genre_id: int = Form(...),
+    price: float = Form(..., ge=0),
+    bpm: Optional[int] = Form(None, ge=0),
+    cover: UploadFile = File(...),
+    mp3: UploadFile = File(...),
+    auth_service: AuthService = Depends(get_auth_service),
+    track_service: TrackService = Depends(get_track_service)
 ):
-
-    return await service.create_track(track_data)
+    
+    access_token = request.cookies.get("access_token")
+    if not access_token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    user = await auth_service.get_user_from_token(access_token)
+    """Создание нового трека (только для авторов)"""
+    track = await track_service.create_track(
+        user=user,
+        title=title,
+        genre_id=genre_id,
+        price=price,
+        cover=cover,
+        mp3=mp3,
+        bpm=bpm
+    )
+    
 
 @router.put("/{track_id}", response_model=TrackResponse)
 async def update_track(
@@ -113,3 +152,4 @@ async def stream_track(
         raise HTTPException(status_code=404, detail="Audio file not found")
     
     return FileResponse(file_path, media_type="audio/mpeg", filename=f"{track.title}.mp3")
+

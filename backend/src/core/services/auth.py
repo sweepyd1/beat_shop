@@ -6,7 +6,8 @@ from jose import jwt, JWTError
 from passlib.context import CryptContext
 from fastapi import HTTPException, status
 
-from database.models import User
+from core.repositories.author import AuthorRepository
+from database.models import Author, User, UserRole
 from config import cfg
 from core.repositories.user import UserRepository
 from schemas.user import UserCreate, UserLogin, TokenPayload
@@ -21,8 +22,9 @@ pwd_context = CryptContext(
 
 
 class AuthService:
-    def __init__(self, repo: UserRepository):
+    def __init__(self, repo: UserRepository, author_repo: AuthorRepository):
         self.repo = repo
+        self.author_repo = author_repo
 
     # ---------- Хеширование паролей ----------
     def verify_password(self, plain_password: str, hashed_password: str) -> bool:
@@ -104,14 +106,37 @@ class AuthService:
                 detail="Пользователь с таким логином или email уже существует"
             )
         
-        # Хешируем пароль и создаём пользователя
+        # Хешируем пароль
         hashed_password = self.get_password_hash(user_data.password)
+        
+        # Создаём пользователя
         user = await self.repo.create(
             full_name=user_data.full_name,
             login=user_data.login,
             email=user_data.email,
-            password_hash=hashed_password
+            password_hash=hashed_password,
+            role=user_data.role
         )
+        
+        # Если пользователь выбрал роль "author", создаём профиль автора
+        print(f"Role received: {user_data.role}")
+        print(f"UserRole.author value: {UserRole.author}")
+        print(f"Are they equal? {user_data.role == UserRole.author}")
+        
+        if user_data.role == "author":
+            print("Создаём профиль автора...")
+            await self.author_repo.create(
+                user_id=user.id,
+                full_name=user_data.full_name,
+                photo_url=None,
+                bio=None
+            )
+            
+            print("Профиль автора создан")
+        else:
+            print("Роль не author, пропускаем")
+        
+
         
         return user
 

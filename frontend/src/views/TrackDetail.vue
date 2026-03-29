@@ -1,231 +1,354 @@
 <template>
-  <div class="track-detail">
-    <div class="track-header">
-      <img :src="track.cover" :alt="track.title" class="track-cover" @error="handleImageError" />
-      <div class="track-info">
+  <div class="track-detail" v-if="track">
+    <div class="track-detail-container">
+      <!-- Левая колонка: обложка и аудио-плеер -->
+      <div class="track-cover-section">
+        <div class="cover-large">
+          <img :src="coverUrl" alt="cover" @error="handleImageError" />
+          <div class="play-button-large" @click="playTrack(track)">
+            <i class="fas fa-play"></i>
+          </div>
+        </div>
+        <div class="track-stats">
+          <div class="stat">
+            <i class="fas fa-headphones"></i>
+            <span>{{ track.plays || 0 }} прослушиваний</span>
+          </div>
+          <div class="stat">
+            <i class="fas fa-calendar-alt"></i>
+            <span>{{ formatDate(track.added_date) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Правая колонка: информация о треке -->
+      <div class="track-info-section">
         <h1>{{ track.title }}</h1>
-        <router-link :to="`/artist/${track.artistId}`" class="artist">{{ track.artist }}</router-link>
-        <div class="meta">
-          <span><i class="fas fa-clock"></i> {{ formatTime(track.duration) }}</span>
-          <span><i class="fas fa-chart-line"></i> {{ track.bpm }} BPM</span>
-          <span><i class="fas fa-tag"></i> {{ track.genre }}</span>
-          <span><i class="fas fa-headphones"></i> {{ track.plays }} прослушиваний</span>
+        <div class="author">
+          <router-link :to="`/artist/${track.author_id}`" class="author-link">
+            {{ track.author.full_name || 'Неизвестный автор' }}
+          </router-link>
         </div>
-        <div class="price">{{ track.price }} ₽</div>
-        <div class="actions">
-          <button class="btn-primary" @click="addToCart"><i class="fas fa-cart-plus"></i> В корзину</button>
-          <button class="btn-secondary" @click="playTrack(track)"><i class="fas fa-play"></i> Превью</button>
-          <button class="btn-icon"><i class="far fa-heart"></i></button>
+
+        <div class="track-meta">
+          <div class="meta-item">
+            <i class="fas fa-tag"></i>
+            <span>{{ track.genre?.name || 'Без жанра' }}</span>
+          </div>
+          <div class="meta-item">
+            <i class="fas fa-clock"></i>
+            <span>{{ formatDuration(track.duration_seconds) }}</span>
+          </div>
+          <div class="meta-item" v-if="track.bpm">
+            <i class="fas fa-waveform"></i>
+            <span>{{ track.bpm }} BPM</span>
+          </div>
+        </div>
+
+        <div class="price-section">
+          <div class="price">{{ track.price }} ₽</div>
+          <button class="buy-btn" @click="openPurchaseModal">
+            <i class="fas fa-shopping-cart"></i> Купить бит
+          </button>
+        </div>
+
+        <div class="track-description" v-if="track.description">
+          <h3>Описание</h3>
+          <p>{{ track.description }}</p>
+        </div>
+
+        <div class="license-info">
+          <h3>Лицензия</h3>
+          <p>При покупке вы получаете лицензию на использование бита в коммерческих целях. Договор оформляется автоматически.</p>
         </div>
       </div>
     </div>
 
-    <div class="track-description" v-if="track.description">
-      <h3>Описание</h3>
-      <p>{{ track.description }}</p>
-    </div>
+    <!-- Модальное окно покупки и оформления договора -->
+    <PurchaseModal
+      v-model="showPurchaseModal"
+      :track="track"
+      @purchase-complete="handlePurchaseComplete"
+    />
+  </div>
 
-    <div class="similar-tracks">
-      <h3>Похожие треки</h3>
-      <div class="track-grid">
-        <TrackCard
-          v-for="similar in similarTracks"
-          :key="similar.id"
-          :track="similar"
-          @image-error="handleImageError"
-        />
-      </div>
-    </div>
+  <div v-else class="loading">
+    <div class="spinner"></div>
+    <p>Загрузка информации о треке...</p>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
-import TrackCard from '../components/TrackCard.vue';
+import { ref, onMounted, computed, inject } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import api from '../api';
+import PurchaseModal from '../components/PurchaseModal.vue';
 
 const route = useRoute();
-const track = ref({});
-const similarTracks = ref([]);
+const router = useRouter();
+const track = ref(null);
+const showPurchaseModal = ref(false);
+const { playTrack } = inject('player');
 
-// Мок-данные (позже заменить на запрос к API)
-const mockTracks = [
-  { id: 1, title: 'Neon Dreams', artist: 'Arctica', artistId: 1, cover: 'https://picsum.photos/200/200?random=1', duration: 210, bpm: 128, genre: 'Electronic', price: 1.99, plays: 12400, description: 'Энергичный электронный трек с глубоким басом.' },
-  { id: 2, title: 'Lost in Space', artist: 'Cosmic', artistId: 2, cover: 'https://picsum.photos/200/200?random=2', duration: 185, bpm: 140, genre: 'Electronic', price: 1.49, plays: 8700 },
-  { id: 3, title: 'Echoes', artist: 'The Waves', artistId: 3, cover: 'https://picsum.photos/200/200?random=3', duration: 240, bpm: 110, genre: 'Rock', price: 2.49, plays: 5300 },
-  { id: 4, title: 'Midnight', artist: 'Luna', artistId: 4, cover: 'https://picsum.photos/200/200?random=4', duration: 200, bpm: 90, genre: 'Ambient', price: 1.79, plays: 3200 },
-];
-
-onMounted(() => {
-  const id = parseInt(route.params.id);
-  track.value = mockTracks.find(t => t.id === id) || mockTracks[0];
-  // Похожие — просто другие треки того же жанра
-  similarTracks.value = mockTracks.filter(t => t.genre === track.value.genre && t.id !== track.value.id).slice(0, 4);
+const coverUrl = computed(() => {
+  if (!track.value) return '';
+  const url = track.value.cover_url;
+  if (!url) return '/default-cover.jpg';
+  if (url.startsWith('http')) return url;
+  const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+  return `${baseUrl}${url}`;
 });
 
-const formatTime = (sec) => {
-  const m = Math.floor(sec / 60);
-  const s = Math.floor(sec % 60).toString().padStart(2, '0');
-  return `${m}:${s}`;
+const fetchTrack = async () => {
+  try {
+    const { data } = await api.get(`/tracks/${route.params.id}`);
+    track.value = data;
+  } catch (error) {
+    console.error('Ошибка загрузки трека:', error);
+    // Можно перенаправить на страницу 404
+    router.push('/404');
+  }
 };
 
-const addToCart = () => {
-  console.log('Добавлено в корзину', track.value);
-  // здесь будет логика добавления
+const formatDuration = (seconds) => {
+  if (!seconds) return '0:00';
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${mins}:${secs.toString().padStart(2, '0')}`;
 };
 
-const playTrack = (t) => {
-  console.log('Play', t);
-  // вызов плеера
+const formatDate = (dateStr) => {
+  if (!dateStr) return '';
+  const date = new Date(dateStr);
+  return date.toLocaleDateString('ru-RU');
+};
+
+const openPurchaseModal = () => {
+  showPurchaseModal.value = true;
+};
+
+const handlePurchaseComplete = (purchaseData) => {
+  // Можно показать уведомление об успешной покупке
+  alert(`Покупка успешно оформлена! Договор отправлен на ${purchaseData.email}`);
+  showPurchaseModal.value = false;
 };
 
 const handleImageError = (e) => {
-  e.target.src = 'data:image/svg+xml,...'; // сокращено
+  e.target.src = '/default-cover.jpg';
 };
+
+onMounted(() => {
+  fetchTrack();
+});
 </script>
 
 <style scoped>
 .track-detail {
   max-width: 1200px;
   margin: 2rem auto;
-  padding: 0 2rem;
-}
-
-.track-header {
-  display: flex;
-  gap: 3rem;
-  margin-bottom: 3rem;
-  align-items: flex-end;
-  background: rgba(255,255,255,0.02);
   padding: 2rem;
-  border-radius: 30px;
-  border: 1px solid rgba(255,255,255,0.05);
+  background: var(--bg-secondary);
+  border-radius: 32px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
-.track-cover {
-  width: 250px;
-  height: 250px;
+.track-detail-container {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 2rem;
+}
+
+/* Левая колонка */
+.track-cover-section {
+  position: sticky;
+  top: 2rem;
+}
+
+.cover-large {
+  position: relative;
   border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  margin-bottom: 1.5rem;
+}
+
+.cover-large img {
+  width: 100%;
+  aspect-ratio: 1;
   object-fit: cover;
-  box-shadow: 0 20px 30px rgba(0,0,0,0.5);
+  display: block;
 }
 
-.track-info {
-  flex: 1;
+.play-button-large {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(45deg, #a855f7, #3b82f6);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
-.track-info h1 {
-  font-size: 3rem;
-  margin-bottom: 0.5rem;
-  background: linear-gradient(135deg, #fff, #c084fc);
+.play-button-large:hover {
+  transform: scale(1.05);
+}
+
+.track-stats {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.stat i {
+  font-size: 1.2rem;
+}
+
+/* Правая колонка */
+.track-info-section h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #fff, #e0b0ff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  margin-bottom: 0.5rem;
 }
 
-.artist {
-  font-size: 1.2rem;
-  color: #a855f7;
-  text-decoration: none;
+.author {
   margin-bottom: 1rem;
-  display: inline-block;
 }
 
-.artist:hover {
+.author-link {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 1.2rem;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.author-link:hover {
+  color: #c084fc;
   text-decoration: underline;
 }
 
-.meta {
+.track-meta {
   display: flex;
-  gap: 1.5rem;
-  color: #a0a0b0;
-  margin: 1rem 0;
   flex-wrap: wrap;
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+  padding: 1rem 0;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
 }
 
-.meta i {
-  margin-right: 0.3rem;
-  color: #a855f7;
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+}
+
+.meta-item i {
+  width: 1.2rem;
+}
+
+.price-section {
+  margin: 2rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(168, 85, 247, 0.1);
+  padding: 1rem 1.5rem;
+  border-radius: 60px;
+  border: 1px solid rgba(168, 85, 247, 0.3);
 }
 
 .price {
   font-size: 2rem;
   font-weight: 700;
-  color: #a855f7;
-  margin: 1rem 0;
+  color: var(--accent);
 }
 
-.actions {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-}
-
-.btn-primary {
+.buy-btn {
   background: linear-gradient(45deg, #a855f7, #3b82f6);
   border: none;
-  color: white;
   padding: 0.8rem 2rem;
-  border-radius: 30px;
+  border-radius: 40px;
+  color: white;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: transform 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.btn-primary:hover {
-  transform: scale(1.05);
-  box-shadow: 0 10px 20px rgba(168,85,247,0.3);
+.buy-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(168, 85, 247, 0.4);
 }
 
-.btn-secondary {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
-  color: white;
-  padding: 0.8rem 2rem;
-  border-radius: 30px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
+.track-description, .license-info {
+  margin-top: 2rem;
 }
 
-.btn-secondary:hover {
-  background: rgba(255,255,255,0.1);
-}
-
-.btn-icon {
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
-  color: white;
+.track-description h3, .license-info h3 {
   font-size: 1.2rem;
-  cursor: pointer;
-  transition: all 0.2s;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
 }
 
-.btn-icon:hover {
-  background: #a855f7;
-  border-color: #a855f7;
+.track-description p, .license-info p {
+  color: var(--text-secondary);
+  line-height: 1.5;
 }
 
-.track-description {
-  background: rgba(255,255,255,0.02);
-  border-radius: 20px;
-  padding: 2rem;
-  margin-bottom: 3rem;
+.loading {
+  text-align: center;
+  padding: 4rem;
 }
 
-.track-description h3 {
-  margin-bottom: 1rem;
+.spinner {
+  border: 4px solid rgba(168, 85, 247, 0.1);
+  border-top: 4px solid var(--accent);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
 }
 
-.similar-tracks h3 {
-  margin-bottom: 1.5rem;
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-.track-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 2rem;
+@media (max-width: 768px) {
+  .track-detail-container {
+    grid-template-columns: 1fr;
+  }
+  .track-cover-section {
+    position: static;
+  }
+  .price-section {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
 }
 </style>

@@ -14,6 +14,11 @@ class InteractionType(enum.Enum):
     favorite = "favorite"
     purchase = "purchase"
 
+class UserRole(enum.Enum):
+    user = "user"      # обычный покупатель
+    author = "author"  # автор
+    admin = "admin"    # администратор
+
 class User(Base):
     __tablename__ = 'users'
 
@@ -24,6 +29,7 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(100), unique=True, nullable=False, index=True)
     registered_at: Mapped[DateTime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     avatar_url: Mapped[str | None] = mapped_column(String(200))
+    role: Mapped[UserRole] = mapped_column(Enum(UserRole), default=UserRole.user)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
 
@@ -32,6 +38,7 @@ class User(Base):
     purchases = relationship("Purchase", back_populates="user", cascade="all, delete-orphan")
     interactions = relationship("Interaction", back_populates="user", cascade="all, delete-orphan")
     subscriptions = relationship("Subscription", back_populates="user", cascade="all, delete-orphan")
+    author_profile = relationship("Author", back_populates="user", uselist=False, cascade="all, delete-orphan")
 class Subscription(Base):
     __tablename__ = 'subscriptions'
 
@@ -48,12 +55,14 @@ class Subscription(Base):
     )
 class Author(Base):
     __tablename__ = 'authors'
-
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id'), unique=True, nullable=False)  # добавлено
     full_name: Mapped[str] = mapped_column(String(150), nullable=False)
     photo_url: Mapped[str | None] = mapped_column(String(200))
     bio: Mapped[str | None] = mapped_column(Text)
 
+    # Связи
+    user = relationship("User", back_populates="author_profile")
     tracks = relationship("Track", back_populates="author", cascade="all, delete-orphan")
     subscribers = relationship("Subscription", back_populates="author", cascade="all, delete-orphan")
 

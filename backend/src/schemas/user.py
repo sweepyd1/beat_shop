@@ -9,6 +9,7 @@ class UserBase(BaseModel):
     full_name: str = Field(..., min_length=1, max_length=150, description="ФИО пользователя")
     login: str = Field(..., min_length=3, max_length=50, description="Логин")
     email: EmailStr = Field(..., description="Email")
+    role:str = Field(..., min_length=1, max_length=150, description="Роль пользователя")
 
 
 class UserCreate(UserBase):
@@ -43,6 +44,7 @@ class UserResponse(UserBase):
     id: int
     registered_at: datetime
     is_active: bool
+    role:str
 
     model_config = ConfigDict(from_attributes=True)
 

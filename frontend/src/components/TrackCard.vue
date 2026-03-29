@@ -1,5 +1,5 @@
 <template>
-  <div class="track-card" @click="handleClick">
+  <div class="track-card" @click="goToTrack">
     <div class="cover-wrapper">
       <img :src="coverUrl" class="cover" @error="$emit('image-error', $event)" />
       <button class="play-overlay" @click.stop="play">
@@ -15,7 +15,9 @@
 
 <script setup>
 import { inject, computed } from "vue";
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 const props = defineProps(["track"]);
 const { playTrack } = inject("player");
 const coverUrl = computed(() => {
@@ -33,6 +35,9 @@ const play = () => {
 const handleClick = () => {
   // можно перейти на страницу трека, но для простоты просто воспроизводим
   play();
+};
+const goToTrack = () => {
+  router.push(`/track/${props.track.id}`);
 };
 </script>
 

@@ -1,3 +1,5 @@
+from typing import Optional
+from database.models import Genre
 from core.repositories.genre import GenreRepository
 from schemas.genre import GenreCreate, GenreUpdate
 from fastapi import HTTPException, status
@@ -37,3 +39,5 @@ class GenreService:
                 "tracks_count": count
             })
         return result
+    async def get_genre(self, genre_id: int) -> Optional[Genre]:
+        return await self.repo.get(genre_id)

@@ -1,4 +1,3 @@
-# seed_mass.py
 import asyncio
 import random
 from datetime import datetime, timedelta
@@ -7,28 +6,67 @@ from sqlalchemy import select
 
 from config import cfg
 from database.db_manager import db_manager
-from database.models import Genre, Author, Track
+from database.models import Genre, Author, Track, User, UserRole
+from api.dependencies import get_auth_service
 
 
 async def seed_mass():
     async with db_manager.get_session() as session:
         print("🚀 Начинаем массовое заполнение данными...")
 
-        # --- 1. Проверка/создание автора с id=1 ---
-        author = await session.get(Author, 1)
-        if not author:
-            author = Author(
+        # --- 1. Создание/получение пользователя для автора ---
+        user = await session.execute(
+            select(User).where(User.login == "default_author")
+        )
+        user = user.scalar_one_or_none()
+        if not user:
+            
+            user = User(
                 full_name="Default Author",
-                bio="Automatically generated author for mass seeding.",
-                photo_url="/storage/covers/default_cover.jpg"
+                login="default_author",
+                email="default@author.com",
+                password_hash="defaultpass",
+                role=UserRole.author,
+                is_active=True
             )
-            session.add(author)
+            session.add(user)
             await session.flush()
-            print("✅ Создан автор с ID=1 (Default Author)")
+            print(f"✅ Создан пользователь default_author с ID={user.id}")
         else:
+            print(f"✅ Пользователь default_author уже существует с ID={user.id}")
+
+        # --- 2. Создание/получение автора (связь с пользователем) ---
+        author = await session.get(Author, 1)  # ищем по id=1
+        if not author:
+            # Проверим, есть ли автор с таким user_id
+            author_by_user = await session.execute(
+                select(Author).where(Author.user_id == user.id)
+            )
+            author_by_user = author_by_user.scalar_one_or_none()
+            if author_by_user:
+                author = author_by_user
+                print(f"✅ Найден автор с user_id={user.id}, id={author.id}")
+            else:
+                author = Author(
+                    user_id=user.id,
+                    full_name="Default Author",
+                    bio="Automatically generated author for mass seeding.",
+                    photo_url="/storage/covers/default_cover.jpg"
+                )
+                session.add(author)
+                await session.flush()
+                print(f"✅ Создан автор с ID={author.id} (Default Author)")
+        else:
+            # Если автор с id=1 уже существует, но его user_id не совпадает с текущим пользователем,
+            # обновим связь (на случай, если предыдущие сидеры создали автора без user_id)
+            if author.user_id is None:
+                author.user_id = user.id
+                session.add(author)
+                await session.flush()
+                print(f"✅ Обновлён user_id автора с ID=1 на {user.id}")
             print("✅ Автор с ID=1 уже существует")
 
-        # --- 2. Создание 10 жанров, если их нет ---
+        # --- 3. Создание 10 жанров, если их нет ---
         genre_names = [
             "Рок", "Поп", "Хип-хоп", "Электронная", "Джаз",
             "Классика", "R&B", "Кантри", "Блюз", "Метал"
@@ -56,7 +94,7 @@ async def seed_mass():
         all_genres = all_genres.scalars().all()
         genre_ids = [g.id for g in all_genres]
 
-        # --- 3. Создание 100 треков ---
+        # --- 4. Создание 100 треков ---
         tracks_created = 0
         track_titles = [
             "Лунная соната", "В лесу", "Дорога домой", "Осенний дождь",
@@ -68,12 +106,11 @@ async def seed_mass():
         ]
 
         for i in range(100):
-            # Генерируем данные
             title = random.choice(track_titles)
-            if i >= len(track_titles):  # если названия кончились, добавляем номер
+            if i >= len(track_titles):
                 title = f"{title} {i+1}"
 
-            duration = random.randint(120, 360)  # 2-6 минут
+            duration = random.randint(120, 360)
             created_date = datetime.now() - timedelta(days=random.randint(0, 1000))
             price = round(random.uniform(50.0, 500.0), 2)
             genre_id = random.choice(genre_ids)
@@ -86,18 +123,18 @@ async def seed_mass():
                 mp3_file_url="/storage/tracks/default.mp3",
                 price=price,
                 genre_id=genre_id,
-                author_id=1  # всегда автор с ID=1
+                author_id=author.id  # используем реальный id автора
             )
             session.add(track)
             tracks_created += 1
 
-            # Прогресс каждые 20 треков
             if tracks_created % 20 == 0:
                 print(f"⏳ Создано {tracks_created} треков...")
-                await session.flush()  # промежуточный flush
+                await session.flush()
 
         await session.commit()
         print(f"🎉 Успешно создано {tracks_created} треков!")
+
 
 if __name__ == "__main__":
     asyncio.run(seed_mass())

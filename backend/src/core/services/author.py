@@ -1,4 +1,6 @@
+from typing import Optional
 from fastapi import HTTPException
+from database.models import Author
 from core.repositories.author import AuthorRepository
 from core.services.file_service import FileService
 from schemas.author import AuthorCreate, AuthorUpdate
@@ -50,3 +52,7 @@ class AuthorService:
             raise HTTPException(status_code=400, detail="Нельзя удалить автора, у которого есть треки")
         
         return await self.repo.delete(author_id)
+    
+    async def get_author_by_user_id(self, user_id: int) -> Optional[Author]:
+        return await self.repo.get_by_user_id(user_id)
+    

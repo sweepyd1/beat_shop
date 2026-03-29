@@ -104,3 +104,19 @@ class TrackRepository(BaseRepository[Track]):
         stmt = stmt.offset(skip).limit(limit)
         result = await self.session.execute(stmt)
         return result.scalars().all()
+    async def create(self, **kwargs) -> Track:
+        track = Track(**kwargs)
+        self.session.add(track)
+        await self.session.commit()
+        await self.session.flush()
+        await self.session.refresh(track)
+        return track
+    async def get_by_author_id(self, author_id: int) -> List[Track]:
+        """Получение всех треков автора по author_id"""
+        stmt = select(Track).where(Track.author_id == author_id).options(
+            selectinload(Track.genre),
+            selectinload(Track.author)
+        ).order_by(Track.added_date.desc())
+        
+        result = await self.session.execute(stmt)
+        return result.scalars().all()

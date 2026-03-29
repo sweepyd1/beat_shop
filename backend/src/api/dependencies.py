@@ -2,6 +2,8 @@ from typing import AsyncIterator
 from fastapi import Depends, HTTPException, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.security import OAuth2PasswordBearer
+from core.repositories.author import AuthorRepository
+from core.services.author import AuthorService
 from core.repositories.genre import GenreRepository
 from core.services.genre import GenreService
 from database.models import User
@@ -32,16 +34,23 @@ def get_track_repository(session: AsyncSession = Depends(get_db_session)) -> Tra
 def get_favorite_repository(session: AsyncSession = Depends(get_db_session)) -> FavoriteRepository:
     return FavoriteRepository(session)
 
+def get_author_repository(session: AsyncSession = Depends(get_db_session)) -> AuthorRepository:
+    return AuthorRepository(session)
+
 # ---------- Сервисы ----------
-def get_auth_service(repo: UserRepository = Depends(get_user_repository)) -> AuthService:
-    return AuthService(repo)
-
-
-def get_track_service(repo: TrackRepository = Depends(get_track_repository)) -> TrackService:
-    return TrackService(repo=repo, file_service=get_file_service())
-
+def get_auth_service(repo: UserRepository = Depends(get_user_repository),  author_repo: AuthorRepository = Depends(get_author_repository),) -> AuthService:
+    return AuthService(repo, author_repo)
 def get_file_service() -> FileService:
     return FileService()
+
+async def get_author_service(
+    session: AsyncSession = Depends(get_db_session),
+    file_service: FileService = Depends(get_file_service)
+) -> AuthorService:
+    repo = AuthorRepository(session)
+    return AuthorService(repo, file_service)
+
+
 
 def get_favorite_service(
     repo: FavoriteRepository = Depends(get_favorite_repository),
@@ -52,7 +61,14 @@ def get_favorite_service(
 
 def get_genre_service(repo: GenreRepository = Depends(get_genre_repository)) -> GenreService:
     return GenreService(repo)
-
+async def get_track_service(
+    session: AsyncSession = Depends(get_db_session),
+    file_service: FileService = Depends(get_file_service),
+    author_service: AuthorService = Depends(get_author_service),
+    genre_service: GenreService = Depends(get_genre_service)
+) -> TrackService:
+    track_repo = TrackRepository(session)
+    return TrackService(track_repo, author_service, genre_service, file_service)
 # ---------- Текущий пользователь (из JWT) ----------
 async def get_current_user(
     request: Request,

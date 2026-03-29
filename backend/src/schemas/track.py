@@ -67,8 +67,35 @@ class TrackBase(BaseModel):
     author_id: int = Field(..., gt=0, description="ID автора")
 
 
-class TrackCreate(TrackBase):
-    pass
+class TrackCreate(BaseModel):
+    title: str = Field(..., min_length=1, max_length=200)
+    genre_id: int
+    price: float = Field(..., ge=0)
+    bpm: Optional[int] = Field(None, ge=0)
+class AuthorShortResponse(BaseModel):
+    id: int
+    full_name: str
+
+# schemas/genre.py
+class GenreShortResponse(BaseModel):
+    id: int
+    name: str
+class TrackResponse(BaseModel):
+    id: int
+    title: str
+    cover_url: Optional[str]
+    duration_seconds: Optional[int]
+    created_date: Optional[datetime]
+    added_date: datetime
+    mp3_file_url: str
+    price: float
+    plays: int
+    bpm: Optional[int]
+    genre: GenreShortResponse   # вместо genre_id
+    author: AuthorShortResponse # вместо author_id
+
+    class Config:
+        from_attributes = True
 
 
 class TrackUpdate(BaseModel):
@@ -81,15 +108,7 @@ class TrackUpdate(BaseModel):
     genre_id: Optional[int] = Field(None, gt=0)
     author_id: Optional[int] = Field(None, gt=0)
 
-class TrackResponse(TrackBase):
-    id: int
-    added_date: datetime
-    plays: Optional[int] = 0        
-    bpm: Optional[int] = 0
-    genre: Optional[GenreResponse] = None
-    author: Optional[AuthorResponse] = None
 
-    model_config = ConfigDict(from_attributes=True)
 
 
 class TrackShortResponse(BaseModel):
