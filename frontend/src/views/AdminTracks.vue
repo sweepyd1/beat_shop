@@ -166,7 +166,15 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import api from '@/api';
+import { useAuthStore } from '@/stores/auth';
+import { useRouter } from 'vue-router';
 
+const authStore = useAuthStore();
+const router = useRouter();
+
+if (authStore.user?.role !== 'admin') {
+  router.replace('/');
+}
 const activeTab = ref('list');
 const dragOverMp3 = ref(false);
 const dragOverCover = ref(false);

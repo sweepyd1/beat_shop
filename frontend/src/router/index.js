@@ -28,7 +28,7 @@ const routes = [
   { path: '/register', component: Register },
   {path: '/admin/tracks',name: 'AdminTracks',
   component: () => import('@/views/AdminTracks.vue'),
-  // meta: { requiresAdmin: true }
+  meta: { requiresAuth: true, role: 'admin' }
 },
  { path: '/track/:id', component: TrackDetail, name: 'track' },
 ]

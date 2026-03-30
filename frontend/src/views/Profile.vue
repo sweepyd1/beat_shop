@@ -1,82 +1,125 @@
 <template>
   <div class="profile">
-    <h1>Личный кабинет</h1>
+    <!-- Hero section -->
+    <div class="hero-section">
+      <div class="hero-background"></div>
+      <div class="hero-content">
+        <div class="avatar-large">
+          <img :src="avatarUrl" alt="avatar" />
+          <button class="edit-avatar-btn" @click="openEditModal">
+            <i class="fas fa-camera"></i>
+          </button>
+        </div>
+        <div class="hero-info">
+          <h1>{{ user.full_name }}</h1>
+          <p class="role-badge">
+            {{ user.role === "author" ? "Автор" : "Покупатель" }}
+          </p>
+          <div class="stats">
+            <div class="stat">
+              <span class="stat-value">{{ user.tracks_count || 0 }}</span>
+              <span class="stat-label">Треков</span>
+            </div>
+            <div class="stat">
+              <span class="stat-value">{{ user.followers_count || 0 }}</span>
+              <span class="stat-label">Подписчиков</span>
+            </div>
+            <div class="stat">
+              <span class="stat-value">{{ user.purchases_count || 0 }}</span>
+              <span class="stat-label">Покупок</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-    <div v-if="loading" class="loading">Загрузка...</div>
-    <div v-if="error" class="error">{{ error }}</div>
-
-    <template v-else>
-      <div class="profile-tabs">
+    <!-- Tabs -->
+    <div class="tabs-container">
+      <div class="tabs">
         <button
           v-for="tab in tabs"
           :key="tab.key"
           :class="{ active: activeTab === tab.key }"
           @click="activeTab = tab.key"
         >
-          {{ tab.label }}
+          <span class="tab-icon" v-html="getTabIcon(tab.key)"></span>
+          <span class="tab-label">{{ tab.label }}</span>
         </button>
       </div>
+    </div>
 
-      <div class="profile-content">
+    <!-- Tab content -->
+    <div class="content-container">
+      <transition-group name="fade" mode="out-in" tag="div">
         <!-- Мои данные -->
-        <div v-if="activeTab === 'info'" class="tab-pane">
-          <div class="user-info">
-            <div class="avatar">
-              <img :src="avatarUrl" alt="avatar" />
+        <div v-if="activeTab === 'info'" class="tab-pane info-pane" key="info">
+          <div class="info-card glass-card">
+            <div class="info-grid">
+              <div class="info-item">
+                <i class="fas fa-envelope"></i>
+                <div>
+                  <label>Email</label>
+                  <p>{{ user.email }}</p>
+                </div>
+              </div>
+              <div class="info-item">
+                <i class="fas fa-calendar-alt"></i>
+                <div>
+                  <label>Дата регистрации</label>
+                  <p>{{ formatDate(user.registered_at) }}</p>
+                </div>
+              </div>
+              <div class="info-item">
+                <i class="fas fa-id-card"></i>
+                <div>
+                  <label>Роль</label>
+                  <p>{{ user.role === "author" ? "Автор" : "Покупатель" }}</p>
+                </div>
+              </div>
             </div>
-            <div class="details">
-              <p><strong>Имя:</strong> {{ user.full_name }}</p>
-              <p><strong>Email:</strong> {{ user.email }}</p>
-              <p>
-                <strong>Роль:</strong>
-                {{ user.role === "author" ? "Автор" : "Покупатель" }}
-              </p>
-              <p>
-                <strong>Дата регистрации:</strong>
-                {{ formatDate(user.registered_at) }}
-              </p>
-              <button class="btn-secondary edit-btn" @click="openEditModal">
-                Редактировать
-              </button>
-            </div>
+            <button class="btn-primary edit-profile-btn" @click="openEditModal">
+              <i class="fas fa-user-edit"></i> Редактировать профиль
+            </button>
           </div>
         </div>
 
-        <!-- Мои покупки (только для покупателя) -->
-        <div
-          v-if="activeTab === 'purchases'"
-          class="tab-pane"
-        >
-          <div v-if="purchases.length === 0" class="empty">
+        <!-- Мои покупки -->
+        <div v-if="activeTab === 'purchases'" class="tab-pane" key="purchases">
+          <div v-if="purchases.length === 0" class="empty-state">
+            <i class="fas fa-shopping-cart empty-icon"></i>
             <p>У вас пока нет покупок</p>
+            <router-link to="/catalog" class="btn-outline"
+              >Перейти в каталог</router-link
+            >
           </div>
-          <div v-else class="purchases-list">
+          <div v-else class="purchases-grid">
             <div
               v-for="purchase in purchases"
               :key="purchase.id"
-              class="purchase-item"
+              class="purchase-card glass-card"
             >
-              <img
-                :src="purchase.track.cover_url"
-                :alt="purchase.track.title"
-                class="purchase-cover"
-              />
-              <div class="purchase-info">
+              <div class="purchase-image">
+                <img
+                  :src="purchase.track.cover_url"
+                  :alt="purchase.track.title"
+                />
+              </div>
+              <div class="purchase-details">
                 <h3>{{ purchase.track.title }}</h3>
-                <p>{{ purchase.track.author.full_name }}</p>
-                <p class="purchase-date">
+                <p class="artist">{{ purchase.track.author.full_name }}</p>
+                <p class="date">
                   Куплено: {{ formatDate(purchase.purchase_date) }}
                 </p>
                 <div class="purchase-actions">
                   <button
                     @click="downloadTrack(purchase.track.id)"
-                    class="download-btn"
+                    class="btn-icon"
                   >
                     <i class="fas fa-download"></i> Скачать
                   </button>
                   <button
                     @click="downloadContract(purchase.id)"
-                    class="contract-btn"
+                    class="btn-icon"
                   >
                     <i class="fas fa-file-pdf"></i> Договор
                   </button>
@@ -88,8 +131,9 @@
         </div>
 
         <!-- Избранное -->
-        <div v-if="activeTab === 'favorites'" class="tab-pane">
-          <div v-if="favorites.length === 0" class="empty">
+        <div v-if="activeTab === 'favorites'" class="tab-pane" key="favorites">
+          <div v-if="favorites.length === 0" class="empty-state">
+            <i class="fas fa-heart empty-icon"></i>
             <p>У вас нет избранных треков</p>
           </div>
           <div class="track-grid">
@@ -102,50 +146,65 @@
         </div>
 
         <!-- Подписки -->
-        <div v-if="activeTab === 'subscriptions'" class="tab-pane">
-          <div v-if="subscriptions.length === 0" class="empty">
+        <div
+          v-if="activeTab === 'subscriptions'"
+          class="tab-pane"
+          key="subscriptions"
+        >
+          <div v-if="subscriptions.length === 0" class="empty-state">
+            <i class="fas fa-users empty-icon"></i>
             <p>Вы ещё не подписаны на авторов</p>
           </div>
           <div class="authors-grid">
-            <div v-for="sub in subscriptions" :key="sub.id" class="author-card">
-              <img
-                :src="sub.author.photo_url || '/default-avatar.png'"
-                alt="author"
-                class="author-avatar"
-              />
+            <div
+              v-for="sub in subscriptions"
+              :key="sub.id"
+              class="author-card glass-card"
+            >
+              <div class="author-avatar-wrapper">
+                <img
+                  :src="sub.author.photo_url || '/default-avatar.png'"
+                  alt="author"
+                />
+              </div>
               <h3>{{ sub.author.full_name }}</h3>
-              <button @click="unsubscribe(sub.author.id)" class="unfollow-btn">
-                Отписаться
+              <button @click="unsubscribe(sub.author.id)" class="btn-unfollow">
+                <i class="fas fa-user-minus"></i> Отписаться
               </button>
             </div>
           </div>
         </div>
 
-        <!-- Студия продюсера (только для автора) -->
+        <!-- Студия продюсера -->
         <div
           v-if="activeTab === 'studio' && user.role === 'author'"
           class="tab-pane studio-pane"
+          key="studio"
         >
           <ArtistDashboard />
         </div>
 
-        <!-- Мои треки (альтернативная вкладка для автора, можно оставить или убрать) -->
+        <!-- Мои треки -->
         <div
           v-if="activeTab === 'my-tracks' && user.role === 'author'"
           class="tab-pane"
+          key="my-tracks"
         >
           <div class="section-header">
             <h2>Ваши биты</h2>
-            <button class="add-track-btn" @click="activeTab = 'upload'">
+            <button class="btn-primary" @click="activeTab = 'upload'">
               <i class="fas fa-plus"></i> Загрузить бит
             </button>
           </div>
 
-          <div v-if="loading" class="loading">Загрузка...</div>
+          <div v-if="loading" class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+          </div>
 
-          <div v-else-if="authorTracks.length === 0" class="empty">
+          <div v-else-if="authorTracks.length === 0" class="empty-state">
+            <i class="fas fa-music empty-icon"></i>
             <p>У вас ещё нет загруженных треков</p>
-            <button class="upload-first-btn" @click="activeTab = 'upload'">
+            <button class="btn-primary" @click="activeTab = 'upload'">
               Загрузить первый бит
             </button>
           </div>
@@ -160,14 +219,14 @@
               <div class="track-actions">
                 <button
                   @click="editTrack(track)"
-                  class="edit-track-btn"
+                  class="btn-action edit"
                   title="Редактировать"
                 >
                   <i class="fas fa-edit"></i>
                 </button>
                 <button
                   @click="deleteTrack(track.id)"
-                  class="delete-track-btn"
+                  class="btn-action delete"
                   title="Удалить"
                 >
                   <i class="fas fa-trash"></i>
@@ -177,17 +236,23 @@
           </div>
         </div>
 
-        <!-- Загрузка трека (только для автора) -->
+        <!-- Загрузка трека -->
         <div
           v-if="activeTab === 'upload' && user.role === 'author'"
           class="tab-pane"
+          key="upload"
         >
-          <div class="upload-form-container">
+          <div class="upload-form-container glass-card">
             <h2>Загрузка нового бита</h2>
             <form @submit.prevent="submitTrack" class="upload-form">
               <div class="form-group">
                 <label>Название трека *</label>
-                <input type="text" v-model="newTrack.title" required />
+                <input
+                  type="text"
+                  v-model="newTrack.title"
+                  required
+                  placeholder="Введите название"
+                />
               </div>
               <div class="form-group">
                 <label>Жанр *</label>
@@ -201,94 +266,129 @@
                   </option>
                 </select>
               </div>
-              <div class="form-group">
-                <label>Цена (₽) *</label>
-                <input
-                  type="number"
-                  v-model="newTrack.price"
-                  min="0"
-                  step="100"
-                  required
-                />
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Цена (₽) *</label>
+                  <input
+                    type="number"
+                    v-model="newTrack.price"
+                    min="0"
+                    step="100"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label>BPM</label>
+                  <input
+                    type="number"
+                    v-model="newTrack.bpm"
+                    min="0"
+                    step="5"
+                  />
+                </div>
               </div>
-              <div class="form-group">
-                <label>BPM</label>
-                <input type="number" v-model="newTrack.bpm" min="0" step="5" />
-              </div>
-              <div class="form-group">
+              <div class="form-group file-group">
                 <label>Обложка *</label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  @change="handleCoverChange"
-                  required
-                />
+                <div class="file-input">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    @change="handleCoverChange"
+                    id="cover-upload"
+                  />
+                  <label for="cover-upload" class="file-label">
+                    <i class="fas fa-cloud-upload-alt"></i> Выберите файл
+                  </label>
+                  <span v-if="newTrack.cover_file" class="file-name">{{
+                    newTrack.cover_file.name
+                  }}</span>
+                </div>
                 <div v-if="coverPreview" class="cover-preview">
                   <img :src="coverPreview" alt="cover preview" />
                 </div>
               </div>
-              <div class="form-group">
+              <div class="form-group file-group">
                 <label>MP3 файл *</label>
-                <input
-                  type="file"
-                  accept="audio/mpeg"
-                  @change="handleMp3Change"
-                  required
-                />
+                <div class="file-input">
+                  <input
+                    type="file"
+                    accept="audio/mpeg"
+                    @change="handleMp3Change"
+                    id="mp3-upload"
+                  />
+                  <label for="mp3-upload" class="file-label">
+                    <i class="fas fa-cloud-upload-alt"></i> Выберите файл
+                  </label>
+                  <span v-if="newTrack.mp3_file" class="file-name">{{
+                    newTrack.mp3_file.name
+                  }}</span>
+                </div>
               </div>
-              <button type="submit" class="submit-btn" :disabled="uploading">
+              <button
+                type="submit"
+                class="btn-primary submit-btn"
+                :disabled="uploading"
+              >
                 <i v-if="uploading" class="fas fa-spinner fa-spin"></i>
                 <span v-else>Загрузить</span>
               </button>
             </form>
           </div>
         </div>
-      </div>
-    </template>
-
-    <!-- Модальное окно редактирования профиля -->
-    <div
-      v-if="showEditModal"
-      class="modal-overlay"
-      @click.self="closeEditModal"
-    >
-      <div class="modal">
-        <h2>Редактирование профиля</h2>
-        <form @submit.prevent="saveProfile" class="edit-form">
-          <div class="avatar-upload">
-            <div class="avatar-preview">
-              <img :src="previewAvatar || avatarUrl" alt="Avatar preview" />
-            </div>
-            <label class="upload-label">
-              <i class="fas fa-camera"></i>
-              <span>Загрузить фото</span>
-              <input
-                type="file"
-                accept="image/*"
-                @change="handleAvatarChange"
-                hidden
-              />
-            </label>
-          </div>
-          <div class="form-group">
-            <label>Имя</label>
-            <input type="text" v-model="editForm.full_name" required />
-          </div>
-          <div class="form-group">
-            <label>Email</label>
-            <input type="email" v-model="editForm.email" required />
-          </div>
-          <div class="modal-buttons">
-            <button type="button" class="btn-cancel" @click="closeEditModal">
-              Отмена
-            </button>
-            <button type="submit" class="btn-save" :disabled="saving">
-              Сохранить
-            </button>
-          </div>
-        </form>
-      </div>
+      </transition-group>
     </div>
+
+    <!-- Modal for profile edit -->
+    <transition name="modal-fade">
+      <div
+        v-if="showEditModal"
+        class="modal-overlay"
+        @click.self="closeEditModal"
+      >
+        <div class="modal glass-card">
+          <button class="modal-close" @click="closeEditModal">&times;</button>
+          <h2>Редактирование профиля</h2>
+          <form @submit.prevent="saveProfile" class="edit-form">
+            <div class="avatar-upload">
+              <div class="avatar-preview">
+                <img :src="previewAvatar || avatarUrl" alt="Avatar preview" />
+              </div>
+              <label class="upload-label">
+                <i class="fas fa-camera"></i>
+                <span>Загрузить фото</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  @change="handleAvatarChange"
+                  hidden
+                />
+              </label>
+            </div>
+            <div class="form-group">
+              <label>Имя</label>
+              <input type="text" v-model="editForm.full_name" required />
+            </div>
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" v-model="editForm.email" required />
+            </div>
+            <div class="modal-buttons">
+              <button
+                type="button"
+                class="btn-secondary"
+                @click="closeEditModal"
+              >
+                Отмена
+              </button>
+              <button type="submit" class="btn-primary" :disabled="saving">
+                <i v-if="saving" class="fas fa-spinner fa-spin"></i>
+                <span v-else>Сохранить</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -333,7 +433,7 @@ const uploading = ref(false);
 const tabs = computed(() => {
   const baseTabs = [
     { key: "info", label: "Мои данные" },
-    { key: "purchases", label: "Мои покупки" }, // всегда доступна
+    { key: "purchases", label: "Мои покупки" },
     { key: "favorites", label: "Избранное" },
     { key: "subscriptions", label: "Подписки" },
   ];
@@ -346,6 +446,7 @@ const tabs = computed(() => {
   }
   return baseTabs;
 });
+
 const activeTab = ref("info");
 
 // Редактирование профиля
@@ -360,6 +461,19 @@ const avatarUrl = computed(() => {
   const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
   return `${baseUrl}${user.value.avatar}`;
 });
+
+const getTabIcon = (tabKey) => {
+  const icons = {
+    info: '<i class="fas fa-user"></i>',
+    purchases: '<i class="fas fa-shopping-cart"></i>',
+    favorites: '<i class="fas fa-heart"></i>',
+    subscriptions: '<i class="fas fa-users"></i>',
+    studio: '<i class="fas fa-chalkboard-teacher"></i>',
+    "my-tracks": '<i class="fas fa-music"></i>',
+    upload: '<i class="fas fa-cloud-upload-alt"></i>',
+  };
+  return icons[tabKey] || '<i class="fas fa-circle"></i>';
+};
 
 const openEditModal = () => {
   editForm.value = {
@@ -442,7 +556,6 @@ const handleMp3Change = (event) => {
 };
 
 const submitTrack = async () => {
-  // Проверяем обязательные поля
   if (
     !newTrack.value.title ||
     !newTrack.value.genre_id ||
@@ -470,13 +583,11 @@ const submitTrack = async () => {
     formData.append("cover", newTrack.value.cover_file);
     formData.append("mp3", newTrack.value.mp3_file);
 
-    // Не указываем Content-Type – axios сам добавит multipart/form-data с boundary
     await api.post("/tracks", formData, {
-      headers: { "Content-Type": undefined }, // сбросит глобальный заголовок
+      headers: { "Content-Type": undefined },
     });
 
     alert("Трек успешно загружен");
-    // Очистка формы
     newTrack.value = {
       title: "",
       genre_id: null,
@@ -486,7 +597,6 @@ const submitTrack = async () => {
       mp3_file: null,
     };
     coverPreview.value = null;
-    // Сброс полей выбора файлов
     const coverInput = document.querySelector('input[accept="image/*"]');
     const mp3Input = document.querySelector('input[accept="audio/mpeg"]');
     if (coverInput) coverInput.value = "";
@@ -539,7 +649,11 @@ const downloadContract = async (purchaseId) => {
 const formatDate = (dateString) => {
   if (!dateString) return "";
   const date = new Date(dateString);
-  return date.toLocaleDateString("ru-RU");
+  return date.toLocaleDateString("ru-RU", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 };
 
 onMounted(async () => {
@@ -552,229 +666,424 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* Общие стили */
+/* ========== GLOBAL & UTILITIES ========== */
 .profile {
-  max-width: 1000px;
-  margin: 2rem auto;
-  padding: 0 2rem;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem 4rem;
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
 }
 
-.loading,
-.error {
-  text-align: center;
-  padding: 2rem;
-  color: #a0a0b0;
+.glass-card {
+  background: rgba(20, 20, 30, 0.6);
+  backdrop-filter: blur(12px);
+  border-radius: 28px;
+  border: 1px solid rgba(168, 85, 247, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.profile-tabs {
-  display: flex;
-  gap: 0.5rem;
-  margin: 2rem 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding-bottom: 0.5rem;
-  flex-wrap: wrap;
+.glass-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+  border-color: rgba(168, 85, 247, 0.4);
 }
 
-.profile-tabs button {
-  background: none;
+.btn-primary {
+  background: linear-gradient(135deg, #a855f7, #3b82f6);
   border: none;
-  color: #a0a0b0;
-  padding: 0.5rem 1.5rem;
-  font-size: 1rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 40px;
+  font-weight: 600;
+  color: white;
   cursor: pointer;
-  border-radius: 30px;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(168, 85, 247, 0.4);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.7rem 1.4rem;
+  border-radius: 40px;
+  color: #e0e0e0;
+  cursor: pointer;
   transition: all 0.2s;
 }
 
-.profile-tabs button.active {
-  background: linear-gradient(45deg, #a855f7, #3b82f6);
-  color: white;
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.15);
 }
 
-.tab-pane {
-  background: rgba(255, 255, 255, 0.02);
-  border-radius: 20px;
-  padding: 2rem;
-  min-height: 300px;
-}
-
-.studio-pane {
-  padding: 0;
+.btn-outline {
   background: transparent;
-}
-
-/* Информация пользователя */
-.user-info {
-  display: flex;
-  gap: 2rem;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.avatar img {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid #a855f7;
-}
-
-.details p {
-  margin: 0.5rem 0;
-  font-size: 1.1rem;
-}
-
-.edit-btn {
-  margin-top: 1rem;
-  background: rgba(168, 85, 247, 0.2);
   border: 1px solid #a855f7;
   color: #a855f7;
-  padding: 0.5rem 1.5rem;
+  padding: 0.6rem 1.2rem;
   border-radius: 40px;
-  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   transition: all 0.2s;
 }
 
-.edit-btn:hover {
+.btn-outline:hover {
   background: #a855f7;
   color: white;
 }
 
-/* Покупки */
-.purchases-list {
+/* ========== HERO SECTION ========== */
+.hero-section {
+  position: relative;
+  margin-bottom: 2rem;
+  border-radius: 32px;
+  overflow: hidden;
+}
+
+.hero-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+      circle at 20% 30%,
+      rgba(168, 85, 247, 0.2),
+      transparent 70%
+    ),
+    linear-gradient(135deg, #0a0a0f, #1a1a2a);
+  z-index: 0;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding: 3rem 2rem;
+  backdrop-filter: blur(2px);
+}
+
+.avatar-large {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  flex-shrink: 0;
+}
+
+.avatar-large img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #a855f7;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.edit-avatar-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: #a855f7;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.edit-avatar-btn:hover {
+  transform: scale(1.1);
+  background: #8b46d9;
+}
+
+.hero-info h1 {
+  font-size: 2.2rem;
+  margin: 0 0 0.5rem 0;
+  background: linear-gradient(135deg, #fff, #c084fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.role-badge {
+  background: rgba(168, 85, 247, 0.2);
+  display: inline-block;
+  padding: 0.2rem 1rem;
+  border-radius: 40px;
+  font-size: 0.8rem;
+  color: #c084fc;
+  margin-bottom: 1rem;
+}
+
+.stats {
+  display: flex;
+  gap: 2rem;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-value {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: #a0a0b0;
+}
+
+/* ========== TABS ========== */
+.tabs-container {
+  margin-bottom: 2rem;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 0;
+}
+
+.tabs button {
+  background: transparent;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  color: #a0a0b0;
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 40px;
+  white-space: nowrap;
+}
+
+.tabs button .tab-icon {
+  font-size: 1.1rem;
+}
+
+.tabs button.active {
+  background: linear-gradient(
+    135deg,
+    rgba(168, 85, 247, 0.2),
+    rgba(59, 130, 246, 0.2)
+  );
+  color: white;
+  box-shadow: 0 2px 8px rgba(168, 85, 247, 0.2);
+}
+
+.tabs button:hover:not(.active) {
+  color: #d0d0e0;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* ========== TAB CONTENT ========== */
+.content-container {
+  min-height: 500px;
+}
+
+.tab-pane {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+/* Info Pane */
+.info-pane .info-card {
+  padding: 2rem;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.info-item i {
+  font-size: 1.8rem;
+  color: #a855f7;
+  width: 40px;
+}
+
+.info-item label {
+  display: block;
+  font-size: 0.8rem;
+  color: #a0a0b0;
+  margin-bottom: 0.2rem;
+}
+
+.info-item p {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.edit-profile-btn {
+  width: 100%;
+  justify-content: center;
+}
+
+/* Purchases Grid */
+.purchases-grid {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
-.purchase-item {
+.purchase-card {
   display: flex;
-  gap: 1rem;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 16px;
-  padding: 1rem;
   align-items: center;
+  gap: 1.5rem;
+  padding: 1.2rem;
   flex-wrap: wrap;
 }
 
-.purchase-cover {
+.purchase-image {
   width: 80px;
   height: 80px;
-  border-radius: 12px;
+  border-radius: 16px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.purchase-image img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
 }
 
-.purchase-info {
+.purchase-details {
   flex: 1;
+  min-width: 180px;
 }
 
-.purchase-info h3 {
-  margin-bottom: 0.2rem;
+.purchase-details h3 {
+  margin: 0 0 0.2rem;
+  font-size: 1.1rem;
 }
 
-.purchase-date {
+.purchase-details .artist {
+  margin: 0 0 0.2rem;
   color: #a0a0b0;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
+}
+
+.purchase-details .date {
+  margin: 0 0 0.8rem;
+  font-size: 0.7rem;
+  color: #6b6b80;
 }
 
 .purchase-actions {
   display: flex;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
+  gap: 0.8rem;
 }
 
-.download-btn,
-.contract-btn {
-  background: none;
-  border: 1px solid #a855f7;
+.btn-icon {
+  background: rgba(168, 85, 247, 0.1);
+  border: none;
+  padding: 0.4rem 1rem;
+  border-radius: 40px;
   color: #a855f7;
-  padding: 0.3rem 1rem;
-  border-radius: 20px;
+  font-size: 0.8rem;
   cursor: pointer;
   transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.download-btn:hover,
-.contract-btn:hover {
+.btn-icon:hover {
   background: #a855f7;
   color: white;
 }
 
 .purchase-price {
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: #a855f7;
+  font-size: 1.4rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #a855f7, #3b82f6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  flex-shrink: 0;
 }
 
-/* Избранное */
+/* Track Grid */
 .track-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 2rem;
-}
-
-/* Подписки */
-.authors-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 1.5rem;
-}
-
-.author-card {
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 20px;
-  padding: 1rem;
-  text-align: center;
-}
-
-.author-avatar {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-bottom: 0.5rem;
-}
-
-.unfollow-btn {
-  background: rgba(255, 255, 255, 0.1);
-  border: none;
-  padding: 0.3rem 1rem;
-  border-radius: 20px;
-  color: white;
-  cursor: pointer;
-  margin-top: 0.5rem;
-}
-
-/* Мои треки */
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.add-track-btn {
-  background: linear-gradient(45deg, #a855f7, #3b82f6);
-  border: none;
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 30px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
 }
 
 .track-card-wrapper {
   position: relative;
+  transition: transform 0.2s;
+}
+
+.track-card-wrapper:hover {
+  transform: translateY(-6px);
 }
 
 .track-actions {
   position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
+  top: 0.8rem;
+  right: 0.8rem;
   display: flex;
   gap: 0.5rem;
   opacity: 0;
@@ -785,55 +1094,191 @@ onMounted(async () => {
   opacity: 1;
 }
 
-.edit-track-btn,
-.delete-track-btn {
+.btn-action {
   background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
   border: none;
   border-radius: 50%;
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   color: white;
   cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.edit-track-btn:hover {
+.btn-action.edit:hover {
   background: #a855f7;
+  transform: scale(1.05);
 }
 
-.delete-track-btn:hover {
+.btn-action.delete:hover {
   background: #ff4444;
+  transform: scale(1.05);
 }
 
-/* Форма загрузки */
+/* Authors Grid */
+.authors-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1.5rem;
+}
+
+.author-card {
+  padding: 1.5rem;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.author-avatar-wrapper {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 1rem;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #a855f7;
+}
+
+.author-avatar-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.author-card h3 {
+  margin: 0 0 1rem;
+  font-size: 1.1rem;
+}
+
+.btn-unfollow {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.4rem 1rem;
+  border-radius: 40px;
+  color: #ff8888;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-unfollow:hover {
+  background: rgba(255, 68, 68, 0.2);
+  border-color: #ff4444;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 28px;
+}
+
+.empty-icon {
+  font-size: 3rem;
+  color: #a855f7;
+  opacity: 0.5;
+  margin-bottom: 1rem;
+}
+
+.empty-state p {
+  margin-bottom: 1.5rem;
+  color: #a0a0b0;
+}
+
+/* Upload Form */
 .upload-form-container {
-  max-width: 500px;
+  max-width: 600px;
   margin: 0 auto;
+  padding: 2rem;
+}
+
+.upload-form-container h2 {
+  margin-bottom: 1.5rem;
+  font-size: 1.6rem;
+  text-align: center;
+  background: linear-gradient(135deg, #fff, #c084fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .upload-form {
   display: flex;
   flex-direction: column;
+  gap: 1.2rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 1rem;
 }
 
-.upload-form .form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-}
-
-.upload-form label {
+.form-group label {
+  font-size: 0.85rem;
   font-weight: 500;
-  color: #d0d0e0;
+  color: #c0c0d0;
 }
 
-.upload-form input,
-.upload-form select {
+.form-group input,
+.form-group select {
   background: rgba(0, 0, 0, 0.3);
-  border: 1px solid #2a2a3a;
+  border: 1px solid rgba(168, 85, 247, 0.3);
   border-radius: 40px;
-  padding: 0.6rem 1rem;
+  padding: 0.7rem 1rem;
   color: white;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #a855f7;
+  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.2);
+}
+
+.file-group .file-input {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.file-input input {
+  display: none;
+}
+
+.file-label {
+  background: rgba(168, 85, 247, 0.15);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  padding: 0.5rem 1rem;
+  border-radius: 40px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.file-label:hover {
+  background: rgba(168, 85, 247, 0.3);
+}
+
+.file-name {
+  font-size: 0.8rem;
+  color: #a0a0b0;
 }
 
 .cover-preview {
@@ -842,6 +1287,7 @@ onMounted(async () => {
   height: 100px;
   border-radius: 12px;
   overflow: hidden;
+  border: 1px solid #a855f7;
 }
 
 .cover-preview img {
@@ -851,29 +1297,44 @@ onMounted(async () => {
 }
 
 .submit-btn {
-  background: linear-gradient(45deg, #a855f7, #3b82f6);
-  border: none;
-  padding: 0.8rem;
-  border-radius: 40px;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
+  margin-top: 0.5rem;
+  justify-content: center;
 }
 
-.submit-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+/* Section Header */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
-/* Модальное окно */
+.section-header h2 {
+  font-size: 1.5rem;
+  margin: 0;
+  background: linear-gradient(135deg, #fff, #c084fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.loading-spinner {
+  text-align: center;
+  padding: 3rem;
+  color: #a855f7;
+  font-size: 2rem;
+}
+
+/* Modal */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(12px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -881,20 +1342,44 @@ onMounted(async () => {
 }
 
 .modal {
-  background: rgba(20, 20, 30, 0.95);
-  backdrop-filter: blur(20px);
-  border-radius: 24px;
-  border: 1px solid rgba(168, 85, 247, 0.3);
-  padding: 2rem;
-  width: 90%;
+  position: relative;
   max-width: 500px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  width: 90%;
+  padding: 2rem;
+  animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  color: #a0a0b0;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.modal-close:hover {
+  color: white;
 }
 
 .modal h2 {
   margin-bottom: 1.5rem;
-  font-size: 1.8rem;
   text-align: center;
+  font-size: 1.8rem;
   background: linear-gradient(135deg, #fff, #c084fc);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -931,8 +1416,8 @@ onMounted(async () => {
   padding: 0.5rem 1rem;
   border-radius: 40px;
   cursor: pointer;
-  color: #a855f7;
   transition: all 0.2s;
+  font-size: 0.85rem;
 }
 
 .upload-label:hover {
@@ -941,29 +1426,7 @@ onMounted(async () => {
 }
 
 .edit-form .form-group {
-  margin-bottom: 1rem;
-}
-
-.edit-form label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: #d0d0e0;
-}
-
-.edit-form input {
-  width: 100%;
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid #2a2a3a;
-  border-radius: 40px;
-  padding: 0.8rem 1rem;
-  color: white;
-  font-size: 1rem;
-}
-
-.edit-form input:focus {
-  outline: none;
-  border-color: #a855f7;
-  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.2);
+  margin-bottom: 1.2rem;
 }
 
 .modal-buttons {
@@ -973,53 +1436,55 @@ onMounted(async () => {
   margin-top: 1.5rem;
 }
 
-.btn-cancel,
-.btn-save {
-  padding: 0.6rem 1.5rem;
-  border-radius: 40px;
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.2s;
-}
-
-.btn-cancel {
-  background: rgba(255, 255, 255, 0.1);
-  color: #a0a0b0;
-}
-
-.btn-cancel:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.btn-save {
-  background: linear-gradient(45deg, #a855f7, #3b82f6);
-  color: white;
-  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
-}
-
-.btn-save:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(168, 85, 247, 0.5);
-}
-
-.btn-save:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.empty {
-  text-align: center;
-  padding: 2rem;
-  color: #a0a0b0;
-}
-
+/* Responsive */
 @media (max-width: 768px) {
   .profile {
-    padding: 0 1rem;
+    padding: 0 1rem 3rem;
   }
+
+  .hero-content {
+    flex-direction: column;
+    text-align: center;
+    padding: 2rem 1rem;
+  }
+
+  .hero-info h1 {
+    font-size: 1.8rem;
+  }
+
+  .stats {
+    justify-content: center;
+  }
+
+  .tabs {
+    justify-content: flex-start;
+  }
+
+  .tabs button {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .purchase-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .purchase-price {
+    align-self: flex-end;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
   .track-grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 1rem;
   }
 }
