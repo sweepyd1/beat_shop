@@ -72,14 +72,18 @@ class TrackCreate(BaseModel):
     genre_id: int
     price: float = Field(..., ge=0)
     bpm: Optional[int] = Field(None, ge=0)
+    
 class AuthorShortResponse(BaseModel):
     id: int
     full_name: str
+    model_config = ConfigDict(from_attributes=True)
 
-# schemas/genre.py
+
 class GenreShortResponse(BaseModel):
     id: int
     name: str
+    model_config = ConfigDict(from_attributes=True)
+
 class TrackResponse(BaseModel):
     id: int
     title: str
@@ -94,8 +98,7 @@ class TrackResponse(BaseModel):
     genre: GenreShortResponse   # вместо genre_id
     author: AuthorShortResponse # вместо author_id
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class TrackUpdate(BaseModel):

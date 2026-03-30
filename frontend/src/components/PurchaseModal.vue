@@ -99,7 +99,7 @@ const submitPurchase = async () => {
       license_type: form.value.licenseType,
       comment: form.value.comment
     };
-    const response = await api.post('/purchases', payload);
+    const response = await api.post('/purchase/purchases', payload);
     // После успешной покупки можно получить ссылку на договор (PDF)
     emit('purchase-complete', {
       ...response.data,

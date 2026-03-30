@@ -44,7 +44,7 @@
 
         <!-- Мои покупки (только для покупателя) -->
         <div
-          v-if="activeTab === 'purchases' && user.role !== 'author'"
+          v-if="activeTab === 'purchases'"
           class="tab-pane"
         >
           <div v-if="purchases.length === 0" class="empty">
@@ -333,12 +333,11 @@ const uploading = ref(false);
 const tabs = computed(() => {
   const baseTabs = [
     { key: "info", label: "Мои данные" },
+    { key: "purchases", label: "Мои покупки" }, // всегда доступна
     { key: "favorites", label: "Избранное" },
     { key: "subscriptions", label: "Подписки" },
   ];
-  if (user.value?.role !== "author") {
-    baseTabs.splice(1, 0, { key: "purchases", label: "Мои покупки" });
-  } else {
+  if (user.value?.role === "author") {
     baseTabs.push(
       { key: "studio", label: "Студия продюсера" },
       { key: "my-tracks", label: "Мои треки" },
@@ -347,7 +346,6 @@ const tabs = computed(() => {
   }
   return baseTabs;
 });
-
 const activeTab = ref("info");
 
 // Редактирование профиля
@@ -523,7 +521,7 @@ const deleteTrack = async (trackId) => {
 
 const downloadContract = async (purchaseId) => {
   try {
-    const { data } = await api.get(`/purchases/${purchaseId}/contract`, {
+    const { data } = await api.get(`/purchase/${purchaseId}/contract`, {
       responseType: "blob",
     });
     const url = window.URL.createObjectURL(data);

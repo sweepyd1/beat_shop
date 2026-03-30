@@ -18,7 +18,10 @@ class UserRole(enum.Enum):
     user = "user"      # обычный покупатель
     author = "author"  # автор
     admin = "admin"    # администратор
-
+class LicenseType(enum.Enum):
+    standard = "standard"
+    extended = "extended"
+    exclusive = "exclusive"
 class User(Base):
     __tablename__ = 'users'
 
@@ -87,6 +90,7 @@ class Track(Base):
     price: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
     plays: Mapped[int] = mapped_column(Integer, nullable=False, default=0.0)
     bpm: Mapped[int] = mapped_column(Integer, nullable=True, default=0.0)
+    
 
     # Внешние ключи
     genre_id: Mapped[int] = mapped_column(Integer, ForeignKey('genres.id'), nullable=False)
@@ -129,10 +133,13 @@ class Purchase(Base):
     purchase_date: Mapped[DateTime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     amount: Mapped[float] = mapped_column(Float, nullable=False)
     status: Mapped[str] = mapped_column(String(20), default='completed')
+    license_type: Mapped[LicenseType] = mapped_column(Enum(LicenseType), nullable=False, default=LicenseType.standard)
+    comment: Mapped[str | None] = mapped_column(Text) 
 
     user = relationship("User", back_populates="purchases")
     track = relationship("Track", back_populates="purchases")
     contract = relationship("Contract", uselist=False, back_populates="purchase", cascade="all, delete-orphan")
+
 
     __table_args__ = (
         UniqueConstraint('user_id', 'track_id', name='unique_user_track_purchase'),

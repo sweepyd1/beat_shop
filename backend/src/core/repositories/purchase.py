@@ -12,7 +12,10 @@ class PurchaseRepository(BaseRepository[Purchase]):
         result = await self.session.execute(
             select(Purchase)
             .where(Purchase.user_id == user_id)
-            .options(selectinload(Purchase.track).selectinload(Track.author))
+            .options(
+                selectinload(Purchase.track).selectinload(Track.author),
+                selectinload(Purchase.track).selectinload(Track.genre)   # Add this line
+            )
             .order_by(Purchase.purchase_date.desc())
         )
         return result.scalars().all()

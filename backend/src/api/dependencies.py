@@ -2,6 +2,9 @@ from typing import AsyncIterator
 from fastapi import Depends, HTTPException, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.security import OAuth2PasswordBearer
+from core.repositories.purchase import PurchaseRepository
+from core.services.contract_service import ContractService
+from core.services.purchase import PurchaseService
 from core.repositories.author import AuthorRepository
 from core.services.author import AuthorService
 from core.repositories.genre import GenreRepository
@@ -36,6 +39,9 @@ def get_favorite_repository(session: AsyncSession = Depends(get_db_session)) -> 
 
 def get_author_repository(session: AsyncSession = Depends(get_db_session)) -> AuthorRepository:
     return AuthorRepository(session)
+def get_purchase_repository(session: AsyncSession = Depends(get_db_session)) -> PurchaseRepository:
+    return PurchaseRepository(session)
+
 
 # ---------- Сервисы ----------
 def get_auth_service(repo: UserRepository = Depends(get_user_repository),  author_repo: AuthorRepository = Depends(get_author_repository),) -> AuthService:
@@ -57,7 +63,14 @@ def get_favorite_service(
     track_repo: TrackRepository = Depends(get_track_repository)
 ) -> FavoriteService:
     return FavoriteService(repo, track_repo)
+def get_contract_service(session: AsyncSession = Depends(get_db_session), file_service: FileService = Depends(get_file_service)) -> ContractService:
+    return ContractService(session, file_service)
 
+def get_purchase_service(
+    session: AsyncSession = Depends(get_db_session),
+    contract_service: ContractService = Depends(get_contract_service)
+) -> PurchaseService:
+    return PurchaseService(session, contract_service)
 
 def get_genre_service(repo: GenreRepository = Depends(get_genre_repository)) -> GenreService:
     return GenreService(repo)

@@ -2,6 +2,7 @@ import os
 from typing import List, Optional
 from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, Request, UploadFile
 from fastapi.responses import FileResponse
+from core.repositories.track import TrackRepository
 from core.services.auth import AuthService
 from database.models import User
 from schemas.track import TrackResponse, TrackCreate, TrackUpdate
@@ -78,15 +79,7 @@ async def new_tracks(
     tracks = await service.get_new_tracks(limit)
     return tracks
 
-@router.get("/{track_id}", response_model=TrackResponse)
-async def get_track(
-    track_id: int,
-    service: TrackService = Depends(get_track_service)
-):
-    track = await service.get_track(track_id)
-    if not track:
-        raise HTTPException(status_code=404, detail="Track not found")
-    return track
+
 
 @router.post("/")
 async def create_track(
@@ -117,6 +110,49 @@ async def create_track(
     )
     
 
+
+@router.get("/{track_id}/download")
+async def download_track(
+    request: Request,
+    track_id: int,
+    auth_service: AuthService = Depends(get_auth_service),
+    track_service: TrackService = Depends(get_track_service)
+):
+    access_token = request.cookies.get("access_token")
+    if not access_token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    user = await auth_service.get_user_from_token(access_token)
+    
+    track = await track_service.get_track(track_id=track_id)
+    if not track:
+        raise HTTPException(status_code=404, detail="Трек не найден")
+    
+    if not track.mp3_file_url:
+        raise HTTPException(status_code=404, detail="Файл трека не найден")
+
+    file_path = track.mp3_file_url.lstrip("/")  # убираем ведущий слеш
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail="Файл трека отсутствует на сервере")
+
+    filename = f"{track.id}_{track.title.replace(' ', '_')}.mp3"
+    return FileResponse(file_path, media_type="audio/mpeg", filename=filename)
+
+@router.get("/{track_id}/stream")
+async def stream_track(
+    track_id: int,
+    service: TrackService = Depends(get_track_service)
+):
+    track = await service.get_track(track_id)
+    if not track:
+        raise HTTPException(status_code=404, detail="Track not found")
+    
+    
+    file_path = track.mp3_file_url  
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail="Audio file not found")
+    
+    return FileResponse(file_path, media_type="audio/mpeg", filename=f"{track.title}.mp3")
+
 @router.put("/{track_id}", response_model=TrackResponse)
 async def update_track(
     track_id: int,
@@ -136,20 +172,13 @@ async def delete_track(
     deleted = await service.delete_track(track_id)
     if not deleted:
         raise HTTPException(status_code=404, detail="Track not found")
-    
-@router.get("/{track_id}/stream")
-async def stream_track(
+
+@router.get("/{track_id}", response_model=TrackResponse)
+async def get_track(
     track_id: int,
     service: TrackService = Depends(get_track_service)
 ):
     track = await service.get_track(track_id)
     if not track:
         raise HTTPException(status_code=404, detail="Track not found")
-    
-    
-    file_path = track.mp3_file_url  
-    if not os.path.exists(file_path):
-        raise HTTPException(status_code=404, detail="Audio file not found")
-    
-    return FileResponse(file_path, media_type="audio/mpeg", filename=f"{track.title}.mp3")
-
+    return track
