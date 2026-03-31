@@ -2,6 +2,8 @@ from typing import AsyncIterator
 from fastapi import Depends, HTTPException, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.security import OAuth2PasswordBearer
+from core.repositories.listen import ListenRepository
+from core.services.listen import ListenService
 from core.repositories.purchase import PurchaseRepository
 from core.services.contract_service import ContractService
 from core.services.purchase import PurchaseService
@@ -82,6 +84,14 @@ async def get_track_service(
 ) -> TrackService:
     track_repo = TrackRepository(session)
     return TrackService(track_repo, author_service, genre_service, file_service)
+async def get_listen_service(
+    session:AsyncSession = Depends(get_db_session)
+) -> ListenService:
+    """Зависимость для получения ListenService"""
+    return ListenService(
+        repo=ListenRepository(session),
+        track_repo=TrackRepository(session)
+    )
 # ---------- Текущий пользователь (из JWT) ----------
 async def get_current_user(
     request: Request,

@@ -12,6 +12,7 @@ import Contacts from '../views/Contacts.vue'
 import Login from '@/views/Login.vue'
 import Register from '@/views/Register.vue'
 import TrackDetail from '../views/TrackDetail.vue'; // новый импорт
+import AdminStats from '@/views/AdminStats.vue';
 const routes = [
   { path: '/', component: Home },
   { path: '/search', component: Search },
@@ -31,6 +32,12 @@ const routes = [
   meta: { requiresAuth: true, role: 'admin' }
 },
  { path: '/track/:id', component: TrackDetail, name: 'track' },
+ {
+  path: '/admin/stats',
+  name: 'AdminStats',
+  component: AdminStats,
+  meta: { requiresAuth: true, requiresAdmin: true }
+}
 ]
 
 const router = createRouter({

@@ -66,7 +66,27 @@ const authStore = useAuthStore();
 const { isAuthenticated, user } = storeToRefs(authStore);
 
 const router = useRouter();
+const listenLoggedForTrack = ref(null);
 
+/**
+ * Отправляет событие прослушивания на бэкенд.
+ * Вызывается один раз при начале воспроизведения трека.
+ */
+const logListen = async () => {
+  // Не логируем, если: нет трека, пользователь не авторизован, или уже логировали этот трек
+  if (!track.value?.id || !isLoggedIn.value || listenLoggedForTrack.value === track.value.id) {
+    return;
+  }
+
+  try {
+    await api.post(`/listen/${track.value.id}`);
+    listenLoggedForTrack.value = track.value.id; // запоминаем, что залогировали
+    // console.log(`✓ Listen logged for track ${track.value.id}`);
+  } catch (error) {
+    // Не блокируем плеер при ошибке логирования
+    console.warn('Failed to log listen:', error?.response?.data || error.message);
+  }
+};
 
 // Получаем глобальное состояние
 const player = inject("player");
@@ -154,12 +174,23 @@ const updateTime = () => {
 };
 
 // Следим за сменой трека
+// Следим за сменой трека
 watch(track, (newTrack, oldTrack) => {
   console.log("Player: track changed", newTrack);
+  
+  // Сбрасываем флаг логирования при смене трека
+  if (newTrack?.id !== oldTrack?.id) {
+    listenLoggedForTrack.value = null;
+  }
+  
   if (newTrack) {
     initAudio();
-    if (isPlaying?.value)
-      audio?.play().catch((e) => console.error("Play error:", e));
+    if (isPlaying?.value) {
+      audio?.play().catch((e) => {
+        console.error("Play error:", e);
+        if (isPlaying) isPlaying.value = false;
+      });
+    }
   } else {
     if (audio) {
       audio.pause();
@@ -169,10 +200,18 @@ watch(track, (newTrack, oldTrack) => {
 });
 
 // Следим за состоянием воспроизведения
-watch(isPlaying, (playing) => {
+watch(isPlaying, async (playing) => {
   if (!audio) return;
   if (playing) {
-    audio.play().catch((e) => console.error("Play error:", e));
+    try {
+      await audio.play();
+      // ✅ Успешно начали играть — логируем прослушивание
+      logListen();
+    } catch (e) {
+      console.error("Play error:", e);
+      // Если play() упал (например, автоплей заблокирован), не логируем
+      if (isPlaying) isPlaying.value = false;
+    }
   } else {
     audio.pause();
   }
