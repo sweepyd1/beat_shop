@@ -13,6 +13,7 @@ class FileService:
         self.storage_path = storage_path
         self.covers_path = storage_path / "covers"
         self.tracks_path = storage_path / "tracks"
+        self.avatars_path = storage_path / "avatars"
         
         # Создаём папки при инициализации
         self.covers_path.mkdir(parents=True, exist_ok=True)
@@ -25,6 +26,9 @@ class FileService:
     async def save_track(self, file: UploadFile) -> str:
         """Сохраняет трек и возвращает относительный путь"""
         return await self._save_file(file, self.tracks_path, ALLOWED_AUDIO_EXTENSIONS)
+    async def save_avatar(self, file: UploadFile) -> str:
+        """Сохраняет аватар пользователя и возвращает относительный путь"""
+        return await self._save_file(file, self.avatars_path, ALLOWED_IMAGE_EXTENSIONS)
 
     async def _save_file(self, file: UploadFile, target_dir: Path, allowed_extensions: set) -> str:
         # Проверяем расширение

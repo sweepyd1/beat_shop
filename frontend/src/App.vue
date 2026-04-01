@@ -14,6 +14,10 @@
 import { ref, provide } from "vue";
 import Player from "./components/Player.vue";
 import Header from "./components/Header.vue";
+import { usePlayer } from '@/composables/usePlayer';
+
+// Инициализация плеера (один раз для всего приложения)
+usePlayer();
 
 // Глобальное состояние плеера
 const currentTrack = ref(null);

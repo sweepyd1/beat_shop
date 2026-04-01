@@ -1,11 +1,7 @@
 <template>
   <div v-if="track" class="player">
     <div class="track-info">
-      <img
-        :src="track.cover_url || '/default-cover.jpg'"
-        :alt="track.title"
-        class="cover"
-      />
+       <img :src="coverUrl" :alt="track.title" class="cover" />
       <div class="details">
         <div class="title">{{ track.title }}</div>
         <div class="artist">
@@ -172,7 +168,13 @@ const initAudio = () => {
 const updateTime = () => {
   if (audio) currentTime.value = audio.currentTime;
 };
-
+const coverUrl = computed(() => {
+  const url = track.value?.cover_url;
+  if (!url) return '/default-cover.jpg';
+  if (url.startsWith('http')) return url;
+  const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+  return `${baseUrl}${url}`;
+});
 // Следим за сменой трека
 // Следим за сменой трека
 watch(track, (newTrack, oldTrack) => {
@@ -185,6 +187,7 @@ watch(track, (newTrack, oldTrack) => {
   
   if (newTrack) {
     initAudio();
+    checkFavorite(); // ✅ Добавлено: проверяем избранное при смене трека
     if (isPlaying?.value) {
       audio?.play().catch((e) => {
         console.error("Play error:", e);

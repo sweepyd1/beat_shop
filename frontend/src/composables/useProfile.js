@@ -1,5 +1,6 @@
 import { ref } from 'vue';
 import apiClient from '../api';
+import api from '@/api';
 
 export function useProfile() {
   const user = ref(null);

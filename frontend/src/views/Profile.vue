@@ -99,10 +99,7 @@
               class="purchase-card glass-card"
             >
               <div class="purchase-image">
-                <img
-                  :src="purchase.track.cover_url"
-                  :alt="purchase.track.title"
-                />
+               <img :src="getImageUrl(purchase.track.cover_url)" :alt="purchase.track.title" />
               </div>
               <div class="purchase-details">
                 <h3>{{ purchase.track.title }}</h3>
@@ -456,10 +453,10 @@ const previewAvatar = ref(null);
 const saving = ref(false);
 
 const avatarUrl = computed(() => {
-  if (!user.value?.avatar) return "/default-avatar.png";
-  if (user.value.avatar.startsWith("http")) return user.value.avatar;
+  if (!user.value?.avatar_url) return "/default-avatar.png";
+  if (user.value.avatar_url.startsWith("http")) return user.value.avatar_url;
   const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
-  return `${baseUrl}${user.value.avatar}`;
+  return `${baseUrl}${user.value.avatar_url}`;
 });
 
 const getTabIcon = (tabKey) => {
@@ -645,7 +642,12 @@ const downloadContract = async (purchaseId) => {
     alert("Не удалось скачать договор");
   }
 };
-
+const getImageUrl = (url) => {
+  if (!url) return '/default-cover.jpg';
+  if (url.startsWith('http')) return url;
+  const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+  return `${baseUrl}${url}`;
+};
 const formatDate = (dateString) => {
   if (!dateString) return "";
   const date = new Date(dateString);
@@ -662,6 +664,7 @@ onMounted(async () => {
     await fetchAuthorTracks();
     await fetchGenres();
   }
+  console.log(purchases.value)
 });
 </script>
 
