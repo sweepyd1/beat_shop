@@ -19,49 +19,7 @@ import { usePlayer } from '@/composables/usePlayer';
 // Инициализация плеера (один раз для всего приложения)
 usePlayer();
 
-// Глобальное состояние плеера
-const currentTrack = ref(null);
-const isPlaying = ref(false);
-const playlist = ref([]);
-const currentIndex = ref(0);
 
-// Функция для воспроизведения трека
-const playTrack = (track) => {
-  console.log("playTrack called", track);
-  currentTrack.value = track;
-  isPlaying.value = true;
-};
-
-// Функция для добавления в плейлист
-const addToPlaylist = (track) => {
-  playlist.value.push(track);
-};
-
-// Функции для управления плеером
-const nextTrack = () => {
-  if (playlist.value.length > 0 && currentIndex.value < playlist.value.length - 1) {
-    currentIndex.value++;
-    currentTrack.value = playlist.value[currentIndex.value];
-  }
-};
-
-const prevTrack = () => {
-  if (playlist.value.length > 0 && currentIndex.value > 0) {
-    currentIndex.value--;
-    currentTrack.value = playlist.value[currentIndex.value];
-  }
-};
-
-provide("player", {
-  currentTrack,
-  isPlaying,
-  playlist,
-  currentIndex,
-  playTrack,
-  addToPlaylist,
-  nextTrack,
-  prevTrack,
-});
 </script>
 <style>
 /* Глобальные стили */

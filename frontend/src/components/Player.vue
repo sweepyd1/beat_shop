@@ -262,10 +262,14 @@ const updateVolume = () => {
 
 const next = () => {
   console.log('Next button clicked');
-  if (nextTrack) nextTrack();
-  else console.error('nextTrack is not defined');
+  console.log('player object:', player);
+  console.log('nextTrack function:', nextTrack);
+  if (nextTrack) {
+    nextTrack();
+  } else {
+    console.error('nextTrack is not defined');
+  }
 };
-
 const prev = () => {
   console.log('Prev button clicked');
   if (prevTrack) prevTrack();
