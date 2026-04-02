@@ -49,5 +49,5 @@ class FavoriteRepository(BaseRepository[Favorite]):
             Favorite.track_id == track_id
         ).returning(Favorite.id)
         result = await self.session.execute(stmt)
-        await self.db.commit()
+        await self.session.commit()
         return result.scalar_one_or_none() is not None

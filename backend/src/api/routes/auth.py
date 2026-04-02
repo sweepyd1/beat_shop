@@ -88,19 +88,34 @@ async def refresh_token(
 @router.get("/me", response_model=UserResponse)
 async def get_me(
     request: Request,
+    response: Response,
     auth_service: AuthService = Depends(get_auth_service)
 ):
-    """Получение информации о текущем пользователе по access_token из куки"""
     access_token = request.cookies.get("access_token")
-    if not access_token:
-        raise HTTPException(status_code=401, detail="Not authenticated")
-    
-    user = await auth_service.get_user_from_token(access_token)
+    refresh_token = request.cookies.get("refresh_token")
 
-    if not user:
-        raise HTTPException(status_code=401, detail="Invalid token")
-    return user
+    # 1. Пробуем access_token
+    user = await auth_service.get_user_from_token(access_token) if access_token else None
+    if user:
+        return user
 
+    # 2. Access не подошёл (истёк/невалиден) – пробуем обновить по refresh
+    if not refresh_token:
+        raise HTTPException(status_code=401, detail="No valid tokens")
+
+    try:
+        new_tokens = await auth_service.refresh_token(refresh_token)
+        # Обновляем куки
+        set_auth_cookies(response, new_tokens["access_token"], new_tokens["refresh_token"])
+        # Теперь получаем пользователя из нового access_token
+        user = await auth_service.get_user_from_token(new_tokens["access_token"])
+        if not user:
+            raise HTTPException(401, "User not found")
+        return user
+    except Exception:
+        # Рефреш невалиден или истёк
+        clear_auth_cookies(response)
+        raise HTTPException(status_code=401, detail="Session expired, please login again")
 
 @router.post("/logout")
 async def logout(response: Response):

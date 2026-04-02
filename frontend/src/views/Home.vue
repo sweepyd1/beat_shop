@@ -1,4 +1,3 @@
-<!-- Файл: Home.vue (обновлённый) -->
 <template>
   <div class="home">
     <!-- Hero-секция с анимированным градиентом -->
@@ -47,7 +46,7 @@
               :src="collection.cover"
               :alt="collection.genre"
               class="collection-cover"
-              @error="handleImageError"
+              @error="handleGenreImageError(collection)"
             />
             <div class="vinyl-label">{{ collection.genre.substring(0, 2) }}</div>
           </div>
@@ -87,25 +86,83 @@ const popularTracks = ref([]);
 const newReleases = ref([]);
 const genreCollections = ref([]);
 
+// Маппинг жанров на красивые обложки (из открытых источников)
+const genreCoverMap = {
+  'hip-hop': 'https://images.unsplash.com/photo-1614680376408-81e91ffe3db7?w=300&h=300&fit=crop',
+  'trap': 'https://images.unsplash.com/photo-1598387993281-cecf8b71a8f8?w=300&h=300&fit=crop',
+  'electronic': 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300&h=300&fit=crop',
+  'house': 'https://images.unsplash.com/photo-1571330735066-03aaa9429d89?w=300&h=300&fit=crop',
+  'techno': 'https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?w=300&h=300&fit=crop',
+  'rock': 'https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?w=300&h=300&fit=crop',
+  'jazz': 'https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=300&h=300&fit=crop',
+  'rnb': 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=300&h=300&fit=crop',
+  'pop': 'https://images.unsplash.com/photo-1614149162883-504ce4d13909?w=300&h=300&fit=crop',
+  'lo-fi': 'https://images.unsplash.com/photo-1487180144351-b8472da7d491?w=300&h=300&fit=crop',
+  'classical': 'https://images.unsplash.com/photo-1507838153414-b4b713384a76?w=300&h=300&fit=crop',
+  'reggae': 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=300&h=300&fit=crop',
+  'metal': 'https://images.unsplash.com/photo-1510915361819-9bd2b4d2a2fb?w=300&h=300&fit=crop',
+  'country': 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=300&h=300&fit=crop',
+  'blues': 'https://images.unsplash.com/photo-1509123777025-4be1efd6cce1?w=300&h=300&fit=crop'
+};
+
+// Дефолтная обложка, если жанр не найден в маппинге
+const DEFAULT_GENRE_COVER = 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=300&h=300&fit=crop';
+
+// Функция получения обложки по названию жанра (регистронезависимая)
+const getGenreCover = (genreName) => {
+  if (!genreName) return DEFAULT_GENRE_COVER;
+  const key = genreName.toLowerCase();
+  return genreCoverMap[key] || DEFAULT_GENRE_COVER;
+};
+
+// Обработчик ошибки загрузки изображения жанра (ставим дефолт)
+const handleGenreImageError = (collection) => {
+  collection.cover = DEFAULT_GENRE_COVER;
+};
+
+// Обработчик ошибок для треков (можно оставить пустым или добавить логику)
+const handleImageError = (event) => {
+  event.target.src = 'https://via.placeholder.com/300x300?text=No+Image';
+};
+
 const fetchPopular = async () => {
-  const { data } = await api.get('/tracks/popular?limit=4');
-  popularTracks.value = data;
+  try {
+    const { data } = await api.get('/tracks/popular?limit=4');
+    popularTracks.value = data;
+  } catch (error) {
+    console.error('Ошибка загрузки популярных треков:', error);
+  }
 };
 
 const fetchNew = async () => {
-  const { data } = await api.get('/tracks/new?limit=4');
-  newReleases.value = data;
+  try {
+    const { data } = await api.get('/tracks/new?limit=4');
+    newReleases.value = data;
+  } catch (error) {
+    console.error('Ошибка загрузки новых треков:', error);
+  }
 };
 
 const fetchGenres = async () => {
-  const { data } = await api.get('/genres');
-  // Преобразуем в формат коллекций (можно взять первые 4 жанра с картинками)
-  genreCollections.value = data.slice(0, 4).map(g => ({
-    id: g.id,
-    genre: g.name,
-    cover: `https://picsum.photos/300/300?random=${g.id}`, // временно, позже можно добавить поле обложки жанра
-    tracks: g.tracks_count
-  }));
+  try {
+    const { data } = await api.get('/genres');
+    // Преобразуем в формат коллекций, добавляя обложку через маппинг
+    genreCollections.value = data.slice(0, 4).map(g => ({
+      id: g.id,
+      genre: g.name,
+      cover: getGenreCover(g.name),
+      tracks: g.tracks_count || Math.floor(Math.random() * 200) + 20 // временно, пока нет реального счётчика
+    }));
+  } catch (error) {
+    console.error('Ошибка загрузки жанров:', error);
+    // Fallback: показываем хотя бы дефолтные жанры для демо
+    genreCollections.value = [
+      { id: 1, genre: 'Hip-Hop', cover: getGenreCover('hip-hop'), tracks: 156 },
+      { id: 2, genre: 'Electronic', cover: getGenreCover('electronic'), tracks: 98 },
+      { id: 3, genre: 'Lo-Fi', cover: getGenreCover('lo-fi'), tracks: 67 },
+      { id: 4, genre: 'Trap', cover: getGenreCover('trap'), tracks: 203 }
+    ];
+  }
 };
 
 onMounted(() => {
@@ -113,8 +170,6 @@ onMounted(() => {
   fetchNew();
   fetchGenres();
 });
-
-
 </script>
 
 <style scoped>

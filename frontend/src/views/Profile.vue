@@ -664,6 +664,7 @@ onMounted(async () => {
     await fetchAuthorTracks();
     await fetchGenres();
   }
+  window.addEventListener('favorites-updated', fetchAll);
   console.log(purchases.value)
 });
 </script>

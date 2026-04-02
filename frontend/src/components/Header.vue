@@ -12,10 +12,16 @@
         <router-link to="/trends" active-class="active">Тренды</router-link>
         <router-link to="/about" active-class="active">О нас</router-link>
         <router-link to="/contacts" active-class="active">Контакты</router-link>
-         <router-link to="/profile" active-class="active">Профиль</router-link>
+        <router-link to="/profile" active-class="active">Профиль</router-link>
+        
+        <!-- Административные ссылки (только для роли admin) -->
+        <template v-if="isAdmin">
+          <router-link to="/admin/tracks" active-class="active">Управление треками</router-link>
+          <router-link to="/admin/stats" active-class="active">Статистика</router-link>
+        </template>
       </nav>
 
-     <div class="user-actions">
+      <div class="user-actions">
         <!-- Если пользователь авторизован -->
         <template v-if="user">
           <router-link to="/cart" class="cart-icon">
@@ -44,7 +50,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { storeToRefs } from 'pinia';
 
@@ -54,6 +60,17 @@ const cartCount = ref(2); // пример, позже из стора
 
 const authStore = useAuthStore();
 const { user } = storeToRefs(authStore);
+
+// Вычисляемое свойство для проверки прав администратора
+const isAdmin = computed(() => {
+  return user.value && user.value.role === 'admin';
+});
+
+// Инициал пользователя для аватарки
+const userInitial = computed(() => {
+  if (!user.value) return '?';
+  return user.value.name ? user.value.name.charAt(0).toUpperCase() : 'U';
+});
 
 const checkMobile = () => {
   isMobile.value = window.innerWidth <= 768;
@@ -68,8 +85,6 @@ onUnmounted(() => {
   window.removeEventListener('resize', checkMobile);
 });
 </script>
-
-
 
 <style scoped>
 .app-header {
@@ -187,15 +202,34 @@ onUnmounted(() => {
   box-shadow: 0 6px 18px rgba(168, 85, 247, 0.5);
 }
 
-.cart-icon, .profile-icon {
+.cart-icon {
   color: #a0a0b0;
   font-size: 1.3rem;
   position: relative;
   transition: color 0.2s;
+  text-decoration: none;
 }
 
-.cart-icon:hover, .profile-icon:hover {
+.cart-icon:hover {
   color: #a855f7;
+}
+
+.avatar-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #a855f7, #3b82f6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: transform 0.2s;
+}
+
+.avatar-circle:hover {
+  transform: scale(1.05);
 }
 
 .badge {
@@ -239,6 +273,7 @@ onUnmounted(() => {
     transform: translateY(-150%);
     transition: transform 0.3s;
     border-bottom: 1px solid rgba(168, 85, 247, 0.2);
+    z-index: 999;
   }
 
   .nav-menu.active {
@@ -255,8 +290,14 @@ onUnmounted(() => {
     font-size: 0.85rem;
   }
 
-  .cart-icon, .profile-icon {
+  .cart-icon {
     font-size: 1.2rem;
+  }
+  
+  .avatar-circle {
+    width: 32px;
+    height: 32px;
+    font-size: 0.9rem;
   }
 }
 </style>

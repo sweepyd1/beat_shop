@@ -116,6 +116,7 @@ const toggleFavorite = async () => {
     router.push('/login');
     return;
   }
+  window.dispatchEvent(new CustomEvent('favorites-updated'));
   try {
     if (isFavorite.value) {
       await api.delete(`/favorites/${track.value.id}`);
@@ -260,11 +261,15 @@ const updateVolume = () => {
 };
 
 const next = () => {
+  console.log('Next button clicked');
   if (nextTrack) nextTrack();
+  else console.error('nextTrack is not defined');
 };
 
 const prev = () => {
+  console.log('Prev button clicked');
   if (prevTrack) prevTrack();
+  else console.error('prevTrack is not defined');
 };
 </script>
 
