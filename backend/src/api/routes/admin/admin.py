@@ -7,7 +7,12 @@ import shutil
 from pathlib import Path
 from datetime import datetime
 import uuid
-
+from schemas.admin_stats import (
+    MetricsResponse, DailySalesResponse, DailyUsersResponse,
+    TopTrackResponse, GenreSalesResponse
+)
+from core.services.admin_stats import AdminStatsService
+from api.dependencies import get_admin_stats_service
 from api.dependencies import get_db_session, get_current_admin
 from core.repositories.track import TrackRepository
 from database.models import User, Track
@@ -20,6 +25,44 @@ COVER_DIR = Path("storage/covers")
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 COVER_DIR.mkdir(parents=True, exist_ok=True)
 
+
+@router.get("/stats/metrics", response_model=MetricsResponse)
+async def get_stats_metrics(
+    stats_service: AdminStatsService = Depends(get_admin_stats_service),
+    current_user: User = Depends(get_current_admin)
+):
+    return await stats_service.get_metrics()
+
+@router.get("/stats/sales-daily", response_model=list[DailySalesResponse])
+async def get_daily_sales(
+    days: int = 7,
+    stats_service: AdminStatsService = Depends(get_admin_stats_service),
+    current_user: User = Depends(get_current_admin)
+):
+    return await stats_service.get_daily_sales(days)
+
+@router.get("/stats/users-daily", response_model=list[DailyUsersResponse])
+async def get_daily_users(
+    days: int = 7,
+    stats_service: AdminStatsService = Depends(get_admin_stats_service),
+    current_user: User = Depends(get_current_admin)
+):
+    return await stats_service.get_daily_users(days)
+
+@router.get("/stats/top-tracks", response_model=list[TopTrackResponse])
+async def get_top_tracks(
+    limit: int = 10,
+    stats_service: AdminStatsService = Depends(get_admin_stats_service),
+    current_user: User = Depends(get_current_admin)
+):
+    return await stats_service.get_top_tracks(limit)
+
+@router.get("/stats/genres", response_model=list[GenreSalesResponse])
+async def get_genre_sales(
+    stats_service: AdminStatsService = Depends(get_admin_stats_service),
+    current_user: User = Depends(get_current_admin)
+):
+    return await stats_service.get_genre_sales()
 @router.post("/tracks", response_model=TrackResponse)
 async def create_track(
     title: str = Form(...),

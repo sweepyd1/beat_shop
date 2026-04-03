@@ -51,13 +51,11 @@
           </div>
         </div>
       </div>
-      <div class="mini-chart">
-        <div v-for="(value, idx) in salesChart" :key="idx" class="bar" :style="{ height: value + 'px' }"></div>
-      </div>
+     
     </div>
 
     <div class="beats-section">
-      <h2><i class="fas fa-headphones"></i> Мои биты</h2>
+      
       <div class="beats-grid">
         <div v-for="beat in tracks" :key="beat.id" class="beat-card">
           <img :src="beat.cover_url" :alt="beat.title" class="beat-cover" @error="handleImageError" />

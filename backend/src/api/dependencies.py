@@ -2,6 +2,9 @@ from typing import AsyncIterator
 from fastapi import Depends, HTTPException, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.security import OAuth2PasswordBearer
+from core.services.admin_stats import AdminStatsService
+from core.repositories.subscription import SubscriptionRepository
+from core.services.stats import StatsService
 from core.repositories.listen import ListenRepository
 from core.services.listen import ListenService
 from core.repositories.purchase import PurchaseRepository
@@ -92,6 +95,21 @@ async def get_listen_service(
         repo=ListenRepository(session),
         track_repo=TrackRepository(session)
     )
+def get_subscription_repository(session: AsyncSession = Depends(get_db_session)) -> SubscriptionRepository:
+    return SubscriptionRepository(session)
+
+# Сервис статистики
+def get_stats_service(
+    purchase_repo: PurchaseRepository = Depends(get_purchase_repository),
+    subscription_repo: SubscriptionRepository = Depends(get_subscription_repository)
+) -> StatsService:
+    return StatsService(purchase_repo, subscription_repo)
+def get_admin_stats_service(
+    user_repo: UserRepository = Depends(get_user_repository),
+    purchase_repo: PurchaseRepository = Depends(get_purchase_repository),
+    track_repo: TrackRepository = Depends(get_track_repository)
+) -> AdminStatsService:
+    return AdminStatsService(user_repo, purchase_repo, track_repo)
 # ---------- Текущий пользователь (из JWT) ----------
 async def get_current_user(
     request: Request,
@@ -151,7 +169,7 @@ async def get_current_admin(
     current_user: User = Depends(get_current_user)
 ) -> User:
     """Проверка, что текущий пользователь - администратор"""
-    if not current_user.is_admin:
+    if current_user.role.value != "admin":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Доступ запрещён. Требуются права администратора."

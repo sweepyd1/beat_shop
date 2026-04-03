@@ -12,42 +12,43 @@
     </div>
 
     <!-- Карточки с ключевыми метриками -->
-    <div class="stats-grid">
+    <div class="stats-grid" v-if="!loading.metrics">
       <div class="stat-card">
         <div class="stat-icon"><i class="fas fa-users"></i></div>
         <div class="stat-info">
-          <div class="stat-value">{{ metrics.totalUsers }}</div>
+          <div class="stat-value">{{ formatNumber(metrics.total_users) }}</div>
           <div class="stat-label">Всего пользователей</div>
           <div class="stat-change positive">
-            +{{ metrics.newUsersLastWeek }} за неделю
+            +{{ metrics.new_users_last_week }} за неделю
           </div>
         </div>
       </div>
       <div class="stat-card">
         <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
         <div class="stat-info">
-          <div class="stat-value">{{ metrics.totalRevenue }} ₽</div>
+          <div class="stat-value">{{ formatNumber(metrics.total_revenue) }} ₽</div>
           <div class="stat-label">Общая выручка</div>
-          <div class="stat-change positive">+{{ metrics.revenueGrowth }}%</div>
+          <div class="stat-change positive">+{{ metrics.revenue_growth }}%</div>
         </div>
       </div>
       <div class="stat-card">
         <div class="stat-icon"><i class="fas fa-shopping-cart"></i></div>
         <div class="stat-info">
-          <div class="stat-value">{{ metrics.totalPurchases }}</div>
+          <div class="stat-value">{{ formatNumber(metrics.total_purchases) }}</div>
           <div class="stat-label">Всего покупок</div>
-          <div class="stat-change">{{ metrics.avgCheck }} ₽ средний чек</div>
+          <div class="stat-change">{{ formatNumber(metrics.avg_check) }} ₽ средний чек</div>
         </div>
       </div>
       <div class="stat-card">
         <div class="stat-icon"><i class="fas fa-headphones"></i></div>
         <div class="stat-info">
-          <div class="stat-value">{{ metrics.totalListens }}</div>
+          <div class="stat-value">{{ formatNumber(metrics.total_listens) }}</div>
           <div class="stat-label">Прослушиваний</div>
           <div class="stat-change">за всё время</div>
         </div>
       </div>
     </div>
+    <div v-else class="loading-placeholder">Загрузка метрик...</div>
 
     <!-- Графики -->
     <div class="charts-row">
@@ -89,12 +90,12 @@
           </thead>
           <tbody>
             <tr v-for="track in topTracks" :key="track.id">
-              <td><img :src="track.cover" class="table-cover" /></td>
+              <td><img :src="track.cover_url || '/default-cover.jpg'" class="table-cover" @error="handleImageError" /></td>
               <td>{{ track.title }}</td>
-              <td>{{ track.artist }}</td>
-              <td>{{ track.genre }}</td>
-              <td>{{ track.sales }}</td>
-              <td>{{ track.revenue }} ₽</td>
+              <td>{{ track.author_name }}</td>
+              <td>{{ track.genre_name }}</td>
+              <td>{{ track.sales_count }}</td>
+              <td>{{ formatNumber(track.revenue) }} ₽</td>
             </tr>
           </tbody>
         </table>
@@ -106,252 +107,229 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { Chart, registerables } from "chart.js";
+import api from "../api"; // путь к вашему API-клиенту
+
 Chart.register(...registerables);
 
-// Моковые данные (замените на реальные API-вызовы позже)
+// Состояния
 const metrics = ref({
-  totalUsers: 1248,
-  newUsersLastWeek: 87,
-  totalRevenue: 245780,
-  revenueGrowth: 12.5,
-  totalPurchases: 3420,
-  avgCheck: 718,
-  totalListens: 15890,
+  total_users: 0,
+  new_users_last_week: 0,
+  total_revenue: 0,
+  revenue_growth: 0,
+  total_purchases: 0,
+  avg_check: 0,
+  total_listens: 0,
+});
+const topTracks = ref([]);
+const dailySales = ref([]);      // массив объектов { date, revenue }
+const dailyUsers = ref([]);      // массив объектов { date, count }
+const genreSales = ref([]);      // массив объектов { genre_name, revenue }
+
+const loading = ref({
+  metrics: true,
+  topTracks: true,
+  sales: true,
+  users: true,
+  genres: true,
 });
 
-// Данные для графика продаж по дням (за последние 7 дней)
-const salesData = {
-  labels: ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"],
-  values: [12500, 14800, 13200, 16700, 18900, 22400, 19800],
-};
-
-// Данные для графика новых пользователей
-const usersData = {
-  labels: ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"],
-  values: [12, 18, 15, 22, 27, 34, 29],
-};
-
-// Топ треков для круговой диаграммы (выручка)
-const topTracksChartData = {
-  labels: [
-    "Неоновая мечта",
-    "В ритме дождя",
-    "Космический вальс",
-    "Закат на Марсе",
-    "Электрический сон",
-  ],
-  values: [45200, 38700, 29100, 24500, 19800],
-};
-
-// Продажи по жанрам
-const genresChartData = {
-  labels: ["Электроника", "Рок", "Поп", "Хип-хоп", "Джаз", "Классика"],
-  values: [125000, 87000, 65000, 42000, 28000, 15000],
-};
-
-// Таблица топ-10 треков
-const topTracks = ref([
-  {
-    id: 1,
-    title: "Неоновая мечта",
-    artist: "ZOMBIE",
-    genre: "Электроника",
-    sales: 215,
-    revenue: 45200,
-    cover: "https://picsum.photos/id/29/60/60",
-  },
-  {
-    id: 2,
-    title: "В ритме дождя",
-    artist: "Метель",
-    genre: "Поп",
-    sales: 189,
-    revenue: 38700,
-    cover: "https://picsum.photos/id/30/60/60",
-  },
-  {
-    id: 3,
-    title: "Космический вальс",
-    artist: "Orion",
-    genre: "Электроника",
-    sales: 142,
-    revenue: 29100,
-    cover: "https://picsum.photos/id/31/60/60",
-  },
-  {
-    id: 4,
-    title: "Закат на Марсе",
-    artist: "Deep Space",
-    genre: "Рок",
-    sales: 120,
-    revenue: 24500,
-    cover: "https://picsum.photos/id/32/60/60",
-  },
-  {
-    id: 5,
-    title: "Электрический сон",
-    artist: "Volt",
-    genre: "Электроника",
-    sales: 98,
-    revenue: 19800,
-    cover: "https://picsum.photos/id/33/60/60",
-  },
-  {
-    id: 6,
-    title: "Тишина в нотах",
-    artist: "Акустика",
-    genre: "Джаз",
-    sales: 87,
-    revenue: 17400,
-    cover: "https://picsum.photos/id/34/60/60",
-  },
-  {
-    id: 7,
-    title: "Ритмы улиц",
-    artist: "Hip Hop Crew",
-    genre: "Хип-хоп",
-    sales: 76,
-    revenue: 15200,
-    cover: "https://picsum.photos/id/35/60/60",
-  },
-  {
-    id: 8,
-    title: "Время пришло",
-    artist: "Рок-Острова",
-    genre: "Рок",
-    sales: 68,
-    revenue: 13600,
-    cover: "https://picsum.photos/id/36/60/60",
-  },
-  {
-    id: 9,
-    title: "Мелодия дождя",
-    artist: "Piano Man",
-    genre: "Классика",
-    sales: 54,
-    revenue: 10800,
-    cover: "https://picsum.photos/id/37/60/60",
-  },
-  {
-    id: 10,
-    title: "Бит за битом",
-    artist: "DJ Bass",
-    genre: "Хип-хоп",
-    sales: 49,
-    revenue: 9800,
-    cover: "https://picsum.photos/id/38/60/60",
-  },
-]);
+// Рефы для графиков
+const salesChartRef = ref(null);
+const usersChartRef = ref(null);
+const topTracksChartRef = ref(null);
+const genresChartRef = ref(null);
 
 let salesChartInstance = null;
 let usersChartInstance = null;
 let topTracksChartInstance = null;
 let genresChartInstance = null;
 
-function initCharts() {
-  const ctxSales = document.querySelector("#salesChart canvas")
-    ? document.querySelector("#salesChart canvas")
-    : document.querySelector('canvas[ref="salesChart"]');
-  // лучше получать по ref, но проще через getElementById или refs
-  // Используем правильный способ: refs
-  const salesCanvas =
-    document.getElementById("salesChartCanvas") ||
-    document.createElement("canvas");
-  // но мы не задали id. Давайте переделаем: добавим id в canvas.
-  // Прямо в шаблоне неудобно менять, поэтому создадим динамически через ref.
-  // Перепишем: используем ref в template. Я сейчас исправлю шаблон.
-}
+// Форматирование чисел
+const formatNumber = (num) => {
+  if (num === undefined || num === null) return '0';
+  return new Intl.NumberFormat('ru-RU').format(num);
+};
 
-// Так как мы используем ref в шаблоне, надо их объявить и потом примонтировать.
-// Сделаем правильно:
-const salesChartRef = ref(null);
-const usersChartRef = ref(null);
-const topTracksChartRef = ref(null);
-const genresChartRef = ref(null);
+const handleImageError = (e) => {
+  e.target.src = '/default-cover.jpg';
+};
+
+// Загрузка метрик
+const fetchMetrics = async () => {
+  try {
+    const { data } = await api.get('/admin/stats/metrics');
+    metrics.value = data;
+  } catch (err) {
+    console.error('Ошибка загрузки метрик:', err);
+  } finally {
+    loading.value.metrics = false;
+  }
+};
+
+// Загрузка топ треков
+const fetchTopTracks = async () => {
+  try {
+    const { data } = await api.get('/admin/stats/top-tracks?limit=10');
+    topTracks.value = data;
+  } catch (err) {
+    console.error('Ошибка загрузки топ треков:', err);
+  } finally {
+    loading.value.topTracks = false;
+  }
+};
+
+// Загрузка продаж по дням
+const fetchDailySales = async () => {
+  try {
+    const { data } = await api.get('/admin/stats/sales-daily?days=7');
+    dailySales.value = data;
+  } catch (err) {
+    console.error('Ошибка загрузки дневных продаж:', err);
+  } finally {
+    loading.value.sales = false;
+  }
+};
+
+// Загрузка новых пользователей по дням
+const fetchDailyUsers = async () => {
+  try {
+    const { data } = await api.get('/admin/stats/users-daily?days=7');
+    dailyUsers.value = data;
+  } catch (err) {
+    console.error('Ошибка загрузки дневных пользователей:', err);
+  } finally {
+    loading.value.users = false;
+  }
+};
+
+// Загрузка продаж по жанрам
+const fetchGenreSales = async () => {
+  try {
+    const { data } = await api.get('/admin/stats/genres');
+    genreSales.value = data;
+  } catch (err) {
+    console.error('Ошибка загрузки продаж по жанрам:', err);
+  } finally {
+    loading.value.genres = false;
+  }
+};
+
+// Инициализация графиков после получения данных
+const initCharts = () => {
+  if (!dailySales.value.length || !dailyUsers.value.length || !topTracks.value.length || !genreSales.value.length) return;
+
+  // 1. График продаж (линия)
+  const salesLabels = dailySales.value.map(item => {
+    const d = new Date(item.date);
+    return d.toLocaleDateString('ru-RU', { weekday: 'short' });
+  });
+  const salesValues = dailySales.value.map(item => item.revenue);
+
+  if (salesChartRef.value) {
+    if (salesChartInstance) salesChartInstance.destroy();
+    salesChartInstance = new Chart(salesChartRef.value, {
+      type: 'line',
+      data: {
+        labels: salesLabels,
+        datasets: [{
+          label: 'Выручка (₽)',
+          data: salesValues,
+          borderColor: '#a855f7',
+          backgroundColor: 'rgba(168,85,247,0.1)',
+          tension: 0.3,
+          fill: true,
+        }]
+      },
+      options: { responsive: true, maintainAspectRatio: false }
+    });
+  }
+
+  // 2. График новых пользователей (столбцы)
+  const userLabels = dailyUsers.value.map(item => {
+    const d = new Date(item.date);
+    return d.toLocaleDateString('ru-RU', { weekday: 'short' });
+  });
+  const userValues = dailyUsers.value.map(item => item.count);
+
+  if (usersChartRef.value) {
+    if (usersChartInstance) usersChartInstance.destroy();
+    usersChartInstance = new Chart(usersChartRef.value, {
+      type: 'bar',
+      data: {
+        labels: userLabels,
+        datasets: [{
+          label: 'Новые пользователи',
+          data: userValues,
+          backgroundColor: '#3b82f6',
+          borderRadius: 8,
+        }]
+      },
+      options: { responsive: true, maintainAspectRatio: false }
+    });
+  }
+
+  // 3. Топ-5 треков по выручке (горизонтальная бар)
+  const top5 = topTracks.value.slice(0, 5);
+  const trackLabels = top5.map(t => t.title);
+  const trackValues = top5.map(t => t.revenue);
+
+  if (topTracksChartRef.value) {
+    if (topTracksChartInstance) topTracksChartInstance.destroy();
+    topTracksChartInstance = new Chart(topTracksChartRef.value, {
+      type: 'bar',
+      data: {
+        labels: trackLabels,
+        datasets: [{
+          label: 'Выручка (₽)',
+          data: trackValues,
+          backgroundColor: '#f97316',
+        }]
+      },
+      options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false }
+    });
+  }
+
+  // 4. Продажи по жанрам (пончик)
+  const genreLabels = genreSales.value.map(g => g.genre_name);
+  const genreValues = genreSales.value.map(g => g.revenue);
+  const backgroundColors = ['#a855f7', '#3b82f6', '#ec4899', '#f97316', '#10b981', '#8b5cf6', '#06b6d4', '#ef4444'];
+
+  if (genresChartRef.value) {
+    if (genresChartInstance) genresChartInstance.destroy();
+    genresChartInstance = new Chart(genresChartRef.value, {
+      type: 'doughnut',
+      data: {
+        labels: genreLabels,
+        datasets: [{
+          data: genreValues,
+          backgroundColor: backgroundColors.slice(0, genreLabels.length),
+        }]
+      },
+      options: { responsive: true, maintainAspectRatio: false }
+    });
+  }
+};
+
+// Загрузка всех данных и инициализация графиков
+const loadAllData = async () => {
+  await Promise.all([
+    fetchMetrics(),
+    fetchTopTracks(),
+    fetchDailySales(),
+    fetchDailyUsers(),
+    fetchGenreSales()
+  ]);
+  initCharts();
+};
 
 onMounted(() => {
-  // График продаж
-  if (salesChartRef.value) {
-    new Chart(salesChartRef.value, {
-      type: "line",
-      data: {
-        labels: salesData.labels,
-        datasets: [
-          {
-            label: "Выручка (₽)",
-            data: salesData.values,
-            borderColor: "#a855f7",
-            backgroundColor: "rgba(168,85,247,0.1)",
-            tension: 0.3,
-            fill: true,
-          },
-        ],
-      },
-      options: { responsive: true, maintainAspectRatio: false },
-    });
-  }
-  // График пользователей
-  if (usersChartRef.value) {
-    new Chart(usersChartRef.value, {
-      type: "bar",
-      data: {
-        labels: usersData.labels,
-        datasets: [
-          {
-            label: "Новые пользователи",
-            data: usersData.values,
-            backgroundColor: "#3b82f6",
-            borderRadius: 8,
-          },
-        ],
-      },
-      options: { responsive: true, maintainAspectRatio: false },
-    });
-  }
-  // Топ треков (горизонтальная или круговая? Сделаем горизонтальную бар)
-  if (topTracksChartRef.value) {
-    new Chart(topTracksChartRef.value, {
-      type: "bar",
-      data: {
-        labels: topTracksChartData.labels,
-        datasets: [
-          {
-            label: "Выручка (₽)",
-            data: topTracksChartData.values,
-            backgroundColor: "#f97316",
-          },
-        ],
-      },
-      options: { indexAxis: "y", responsive: true, maintainAspectRatio: false },
-    });
-  }
-  // Жанры (круговая)
-  if (genresChartRef.value) {
-    new Chart(genresChartRef.value, {
-      type: "doughnut",
-      data: {
-        labels: genresChartData.labels,
-        datasets: [
-          {
-            data: genresChartData.values,
-            backgroundColor: [
-              "#a855f7",
-              "#3b82f6",
-              "#ec4899",
-              "#f97316",
-              "#10b981",
-              "#8b5cf6",
-            ],
-          },
-        ],
-      },
-      options: { responsive: true, maintainAspectRatio: false },
-    });
-  }
+  loadAllData();
 });
 </script>
 
 <style scoped>
+/* Ваши стили остаются без изменений (из исходного компонента) */
 .stats-container {
   max-width: 1400px;
   margin: 2rem auto;
@@ -450,6 +428,11 @@ onMounted(() => {
   height: 40px;
   border-radius: 0.5rem;
   object-fit: cover;
+}
+.loading-placeholder {
+  text-align: center;
+  padding: 2rem;
+  color: #a0a0b0;
 }
 @media (max-width: 768px) {
   .charts-row {

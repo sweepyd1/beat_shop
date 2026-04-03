@@ -1,7 +1,8 @@
 # src/core/repositories/user.py
+from datetime import date, datetime, timedelta
 from typing import List, Optional
 from sqlalchemy.orm import selectinload
-from sqlalchemy import select, or_
+from sqlalchemy import func, select, or_
 from database.models import Favorite, Purchase, Subscription, Track, User
 from .base import BaseRepository
 
@@ -79,3 +80,21 @@ class UserRepository(BaseRepository[User]):
             .order_by(Subscription.subscribed_at.desc())
         )
         return result.scalars().all()
+    
+    async def count_all(self) -> int:
+        result = await self.session.execute(select(func.count()).select_from(User))
+        return result.scalar_one() or 0
+
+    async def count_registered_since(self, since_date: datetime) -> int:
+        result = await self.session.execute(
+            select(func.count()).select_from(User).where(User.registered_at >= since_date)
+        )
+        return result.scalar_one() or 0
+    async def count_registered_on_date(self, target_date: date) -> int:
+        start = datetime.combine(target_date, datetime.min.time())
+        end = start + timedelta(days=1)
+        result = await self.session.execute(
+            select(func.count())
+            .where(User.registered_at >= start, User.registered_at < end)
+        )
+        return result.scalar_one() or 0

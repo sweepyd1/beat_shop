@@ -92,6 +92,7 @@ class TrackResponse(BaseModel):
     created_date: Optional[datetime]
     added_date: datetime
     mp3_file_url: str
+    sales: int = 0   
     price: float
     plays: int
     bpm: Optional[int]
@@ -246,7 +247,14 @@ class RecommendationResponse(BaseModel):
     track_id: int
     score: Optional[float] = None
     reason: Optional[str] = None  
-
+class AuthorTrackResponse(BaseModel):
+    """Упрощённая схема для списка треков автора (дашборд)"""
+    id: int
+    title: str
+    cover_url: Optional[str] = None
+    price: float
+    plays: int = 0
+    sales: int = 0   # количество продаж
 
 
 AuthorDetailResponse.model_rebuild()

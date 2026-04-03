@@ -1,7 +1,7 @@
 from typing import List, Optional
-from sqlalchemy import select, or_
+from sqlalchemy import func, select, or_
 from sqlalchemy.orm import selectinload
-from database.models import Author, Track
+from database.models import Author, Genre, Purchase, Track
 from .base import BaseRepository
 
 class TrackRepository(BaseRepository[Track]):
@@ -111,6 +111,7 @@ class TrackRepository(BaseRepository[Track]):
         await self.session.flush()
         await self.session.refresh(track)
         return track
+    
     async def get_by_author_id(self, author_id: int) -> List[Track]:
         """Получение всех треков автора по author_id"""
         stmt = select(Track).where(Track.author_id == author_id).options(
@@ -120,3 +121,38 @@ class TrackRepository(BaseRepository[Track]):
         
         result = await self.session.execute(stmt)
         return result.scalars().all()
+
+
+    async def get_sales_count(self, track_id: int) -> int:
+        result = await self.session.execute(
+            select(func.count()).select_from(Purchase).where(Purchase.track_id == track_id)
+        )
+        return result.scalar_one() or 0
+    async def count_by_author(self, author_id: int) -> int:
+        result = await self.session.execute(
+            select(func.count()).select_from(Track).where(Track.author_id == author_id)
+        )
+        return result.scalar_one() or 0
+    async def total_listens(self) -> int:
+        result = await self.session.execute(select(func.sum(Track.plays)))
+        return result.scalar_one() or 0
+
+    async def top_tracks_by_revenue(self, limit: int = 10) -> list[tuple]:
+        result = await self.session.execute(
+            select(
+                Track.id,
+                Track.title,
+                Author.full_name.label('author_name'),
+                Genre.name.label('genre_name'),
+                func.count(Purchase.id).label('sales_count'),
+                func.coalesce(func.sum(Purchase.amount), 0).label('revenue'),  # ← ключевое изменение
+                Track.cover_url
+            )
+            .outerjoin(Purchase, Purchase.track_id == Track.id)
+            .join(Author, Author.id == Track.author_id)
+            .join(Genre, Genre.id == Track.genre_id)
+            .group_by(Track.id, Author.full_name, Genre.name)
+            .order_by(func.coalesce(func.sum(Purchase.amount), 0).desc())
+            .limit(limit)
+        )
+        return result.all()

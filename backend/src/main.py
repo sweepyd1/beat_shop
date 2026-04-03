@@ -13,8 +13,8 @@ from core.services.author import AuthorService
 from database.db_manager import db_manager
 from database.models import User
 from config import cfg, setup_environment
-from api.routes import auth, tracks, genres, user, favorites, purchase, listen
-from api.routes.admin import authors as admin_authors, genre as admin_genres, tracks as admin_tracks
+from api.routes import auth, tracks, genres, user, favorites, purchase, listen, author
+from api.routes.admin import authors as admin_authors, genre as admin_genres, tracks as admin_tracks, admin as admin_stats
 # @asynccontextmanager
 # async def lifespan(app: FastAPI):
 #     # Действия при старте
@@ -76,10 +76,12 @@ app.include_router(user.router)
 app.include_router(favorites.router)
 app.include_router(purchase.router)
 app.include_router(listen.router)
+app.include_router(author.router)
 # Админские роуты
 app.include_router(admin_authors.router)
 app.include_router(admin_genres.router)
 app.include_router(admin_tracks.router)
+app.include_router(admin_stats.router)
 
 @app.get("/")
 async def root():

@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import List, Optional
 
 from fastapi import HTTPException, UploadFile
+from schemas.track import AuthorTrackResponse, TrackResponse
 from core.services.author import AuthorService
 from core.services.genre import GenreService
 from database.models import Track, User
@@ -149,3 +150,19 @@ class TrackService:
         # Получаем треки автора с подгрузкой жанра
         tracks = await self.repo.get_by_author_id(author.id)
         return tracks
+    async def get_author_tracks(self, author_id: int) -> List[AuthorTrackResponse]:
+        tracks = await self.repo.get_by_author_id(author_id)
+        result = []
+        for track in tracks:
+            sales = await self.repo.get_sales_count(track.id)
+            result.append(AuthorTrackResponse(
+                id=track.id,
+                title=track.title,
+                cover_url=track.cover_url,
+                price=track.price,
+                plays=track.plays or 0,
+                sales=sales
+            ))
+        return result
+    async def get_tracks_count(self, author_id: int) -> int:
+        return await self.repo.count_by_author(author_id)
