@@ -103,3 +103,26 @@ class PurchaseRepository(BaseRepository[Purchase]):
             .order_by(func.coalesce(func.sum(Purchase.amount), 0).desc())
         )
         return [(row.id, row.name, row.revenue or 0.0) for row in result]
+ 
+    async def get_daily_purchases(self, days: int = 30):
+        """Количество покупок и сумма по дням за последние N дней"""
+        start_date = datetime.utcnow().date() - timedelta(days=days-1)
+        stmt = (
+            select(
+                func.date(Purchase.purchase_date).label('date'),
+                func.count(Purchase.id).label('purchase_count'),
+                func.sum(Purchase.amount).label('total_amount')
+            )
+            .where(func.date(Purchase.purchase_date) >= start_date)
+            .group_by(func.date(Purchase.purchase_date))
+            .order_by('date')
+        )
+        result = await self.session.execute(stmt)
+        rows = {row.date: (row.purchase_count, row.total_amount or 0.0) for row in result}
+        full = []
+        for i in range(days):
+            d = start_date + timedelta(days=i)
+            cnt, amt = rows.get(d, (0, 0.0))
+            full.append((d, cnt, amt))
+        return full
+

@@ -98,3 +98,27 @@ class UserRepository(BaseRepository[User]):
             .where(User.registered_at >= start, User.registered_at < end)
         )
         return result.scalar_one() or 0
+
+    async def get_top_buyers(self, limit: int = 10):
+        """Возвращает список пользователей с суммой покупок и количеством покупок"""
+        stmt = (
+            select(
+                User.id,
+                User.full_name,
+                User.login,
+                func.sum(Purchase.amount).label('total_spent'),
+                func.count(Purchase.id).label('purchases_count')
+            )
+            .join(Purchase, User.id == Purchase.user_id)
+            .group_by(User.id)
+            .order_by(func.sum(Purchase.amount).desc())
+            .limit(limit)
+        )
+        result = await self.session.execute(stmt)
+        return result.all()  # каждая строка: (id, full_name, login, total_spent, purchases_count)
+
+    async def get_role_distribution(self):
+        """Распределение пользователей по ролям"""
+        stmt = select(User.role, func.count(User.id)).group_by(User.role)
+        result = await self.session.execute(stmt)
+        return [(role.value, count) for role, count in result]  # role.value т.к. role - Enum

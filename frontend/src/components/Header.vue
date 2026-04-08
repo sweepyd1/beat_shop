@@ -18,6 +18,9 @@
         <template v-if="isAdmin">
           <router-link to="/admin/tracks" active-class="active">Управление треками</router-link>
           <router-link to="/admin/stats" active-class="active">Статистика</router-link>
+          <router-link to="/admin/user-stats" class="menu-item">
+  <i class="fas fa-users"></i> Статистика пользователей
+</router-link>
         </template>
       </nav>
 

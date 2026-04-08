@@ -8,13 +8,12 @@ from pathlib import Path
 from datetime import datetime
 import uuid
 from schemas.admin_stats import (
-    MetricsResponse, DailySalesResponse, DailyUsersResponse,
-    TopTrackResponse, GenreSalesResponse
+    DailyUserPurchasesResponse, DailyUserRegistrationsResponse, MetricsResponse, DailySalesResponse, DailyUsersResponse, TopBuyerResponse, TopListenerResponse,
+    TopTrackResponse, GenreSalesResponse, UserMetricsResponse, UserRoleDistributionResponse
 )
 from core.services.admin_stats import AdminStatsService
 from api.dependencies import get_admin_stats_service
 from api.dependencies import get_db_session, get_current_admin
-from core.repositories.track import TrackRepository
 from database.models import User, Track
 from schemas.track import TrackResponse
 
@@ -76,7 +75,6 @@ async def create_track(
     current_user: User = Depends(get_current_admin),
     session: AsyncSession = Depends(get_db_session),
 ):
-    # Проверка расширений
     if not mp3_file.filename.endswith('.mp3'):
         raise HTTPException(400, "Только MP3")
     if not cover.filename.lower().endswith(('.jpg','.jpeg','.png')):
@@ -120,3 +118,48 @@ async def create_track(
     result = await session.get(Track, track.id, options=[selectinload(Track.author), selectinload(Track.genre)])
     return result
 
+@router.get("/stats/user-metrics", response_model=UserMetricsResponse)
+async def get_user_metrics(
+    stats_service: AdminStatsService = Depends(get_admin_stats_service),
+    current_user: User = Depends(get_current_admin)
+):
+    return await stats_service.get_user_metrics()
+
+@router.get("/stats/user-daily-registrations", response_model=list[DailyUserRegistrationsResponse])
+async def get_daily_registrations(
+    days: int = 30,
+    stats_service: AdminStatsService = Depends(get_admin_stats_service),
+    current_user: User = Depends(get_current_admin)
+):
+    return await stats_service.get_daily_user_registrations(days)
+
+@router.get("/stats/user-daily-purchases", response_model=list[DailyUserPurchasesResponse])
+async def get_daily_purchases_activity(
+    days: int = 30,
+    stats_service: AdminStatsService = Depends(get_admin_stats_service),
+    current_user: User = Depends(get_current_admin)
+):
+    return await stats_service.get_daily_user_purchases(days)
+
+@router.get("/stats/user-top-buyers", response_model=list[TopBuyerResponse])
+async def get_top_buyers(
+    limit: int = 10,
+    stats_service: AdminStatsService = Depends(get_admin_stats_service),
+    current_user: User = Depends(get_current_admin)
+):
+    return await stats_service.get_top_buyers(limit)
+
+@router.get("/stats/user-top-listeners", response_model=list[TopListenerResponse])
+async def get_top_listeners(
+    limit: int = 10,
+    stats_service: AdminStatsService = Depends(get_admin_stats_service),
+    current_user: User = Depends(get_current_admin)
+):
+    return await stats_service.get_top_listeners(limit)
+
+@router.get("/stats/user-role-distribution", response_model=list[UserRoleDistributionResponse])
+async def get_role_distribution(
+    stats_service: AdminStatsService = Depends(get_admin_stats_service),
+    current_user: User = Depends(get_current_admin)
+):
+    return await stats_service.get_user_role_distribution()

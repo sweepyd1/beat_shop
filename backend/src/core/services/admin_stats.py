@@ -1,18 +1,31 @@
 from datetime import datetime, timedelta
 from schemas.admin_stats import (
     MetricsResponse, DailySalesResponse, DailyUsersResponse,
-    TopTrackResponse, GenreSalesResponse
+    TopTrackResponse, GenreSalesResponse,
+    # Новые схемы (добавьте в schemas/admin_stats.py)
+    UserMetricsResponse, DailyUserRegistrationsResponse,
+    DailyUserPurchasesResponse, TopBuyerResponse,
+    TopListenerResponse, UserRoleDistributionResponse
 )
 from core.repositories.user import UserRepository
 from core.repositories.purchase import PurchaseRepository
 from core.repositories.track import TrackRepository
+from core.repositories.interaction import InteractionRepository
 
 class AdminStatsService:
-    def __init__(self, user_repo: UserRepository, purchase_repo: PurchaseRepository, track_repo: TrackRepository):
+    def __init__(
+        self,
+        user_repo: UserRepository,
+        purchase_repo: PurchaseRepository,
+        track_repo: TrackRepository,
+        interaction_repo: InteractionRepository   # новый
+    ):
         self.user_repo = user_repo
         self.purchase_repo = purchase_repo
         self.track_repo = track_repo
+        self.interaction_repo = interaction_repo
 
+    # ========== Существующие методы (без изменений, но исправлен get_daily_users) ==========
     async def get_metrics(self) -> MetricsResponse:
         total_users = await self.user_repo.count_all()
         week_ago = datetime.now() - timedelta(days=7)
@@ -40,22 +53,12 @@ class AdminStatsService:
         return [DailySalesResponse(date=d, revenue=round(r, 2)) for d, r in data]
 
     async def get_daily_users(self, days: int = 7) -> list[DailyUsersResponse]:
+        # Исправленный метод, использует count_registered_on_date
         result = []
         for i in range(days-1, -1, -1):
             day = datetime.now().date() - timedelta(days=i)
-            start = datetime.combine(day, datetime.min.time())
-            end = start + timedelta(days=1)
-            count = await self.user_repo.count_registered_since(start)
-            # нужно вычесть предыдущие дни, так как count_registered_since накопительный
-            # лучше сделать отдельный метод, упростим: получим общее количество за день через range
-            # для простоты создадим новый метод в репозитории
-            # Пока заглушка, реализуем позже
-            # Для демонстрации вернём мок
-            result.append(DailyUsersResponse(date=day, count=0))
-        # Реализуем правильно:
-        # В UserRepository добавим:
-        # async def count_registered_on_date(self, date: date) -> int
-        # и используем здесь
+            count = await self.user_repo.count_registered_on_date(day)
+            result.append(DailyUsersResponse(date=day, count=count))
         return result
 
     async def get_top_tracks(self, limit: int = 10) -> list[TopTrackResponse]:
@@ -81,3 +84,63 @@ class AdminStatsService:
                 revenue=round(row[2], 2)
             ) for row in rows
         ]
+
+    # ========== Новые методы для статистики по пользователям ==========
+    async def get_user_metrics(self) -> UserMetricsResponse:
+        total_users = await self.user_repo.count_all()
+        week_ago = datetime.now() - timedelta(days=7)
+        new_users = await self.user_repo.count_registered_since(week_ago)
+        active_users = await self.interaction_repo.get_active_users_count_since(30)
+        total_subscriptions = await self.user_repo.total_subscriptions()  # нужно добавить
+        avg_purchases = await self.purchase_repo.average_purchases_per_user()  # новый метод
+        total_purchases_amount = await self.purchase_repo.total_revenue()
+        return UserMetricsResponse(
+            total_users=total_users,
+            new_users_last_week=new_users,
+            active_users_last_month=active_users,
+            total_subscriptions=total_subscriptions,
+            avg_purchases_per_user=round(avg_purchases, 2),
+            total_purchases_amount=round(total_purchases_amount, 2)
+        )
+
+    async def get_daily_user_registrations(self, days: int = 30) -> list[DailyUserRegistrationsResponse]:
+        result = []
+        for i in range(days-1, -1, -1):
+            day = datetime.now().date() - timedelta(days=i)
+            count = await self.user_repo.count_registered_on_date(day)
+            result.append(DailyUserRegistrationsResponse(date=day, count=count))
+        return result
+
+    async def get_daily_user_purchases(self, days: int = 30) -> list[DailyUserPurchasesResponse]:
+        data = await self.purchase_repo.get_daily_purchases(days)
+        return [
+            DailyUserPurchasesResponse(date=d, purchase_count=cnt, total_amount=round(amt, 2))
+            for d, cnt, amt in data
+        ]
+
+    async def get_top_buyers(self, limit: int = 10) -> list[TopBuyerResponse]:
+        rows = await self.user_repo.get_top_buyers(limit)
+        return [
+            TopBuyerResponse(
+                user_id=row.id,
+                full_name=row.full_name,
+                login=row.login,
+                total_spent=round(row.total_spent, 2),
+                purchases_count=row.purchases_count
+            ) for row in rows
+        ]
+
+    async def get_top_listeners(self, limit: int = 10) -> list[TopListenerResponse]:
+        items = await self.interaction_repo.get_top_listeners(limit)
+        return [
+            TopListenerResponse(
+                user_id=user.id,
+                full_name=user.full_name,
+                login=user.login,
+                listen_count=count
+            ) for user, count in items
+        ]
+
+    async def get_user_role_distribution(self) -> list[UserRoleDistributionResponse]:
+        rows = await self.user_repo.get_role_distribution()
+        return [UserRoleDistributionResponse(role=role, count=count) for role, count in rows]

@@ -1,3 +1,4 @@
+from decimal import Decimal
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import date
@@ -32,3 +33,37 @@ class GenreSalesResponse(BaseModel):
     genre_id: int
     genre_name: str
     revenue: float
+
+class UserMetricsResponse(BaseModel):
+    total_users: int
+    new_users_last_week: int
+    active_users_last_month: int          # пользователи, совершившие покупку или прослушивание за последние 30 дней
+    total_subscriptions: int              # общее количество подписок на авторов
+    avg_purchases_per_user: float
+    total_purchases_amount: Decimal
+
+class DailyUserRegistrationsResponse(BaseModel):
+    date: date
+    count: int
+
+class DailyUserPurchasesResponse(BaseModel):
+    date: date
+    purchase_count: int
+    total_amount: Decimal
+
+class TopBuyerResponse(BaseModel):
+    user_id: int
+    full_name: str
+    login: str
+    total_spent: Decimal
+    purchases_count: int
+
+class TopListenerResponse(BaseModel):
+    user_id: int
+    full_name: str
+    login: str
+    listen_count: int
+
+class UserRoleDistributionResponse(BaseModel):
+    role: str
+    count: int

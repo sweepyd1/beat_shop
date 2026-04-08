@@ -2,6 +2,7 @@ from typing import AsyncIterator
 from fastapi import Depends, HTTPException, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.security import OAuth2PasswordBearer
+from core.repositories.interaction import InteractionRepository
 from core.services.admin_stats import AdminStatsService
 from core.repositories.subscription import SubscriptionRepository
 from core.services.stats import StatsService
@@ -46,7 +47,8 @@ def get_author_repository(session: AsyncSession = Depends(get_db_session)) -> Au
     return AuthorRepository(session)
 def get_purchase_repository(session: AsyncSession = Depends(get_db_session)) -> PurchaseRepository:
     return PurchaseRepository(session)
-
+async def get_interaction_repository(session: AsyncSession = Depends(get_db_session)) -> InteractionRepository:
+    return InteractionRepository(session)
 
 # ---------- Сервисы ----------
 def get_auth_service(repo: UserRepository = Depends(get_user_repository),  author_repo: AuthorRepository = Depends(get_author_repository),) -> AuthService:
@@ -104,12 +106,13 @@ def get_stats_service(
     subscription_repo: SubscriptionRepository = Depends(get_subscription_repository)
 ) -> StatsService:
     return StatsService(purchase_repo, subscription_repo)
-def get_admin_stats_service(
+async def get_admin_stats_service(
     user_repo: UserRepository = Depends(get_user_repository),
     purchase_repo: PurchaseRepository = Depends(get_purchase_repository),
-    track_repo: TrackRepository = Depends(get_track_repository)
+    track_repo: TrackRepository = Depends(get_track_repository),
+    interaction_repo: InteractionRepository = Depends(get_interaction_repository),
 ) -> AdminStatsService:
-    return AdminStatsService(user_repo, purchase_repo, track_repo)
+    return AdminStatsService(user_repo, purchase_repo, track_repo, interaction_repo)
 # ---------- Текущий пользователь (из JWT) ----------
 async def get_current_user(
     request: Request,
