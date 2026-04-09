@@ -1,4 +1,8 @@
+<!-- eslint-disable-next-line vue/no-multiple-template-root -->
 <template>
+  <div>
+
+  
   <header class="app-header">
     <div class="container">
       <div class="logo" @click="$router.push('/')">
@@ -6,31 +10,43 @@
         <span class="logo-text">BeatMarket</span>
       </div>
 
-      <nav :class="['nav-menu', { 'active': menuOpen }]">
+      <nav :class="['nav-menu', { active: menuOpen }]">
         <router-link to="/" exact-active-class="active">Главная</router-link>
         <router-link to="/search" active-class="active">Поиск</router-link>
         <router-link to="/trends" active-class="active">Тренды</router-link>
         <router-link to="/about" active-class="active">О нас</router-link>
         <router-link to="/contacts" active-class="active">Контакты</router-link>
         <router-link to="/profile" active-class="active">Профиль</router-link>
-        
+
         <!-- Административные ссылки (только для роли admin) -->
         <template v-if="isAdmin">
-          <router-link to="/admin/tracks" active-class="active">Управление треками</router-link>
-          <router-link to="/admin/stats" active-class="active">Статистика</router-link>
+          <router-link to="/admin/tracks" active-class="active"
+            >Управление треками</router-link
+          >
+          <router-link to="/admin/stats" active-class="active"
+            >Статистика</router-link
+          >
           <router-link to="/admin/user-stats" class="menu-item">
-  <i class="fas fa-users"></i> Статистика пользователей
-</router-link>
+            Статистика пользователей
+          </router-link>
         </template>
       </nav>
 
       <div class="user-actions">
         <!-- Если пользователь авторизован -->
         <template v-if="user">
+          <button
+            class="ai-recommend-btn"
+            @click="openRecommendationModal"
+            title="AI рекомендации"
+          >
+            🤖
+          </button>
+          <!-- <router-link to="/cart" class="cart-icon">...</router-link>
           <router-link to="/cart" class="cart-icon">
             <i class="fas fa-shopping-cart"></i>
             <span v-if="cartCount > 0" class="badge">{{ cartCount }}</span>
-          </router-link>
+          </router-link> -->
           <router-link to="/profile" class="profile-link">
             <div class="avatar-circle">
               {{ userInitial }}
@@ -41,21 +57,36 @@
         <!-- Если не авторизован -->
         <template v-else>
           <router-link to="/login" class="btn-login">Войти</router-link>
-          <router-link to="/register" class="btn-register">Регистрация</router-link>
+          <router-link to="/register" class="btn-register"
+            >Регистрация</router-link
+          >
         </template>
 
-        <button class="menu-toggle" @click="menuOpen = !menuOpen" v-if="isMobile">
+        <button
+          class="menu-toggle"
+          @click="menuOpen = !menuOpen"
+          v-if="isMobile"
+        >
           <i :class="menuOpen ? 'fas fa-times' : 'fas fa-bars'"></i>
         </button>
       </div>
     </div>
   </header>
+  <RecommendationModal :visible="showRecommendationModal" @close="showRecommendationModal = false" />
+  </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed } from 'vue';
-import { useAuthStore } from '@/stores/auth';
-import { storeToRefs } from 'pinia';
+import { ref, onMounted, onUnmounted, computed } from "vue";
+import { useAuthStore } from "@/stores/auth";
+import { storeToRefs } from "pinia";
+import RecommendationModal from "@/components/RecommendationModal.vue";
+
+const showRecommendationModal = ref(false);
+
+const openRecommendationModal = () => {
+  showRecommendationModal.value = true;
+};
 
 const menuOpen = ref(false);
 const isMobile = ref(window.innerWidth <= 768);
@@ -66,13 +97,13 @@ const { user } = storeToRefs(authStore);
 
 // Вычисляемое свойство для проверки прав администратора
 const isAdmin = computed(() => {
-  return user.value && user.value.role === 'admin';
+  return user.value && user.value.role === "admin";
 });
 
 // Инициал пользователя для аватарки
 const userInitial = computed(() => {
-  if (!user.value) return '?';
-  return user.value.name ? user.value.name.charAt(0).toUpperCase() : 'U';
+  if (!user.value) return "?";
+  return user.value.name ? user.value.name.charAt(0).toUpperCase() : "U";
 });
 
 const checkMobile = () => {
@@ -81,11 +112,11 @@ const checkMobile = () => {
 };
 
 onMounted(() => {
-  window.addEventListener('resize', checkMobile);
+  window.addEventListener("resize", checkMobile);
 });
 
 onUnmounted(() => {
-  window.removeEventListener('resize', checkMobile);
+  window.removeEventListener("resize", checkMobile);
 });
 </script>
 
@@ -150,7 +181,7 @@ onUnmounted(() => {
 }
 
 .nav-menu a::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   left: 0;
@@ -259,8 +290,12 @@ onUnmounted(() => {
 }
 
 @media (max-width: 768px) {
-  .app-header { padding: 0.8rem 1rem; }
-  .menu-toggle { display: block; }
+  .app-header {
+    padding: 0.8rem 1rem;
+  }
+  .menu-toggle {
+    display: block;
+  }
 
   .nav-menu {
     position: fixed;
@@ -296,11 +331,30 @@ onUnmounted(() => {
   .cart-icon {
     font-size: 1.2rem;
   }
-  
+
   .avatar-circle {
     width: 32px;
     height: 32px;
     font-size: 0.9rem;
   }
+}
+.ai-recommend-btn {
+  background: linear-gradient(45deg, #a855f7, #3b82f6);
+  border: none;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.ai-recommend-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 12px rgba(168, 85, 247, 0.6);
 }
 </style>
