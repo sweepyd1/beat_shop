@@ -8,6 +8,18 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  paramsSerializer: (params) => {
+    const searchParams = new URLSearchParams();
+    Object.entries(params).forEach(([key, value]) => {
+      if (value === undefined || value === null) return;
+      if (Array.isArray(value)) {
+        value.forEach(v => searchParams.append(key, v));
+      } else {
+        searchParams.append(key, value);
+      }
+    });
+    return searchParams.toString();
+  }
 });
 
 // Интерцептор для добавления токена авторизации

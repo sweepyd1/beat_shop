@@ -45,7 +45,7 @@ class UserResponse(UserBase):
     registered_at: datetime
     is_active: bool
     role:str
-    avatar_url: str
+    avatar_url: Optional[str] = None 
 
     model_config = ConfigDict(from_attributes=True)
 
