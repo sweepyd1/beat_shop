@@ -111,15 +111,24 @@ class ContractService:
         pdf.cell(0, 10, "Продавец передает, а Покупатель принимает исключительное право на музыкальное произведение:", 0, 1)
         pdf.cell(0, 10, f"Название: {track.title}", 0, 1)
         pdf.cell(0, 10, f"Автор: {track.author.full_name}", 0, 1)
-        pdf.cell(0, 10, f"Стоимость: {track.price} руб.", 0, 1)
+
+        # ✅ Исправлено: берём фактическую сумму из purchase.amount
+        pdf.cell(0, 10, f"Стоимость: {purchase.amount} руб.", 0, 1)
         pdf.ln(10)
 
         pdf.set_font('DejaVu', 'B', 12)
         pdf.cell(0, 10, "3. ОСОБЫЕ УСЛОВИЯ", 0, 1)
         pdf.set_font('DejaVu', '', 10)
-        
-        pdf.cell(0, 10, f"Лицензия:", 0, 1)
-        
+
+        # ✅ Добавляем тип лицензии
+        license_names = {
+            "standard": "Стандартная (неисключительная)",
+            "extended": "Расширенная (неисключительная)",
+            "exclusive": "Эксклюзивная (исключительная)"
+        }
+        license_str = license_names.get(purchase.license_type.value, purchase.license_type.value)
+        pdf.cell(0, 10, f"Тип лицензии: {license_str}", 0, 1)
+
         pdf.ln(10)
 
         pdf.set_font('DejaVu', 'B', 12)

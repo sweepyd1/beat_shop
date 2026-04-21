@@ -12,7 +12,14 @@
           <div>
             <p class="track-title">{{ track.title }}</p>
             <p class="track-author">{{ track.author?.name || 'Автор' }}</p>
-            <p class="track-price">{{ track.price }} ₽</p>
+            <div class="price-block">
+              <!-- Зачёркнутая базовая цена (стандартная) показывается только если выбрана не стандартная лицензия -->
+              <span v-if="form.licenseType !== 'standard'" class="old-price">
+                {{ formatPrice(basePrice) }} ₽
+              </span>
+              <span class="current-price">{{ formatPrice(currentPrice) }} ₽</span>
+            </div>
+            <p class="license-hint">{{ licenseHint }}</p>
           </div>
         </div>
 
@@ -28,9 +35,9 @@
           <div class="form-group">
             <label>Тип лицензии *</label>
             <select v-model="form.licenseType" required>
-              <option value="standard">Стандартная (для YouTube, SoundCloud)</option>
-              <option value="extended">Расширенная (для коммерческого использования, стриминг)</option>
-              <option value="exclusive">Эксклюзивная (полные права)</option>
+              <option value="standard">Стандартная (для YouTube, SoundCloud) – {{ formatPrice(prices.standard) }} ₽</option>
+              <option value="extended">Расширенная (для коммерческого использования, стриминг) – {{ formatPrice(prices.extended) }} ₽</option>
+              <option value="exclusive">Эксклюзивная (полные права) – {{ formatPrice(prices.exclusive) }} ₽</option>
             </select>
           </div>
           <div class="form-group">
@@ -71,6 +78,12 @@ const form = ref({
 });
 const loading = ref(false);
 
+// Форматирование цены с разделителями тысяч
+const formatPrice = (value) => {
+  return Number(value).toLocaleString('ru-RU');
+};
+
+// URL обложки трека
 const coverUrl = computed(() => {
   if (!props.track) return '';
   const url = props.track.cover_url;
@@ -80,10 +93,40 @@ const coverUrl = computed(() => {
   return `${baseUrl}${url}`;
 });
 
+// Цены для разных лицензий на основе базовой цены трека и коэффициентов
+const prices = computed(() => {
+  const base = props.track?.price || 0;
+  return {
+    standard: base,
+    extended: base * 2.0,    // коэффициент расширенной лицензии
+    exclusive: base * 5.0    // коэффициент эксклюзивной лицензии
+  };
+});
+
+// Базовая (стандартная) цена — всегда используется для зачёркивания
+const basePrice = computed(() => prices.value.standard);
+
+// Текущая цена в зависимости от выбранной лицензии
+const currentPrice = computed(() => {
+  return prices.value[form.value.licenseType] || prices.value.standard;
+});
+
+// Текст‑подсказка о выбранной лицензии
+const licenseHint = computed(() => {
+  const hints = {
+    standard: 'Базовая стоимость (стандартная лицензия)',
+    extended: 'Расширенная лицензия (+100% к базовой)',
+    exclusive: 'Эксклюзивная лицензия (+400% к базовой)'
+  };
+  return hints[form.value.licenseType] || '';
+});
+
+// Закрытие модального окна
 const close = () => {
   emit('update:modelValue', false);
 };
 
+// Отправка формы покупки
 const submitPurchase = async () => {
   if (!form.value.agree) {
     alert('Необходимо согласиться с условиями договора');
@@ -91,7 +134,6 @@ const submitPurchase = async () => {
   }
   loading.value = true;
   try {
-    // Здесь должен быть реальный запрос к API для создания покупки и генерации договора
     const payload = {
       track_id: props.track.id,
       buyer_name: form.value.name,
@@ -100,7 +142,6 @@ const submitPurchase = async () => {
       comment: form.value.comment
     };
     const response = await api.post('/purchase/purchases', payload);
-    // После успешной покупки можно получить ссылку на договор (PDF)
     emit('purchase-complete', {
       ...response.data,
       email: form.value.email
@@ -114,8 +155,9 @@ const submitPurchase = async () => {
   }
 };
 
+// Показ условий лицензионного договора
 const showTerms = () => {
-  // Открыть модальное окно с текстом договора или ссылку на отдельную страницу
+  // Здесь можно открыть модальное окно с текстом или перейти на страницу
   alert('Здесь будет текст лицензионного договора');
 };
 </script>
@@ -201,9 +243,28 @@ const showTerms = () => {
   color: var(--text-secondary);
 }
 
-.track-price {
+.price-block {
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.old-price {
+  text-decoration: line-through;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.current-price {
   color: var(--accent);
   font-weight: 600;
+  font-size: 1.2rem;
+}
+
+.license-hint {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
   margin-top: 0.2rem;
 }
 
