@@ -62,7 +62,7 @@ async def get_genre_sales(
     current_user: User = Depends(get_current_admin)
 ):
     return await stats_service.get_genre_sales()
-@router.post("/tracks", response_model=TrackResponse)
+@router.post("/tracks")
 async def create_track(
     title: str = Form(...),
     genre_id: int = Form(...),
@@ -114,9 +114,6 @@ async def create_track(
     await session.commit()
     await session.refresh(track)
 
-    # Загрузка связей для ответа
-    result = await session.get(Track, track.id, options=[selectinload(Track.author), selectinload(Track.genre)])
-    return result
 
 @router.get("/stats/user-metrics", response_model=UserMetricsResponse)
 async def get_user_metrics(

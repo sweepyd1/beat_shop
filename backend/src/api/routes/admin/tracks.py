@@ -2,17 +2,18 @@ from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File,
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Optional
 from datetime import datetime
-
+from sqlalchemy import select
 from schemas.track import TrackResponse
 from core.repositories.track import TrackRepository
 from core.services.track import TrackService
 from core.services.file_service import FileService
-from api.dependencies import get_db_session, get_current_admin, get_file_service
-from database.models import User
+from api.dependencies import get_db_session, get_current_admin, get_file_service, get_track_service
+from database.models import Track, User
+from sqlalchemy.orm import selectinload
 
 router = APIRouter(prefix="/admin/tracks", tags=["admin tracks"])
 
-@router.post("/", response_model=TrackResponse, status_code=201)
+@router.post("/", status_code=201)
 async def create_track(
     title: str = Form(..., min_length=1, max_length=200),
     price: float = Form(..., ge=0),
@@ -23,32 +24,32 @@ async def create_track(
     cover: Optional[UploadFile] = File(None),
     mp3_file: UploadFile = File(...),
     admin: User = Depends(get_current_admin),
-    session: AsyncSession = Depends(get_db_session),
-    file_service: FileService = Depends(get_file_service)
+    track_service: TrackService = Depends(get_track_service)  # Используем зависимость TrackService
 ):
     """Создание трека с загрузкой файлов"""
-    repo = TrackRepository(session)
-    service = TrackService(repo, file_service)
-    
     # Сохраняем файлы
     cover_url = None
     if cover:
-        cover_url = await file_service.save_cover(cover)
+        cover_url = await track_service.file_service.save_cover(cover)
+    print(author_id)
+    mp3_url = await track_service.file_service.save_track(mp3_file)
     
-    mp3_url = await file_service.save_track(mp3_file)
-    
-    # Создаём трек в БД
-    track = await service.create_track(
+    # Создаём трек в БД через сервис
+    track = await track_service.create_track(
         title=title,
         price=price,
         genre_id=genre_id,
-        author_id=author_id,
+        user=author_id,
         duration_seconds=duration_seconds,
         created_date=created_date,
         cover_url=cover_url,
         mp3_file_url=mp3_url
     )
-    return track
+    
+    # Не нужно использовать session.merge, так как track был создан через сервис и уже сохранён
+    return {"message": "Track created successfully"}
+
+    
 
 @router.put("/{track_id}", response_model=TrackResponse)
 async def update_track(
