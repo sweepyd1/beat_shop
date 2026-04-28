@@ -17,15 +17,15 @@
           </p>
           <div class="stats">
             <div class="stat">
-              <span class="stat-value">{{ user.tracks_count || 0 }}</span>
+              <span class="stat-value">{{ tracksCount }}</span>
               <span class="stat-label">Треков</span>
             </div>
-            <div class="stat">
+            <!-- <div class="stat">
               <span class="stat-value">{{ user.followers_count || 0 }}</span>
               <span class="stat-label">Подписчиков</span>
-            </div>
+            </div> -->
             <div class="stat">
-              <span class="stat-value">{{ user.purchases_count || 0 }}</span>
+              <span class="stat-value">{{ purchasesCount }}</span>
               <span class="stat-label">Покупок</span>
             </div>
           </div>
@@ -143,7 +143,7 @@
         </div>
 
         <!-- Подписки -->
-        <div
+        <!-- <div
           v-if="activeTab === 'subscriptions'"
           class="tab-pane"
           key="subscriptions"
@@ -170,7 +170,7 @@
               </button>
             </div>
           </div>
-        </div>
+        </div> -->
 
         <!-- Студия продюсера -->
         <div
@@ -432,7 +432,7 @@ const tabs = computed(() => {
     { key: "info", label: "Мои данные" },
     { key: "purchases", label: "Мои покупки" },
     { key: "favorites", label: "Избранное" },
-    { key: "subscriptions", label: "Подписки" },
+    // { key: "subscriptions", label: "Подписки" },
   ];
   if (user.value?.role === "author") {
     baseTabs.push(
@@ -471,7 +471,14 @@ const getTabIcon = (tabKey) => {
   };
   return icons[tabKey] || '<i class="fas fa-circle"></i>';
 };
+const tracksCount = computed(() => {
+  if (user.value?.role === 'author') {
+    return authorTracks.value.length;
+  }
+  return 0;
+});
 
+const purchasesCount = computed(() => purchases.value.length);
 const openEditModal = () => {
   editForm.value = {
     full_name: user.value.full_name,
