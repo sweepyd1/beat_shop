@@ -3,7 +3,7 @@ from datetime import date, datetime, timedelta
 from typing import List, Optional
 from sqlalchemy.orm import selectinload
 from sqlalchemy import func, select, or_
-from database.models import Favorite, Purchase, Subscription, Track, User
+from database.models import Favorite, Interaction, Purchase, Subscription, Track, User
 from .base import BaseRepository
 
 
@@ -41,15 +41,34 @@ class UserRepository(BaseRepository[User]):
         )
         return result.first() is not None
     
+    
+
     async def get_with_relations(self, user_id: int) -> Optional[User]:
         """Получить пользователя со всеми связанными данными (подписки, покупки, избранное)"""
         result = await self.session.execute(
             select(User)
             .where(User.id == user_id)
             .options(
+                # Загрузка подписок с авторами
                 selectinload(User.subscriptions).selectinload(Subscription.author),
-                selectinload(User.purchases).selectinload(Purchase.track).selectinload(Track.author),
-                selectinload(User.favorites).selectinload(Favorite.track).selectinload(Track.author),
+                # Загрузка покупок с треками, у которых загружены авторы и жанры
+                selectinload(User.purchases)
+                    .selectinload(Purchase.track)
+                    .selectinload(Track.author),   # автор трека
+                selectinload(User.purchases)
+                    .selectinload(Purchase.track)
+                    .selectinload(Track.genre),    # 👈 жанр трека (исправляет ошибку)
+                # Загрузка избранного с треками, у которых загружены авторы и жанры
+                selectinload(User.favorites)
+                    .selectinload(Favorite.track)
+                    .selectinload(Track.author),
+                selectinload(User.favorites)
+                    .selectinload(Favorite.track)
+                    .selectinload(Track.genre),    # 👈 и здесь тоже
+                # Загрузка интеракций (прослушивания для топ жанров)
+                selectinload(User.interactions)
+                    .selectinload(Interaction.track)
+                    .selectinload(Track.genre),    # 👈 и для интеракций
             )
         )
         return result.scalar_one_or_none()

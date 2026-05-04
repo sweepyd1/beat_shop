@@ -20,16 +20,10 @@
 
         <!-- Административные ссылки (только для роли admin) -->
         <template v-if="isAdmin">
-          <router-link to="/admin/tracks" active-class="active"
-            >Управление треками</router-link
-          >
-          <router-link to="/admin/stats" active-class="active"
-            >Статистика</router-link
-          >
-          <router-link to="/admin/user-stats" class="menu-item">
-            Статистика пользователей
-          </router-link>
-        </template>
+  <router-link to="/admin" class="admin-link">
+    <i class="fas fa-crown"></i> Админ панель
+  </router-link>
+</template>
       </nav>
 
       <div class="user-actions">

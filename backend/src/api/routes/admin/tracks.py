@@ -24,10 +24,10 @@ async def create_track(
     cover: Optional[UploadFile] = File(None),
     mp3_file: UploadFile = File(...),
     admin: User = Depends(get_current_admin),
-    track_service: TrackService = Depends(get_track_service)  # Используем зависимость TrackService
+    track_service: TrackService = Depends(get_track_service)  
 ):
     """Создание трека с загрузкой файлов"""
-    # Сохраняем файлы
+
     cover_url = None
     if cover:
         cover_url = await track_service.file_service.save_cover(cover)
@@ -59,46 +59,35 @@ async def update_track(
     genre_id: Optional[int] = Form(None),
     author_id: Optional[int] = Form(None),
     duration_seconds: Optional[int] = Form(None, ge=0),
-    created_date: Optional[datetime] = Form(None),
+    bpm: Optional[int] = Form(None),
     cover: Optional[UploadFile] = File(None),
     mp3_file: Optional[UploadFile] = File(None),
     admin: User = Depends(get_current_admin),
-    session: AsyncSession = Depends(get_db_session),
-    file_service: FileService = Depends(get_file_service)
+    track_service: TrackService = Depends(get_track_service)   # <-- используем готовый сервис
 ):
-    """Обновление трека"""
-    repo = TrackRepository(session)
-    service = TrackService(repo, file_service)
-    
-    # Собираем данные для обновления
+    """Обновление трека (администратором)"""
     update_data = {}
-    if title is not None:
-        update_data['title'] = title
-    if price is not None:
-        update_data['price'] = price
-    if genre_id is not None:
-        update_data['genre_id'] = genre_id
-    if author_id is not None:
-        update_data['author_id'] = author_id
-    if duration_seconds is not None:
-        update_data['duration_seconds'] = duration_seconds
-    if created_date is not None:
-        update_data['created_date'] = created_date
-    
-    track = await service.update_track(track_id, update_data, cover, mp3_file)
+    if title is not None: update_data['title'] = title
+    if price is not None: update_data['price'] = price
+    if genre_id is not None: update_data['genre_id'] = genre_id
+    if author_id is not None: update_data['author_id'] = author_id
+    if duration_seconds is not None: update_data['duration_seconds'] = duration_seconds
+    if bpm is not None: update_data['bpm'] = bpm
+
+    track = await track_service.update_track(track_id, update_data, cover, mp3_file)
     if not track:
-        raise HTTPException(404, "Трек не найден")
+        raise HTTPException(status_code=404, detail="Трек не найден")
     return track
+
 
 @router.delete("/{track_id}", status_code=204)
 async def delete_track(
     track_id: int,
     admin: User = Depends(get_current_admin),
-    session: AsyncSession = Depends(get_db_session),
-    file_service: FileService = Depends(get_file_service)
+    track_service: TrackService = Depends(get_track_service)   # <-- используем готовый сервис
 ):
-    repo = TrackRepository(session)
-    service = TrackService(repo, file_service)
-    deleted = await service.delete_track(track_id)
+    """Удаление трека (администратором)"""
+    deleted = await track_service.delete_track(track_id)
     if not deleted:
-        raise HTTPException(404, "Трек не найден")
+        raise HTTPException(status_code=404, detail="Трек не найден")
+    

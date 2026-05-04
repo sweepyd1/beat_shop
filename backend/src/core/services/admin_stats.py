@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+
 from schemas.admin_stats import (
     MetricsResponse, DailySalesResponse, DailyUsersResponse,
     TopTrackResponse, GenreSalesResponse,
@@ -91,14 +92,14 @@ class AdminStatsService:
         week_ago = datetime.now() - timedelta(days=7)
         new_users = await self.user_repo.count_registered_since(week_ago)
         active_users = await self.interaction_repo.get_active_users_count_since(30)
-        total_subscriptions = await self.user_repo.total_subscriptions()  # нужно добавить
+        # total_subscriptions = await self.user_repo.total_subscriptions()  # нужно добавить
         avg_purchases = await self.purchase_repo.average_purchases_per_user()  # новый метод
         total_purchases_amount = await self.purchase_repo.total_revenue()
         return UserMetricsResponse(
             total_users=total_users,
             new_users_last_week=new_users,
             active_users_last_month=active_users,
-            total_subscriptions=total_subscriptions,
+            total_subscriptions=0,
             avg_purchases_per_user=round(avg_purchases, 2),
             total_purchases_amount=round(total_purchases_amount, 2)
         )
@@ -144,3 +145,4 @@ class AdminStatsService:
     async def get_user_role_distribution(self) -> list[UserRoleDistributionResponse]:
         rows = await self.user_repo.get_role_distribution()
         return [UserRoleDistributionResponse(role=role, count=count) for role, count in rows]
+    

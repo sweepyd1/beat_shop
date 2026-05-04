@@ -13,6 +13,7 @@ import Login from '@/views/Login.vue'
 import Register from '@/views/Register.vue'
 import TrackDetail from '../views/TrackDetail.vue'; // новый импорт
 import AdminStats from '@/views/AdminStats.vue';
+import AdminDashboard from '@/views/AdminDashboard.vue'
 const routes = [
   { path: '/', component: Home },
   { path: '/search', component: Search },
@@ -43,7 +44,19 @@ const routes = [
   name: 'UserStats',
   component: () => import('@/views/UserStats.vue'),
   meta: { requiresAdmin: true }
-}
+},
+{
+  path: '/admin/users',
+  name: 'AdminUsers',
+  component: () => import('@/views/AdminUsers.vue'),
+  meta: { requiresAuth: true, role: 'admin' }
+},
+  {
+    path: '/admin',
+    name: 'AdminDashboard',
+    component: AdminDashboard,
+   
+  },
 ]
 
 const router = createRouter({

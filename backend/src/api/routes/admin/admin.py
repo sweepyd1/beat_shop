@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from typing import Optional
@@ -7,12 +8,13 @@ import shutil
 from pathlib import Path
 from datetime import datetime
 import uuid
+from core.services.track import TrackService
 from schemas.admin_stats import (
     DailyUserPurchasesResponse, DailyUserRegistrationsResponse, MetricsResponse, DailySalesResponse, DailyUsersResponse, TopBuyerResponse, TopListenerResponse,
     TopTrackResponse, GenreSalesResponse, UserMetricsResponse, UserRoleDistributionResponse
 )
 from core.services.admin_stats import AdminStatsService
-from api.dependencies import get_admin_stats_service
+from api.dependencies import get_admin_stats_service, get_track_service
 from api.dependencies import get_db_session, get_current_admin
 from database.models import User, Track
 from schemas.track import TrackResponse
@@ -24,6 +26,13 @@ COVER_DIR = Path("storage/covers")
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 COVER_DIR.mkdir(parents=True, exist_ok=True)
 
+@router.get("/tracks", response_model=list[TrackResponse])
+async def get_all_tracks(
+    admin: User = Depends(get_current_admin),
+    track_service: TrackService = Depends(get_track_service)
+):
+    tracks = await track_service.search_tracks(limit=1000)
+    return tracks
 
 @router.get("/stats/metrics", response_model=MetricsResponse)
 async def get_stats_metrics(
@@ -160,3 +169,16 @@ async def get_role_distribution(
     current_user: User = Depends(get_current_admin)
 ):
     return await stats_service.get_user_role_distribution()
+
+
+@router.get("/tracks/{track_id}", response_model=TrackResponse)
+async def get_track(
+    track_id: int,
+    admin: User = Depends(get_current_admin),
+    track_service: TrackService = Depends(get_track_service)
+):
+
+    track = await track_service.get_track(track_id)
+    if not track:
+        raise HTTPException(status_code=404, detail="Трек не найден")
+    return track

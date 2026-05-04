@@ -27,7 +27,6 @@
     <div v-if="activeTab === 'add'" class="card add-card">
       <form @submit.prevent="submitTrack" class="space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <!-- Левая колонка: файлы -->
           <div class="space-y-6">
             <div>
               <label class="block text-sm font-medium text-gray-300 mb-2">MP3 файл</label>
@@ -76,7 +75,6 @@
             </div>
           </div>
 
-          <!-- Правая колонка: метаданные -->
           <div class="space-y-4">
             <div>
               <label class="block text-sm font-medium text-gray-300">Название *</label>
@@ -136,14 +134,15 @@
       <div v-else class="track-grid">
         <div v-for="track in filteredTracks" :key="track.id" class="track-card">
           <div class="relative">
-            <img :src="track.cover_url" class="track-cover" />
-            <button 
-              @click="deleteTrack(track.id)" 
-              class="delete-btn"
-              title="Удалить"
-            >
-              <i class="fas fa-trash-alt"></i>
-            </button>
+            <img :src="track.cover_url" class="track-cover" @error="e => e.target.src='/default-cover.jpg'" />
+            <div class="action-buttons">
+              <button @click.stop="openEditModal(track)" class="edit-btn" title="Редактировать">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button @click.stop="deleteTrack(track.id)" class="delete-btn" title="Удалить">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </div>
           </div>
           <div class="track-info">
             <h3 class="track-title">{{ track.title }}</h3>
@@ -160,6 +159,91 @@
         </div>
       </div>
     </div>
+
+    <!-- Модальное окно редактирования -->
+    <teleport to="body">
+      <div v-if="showEditModal" class="modal-overlay" @click.self="closeEditModal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>Редактирование трека</h2>
+            <button @click="closeEditModal" class="close-btn">&times;</button>
+          </div>
+          <form @submit.prevent="submitEdit" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-6">
+                <div>
+                  <label class="block text-sm font-medium text-gray-300 mb-2">Новый MP3 (необязательно)</label>
+                  <div class="upload-area" @click="$refs.editMp3Input.click()">
+                    <input type="file" ref="editMp3Input" accept=".mp3" @change="onEditMp3Change" hidden />
+                    <div v-if="editMp3File" class="file-preview">
+                      <i class="fas fa-music text-4xl text-purple-400"></i>
+                      <span class="text-sm">{{ editMp3File.name }}</span>
+                    </div>
+                    <div v-else class="upload-placeholder">
+                      <i class="fas fa-music text-4xl text-gray-500 mb-2"></i>
+                      <p>Заменить MP3 (опционально)</p>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-300 mb-2">Новая обложка</label>
+                  <div class="upload-area" @click="$refs.editCoverInput.click()">
+                    <input type="file" ref="editCoverInput" accept="image/*" @change="onEditCoverChange" hidden />
+                    <div v-if="editCoverPreview" class="file-preview">
+                      <img :src="editCoverPreview" class="preview-image" />
+                    </div>
+                    <div v-else class="upload-placeholder">
+                      <i class="fas fa-image text-4xl text-gray-500 mb-2"></i>
+                      <p>Заменить обложку (опционально)</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-300">Название *</label>
+                  <input v-model="editForm.title" type="text" required class="input" />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-300">Жанр *</label>
+                  <select v-model="editForm.genre_id" required class="input">
+                    <option v-for="g in genres" :key="g.id" :value="g.id">{{ g.name }}</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-300">Автор *</label>
+                  <select v-model="editForm.author_id" required class="input">
+                    <option v-for="a in authors" :key="a.id" :value="a.id">{{ a.full_name }}</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-300">Цена (₽) *</label>
+                  <input v-model.number="editForm.price" type="number" step="0.01" required class="input" />
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-300">BPM</label>
+                    <input v-model.number="editForm.bpm" type="number" class="input" />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-300">Длительность (сек)</label>
+                    <input v-model.number="editForm.duration_seconds" type="number" class="input" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex justify-end">
+              <button type="submit" :disabled="editLoading" class="btn-primary">
+                <i class="fas fa-save mr-2"></i>
+                {{ editLoading ? 'Сохранение...' : 'Сохранить изменения' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </teleport>
   </div>
 </template>
 
@@ -175,9 +259,11 @@ const router = useRouter();
 if (authStore.user?.role !== 'admin') {
   router.replace('/');
 }
+
 const activeTab = ref('list');
 const dragOverMp3 = ref(false);
 const dragOverCover = ref(false);
+
 const form = ref({
   title: '',
   genre_id: null,
@@ -188,6 +274,22 @@ const form = ref({
   mp3_file: null,
   cover_file: null
 });
+
+const editingTrackId = ref(null);
+const editForm = ref({
+  title: '',
+  genre_id: null,
+  author_id: null,
+  price: 0,
+  bpm: null,
+  duration_seconds: null,
+});
+const editCoverPreview = ref(null);
+const editCoverFile = ref(null);
+const editMp3File = ref(null);
+const editLoading = ref(false);
+const showEditModal = ref(false);
+
 const genres = ref([]);
 const authors = ref([]);
 const tracks = ref([]);
@@ -195,6 +297,9 @@ const loading = ref(false);
 const tracksLoading = ref(false);
 const searchQuery = ref('');
 const genreFilter = ref('');
+
+const mp3Input = ref(null);
+const coverInput = ref(null);
 
 const coverPreview = computed(() => {
   if (form.value.cover_file) {
@@ -207,8 +312,8 @@ const filteredTracks = computed(() => {
   let result = tracks.value;
   if (searchQuery.value) {
     const q = searchQuery.value.toLowerCase();
-    result = result.filter(t => 
-      t.title.toLowerCase().includes(q) || 
+    result = result.filter(t =>
+      t.title.toLowerCase().includes(q) ||
       t.author?.full_name.toLowerCase().includes(q)
     );
   }
@@ -222,9 +327,6 @@ const triggerFileInput = (type) => {
   if (type === 'mp3') mp3Input.value.click();
   else coverInput.value.click();
 };
-
-const mp3Input = ref(null);
-const coverInput = ref(null);
 
 const handleFileChange = (event, type) => {
   const file = event.target.files[0];
@@ -283,7 +385,6 @@ const submitTrack = async () => {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     alert('Трек успешно добавлен');
-    // Сброс формы
     form.value = { title: '', genre_id: null, author_id: null, price: 0, bpm: null, duration_seconds: null, mp3_file: null, cover_file: null };
     if (coverPreview.value) URL.revokeObjectURL(coverPreview.value);
     fetchTracks();
@@ -293,6 +394,84 @@ const submitTrack = async () => {
     alert(err.response?.data?.detail || 'Ошибка добавления трека');
   } finally {
     loading.value = false;
+  }
+};
+
+// Редактирование
+const openEditModal = async (track) => {
+  try {
+    const { data } = await api.get(`/admin/tracks/${track.id}`);
+    editingTrackId.value = data.id;
+    editForm.value = {
+      title: data.title,
+      genre_id: data.genre.id,
+      author_id: data.author.id,
+      price: data.price,
+      bpm: data.bpm || null,
+      duration_seconds: data.duration_seconds || null,
+    };
+    editCoverFile.value = null;
+    editMp3File.value = null;
+    editCoverPreview.value = data.cover_url || null;
+    showEditModal.value = true;
+  } catch (err) {
+    console.error('Ошибка загрузки трека для редактирования:', err);
+    alert('Не удалось загрузить данные трека');
+  }
+};
+
+const onEditCoverChange = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    if (!file.type.startsWith('image/')) {
+      alert('Выберите изображение');
+      return;
+    }
+    editCoverFile.value = file;
+    editCoverPreview.value = URL.createObjectURL(file);
+  }
+};
+
+const onEditMp3Change = (event) => {
+  const file = event.target.files[0];
+  if (file && file.name.endsWith('.mp3')) {
+    editMp3File.value = file;
+  } else if (file) {
+    alert('Выберите MP3 файл');
+  }
+};
+
+const submitEdit = async () => {
+  editLoading.value = true;
+  const fd = new FormData();
+  fd.append('title', editForm.value.title);
+  fd.append('genre_id', editForm.value.genre_id);
+  fd.append('author_id', editForm.value.author_id);
+  fd.append('price', editForm.value.price);
+  if (editForm.value.bpm) fd.append('bpm', editForm.value.bpm);
+  if (editForm.value.duration_seconds) fd.append('duration_seconds', editForm.value.duration_seconds);
+  if (editCoverFile.value) fd.append('cover', editCoverFile.value);
+  if (editMp3File.value) fd.append('mp3_file', editMp3File.value);
+
+  try {
+    await api.put(`/admin/tracks/${editingTrackId.value}`, fd, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    alert('Трек обновлён');
+    showEditModal.value = false;
+    fetchTracks();
+  } catch (err) {
+    console.error(err);
+    alert(err.response?.data?.detail || 'Ошибка обновления');
+  } finally {
+    editLoading.value = false;
+  }
+};
+
+const closeEditModal = () => {
+  showEditModal.value = false;
+  if (editCoverPreview.value && editCoverFile.value) {
+    URL.revokeObjectURL(editCoverPreview.value);
   }
 };
 
@@ -313,10 +492,13 @@ const fetchAuthors = async () => {
 const fetchTracks = async () => {
   tracksLoading.value = true;
   try {
-    const res = await api.get('/admin/tracks');
+    const res = await api.get('/admin/tracks');  // ← изменено на /list
     tracks.value = res.data;
-  } catch (err) { console.error(err); }
-  finally { tracksLoading.value = false; }
+  } catch (err) {
+    console.error(err);
+  } finally {
+    tracksLoading.value = false;
+  }
 };
 
 const deleteTrack = async (id) => {
@@ -342,15 +524,15 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* Современный CSS с использованием Tailwind-like классов, но без Tailwind */
+
 .admin-container {
   max-width: 1400px;
   margin: 2rem auto;
   padding: 0 1rem;
 }
 .header {
-  margin-bottom: 2rem;
   text-align: center;
+  margin-bottom: 2rem;
 }
 .tabs {
   display: flex;
@@ -512,13 +694,25 @@ onMounted(() => {
   font-size: 0.75rem;
   color: #a0a0b0;
 }
-.delete-btn {
+
+/* Кнопки действий (редактировать/удалить) */
+.action-buttons {
   position: absolute;
   top: 0.5rem;
   right: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.track-card:hover .action-buttons {
+  opacity: 1;
+}
+.edit-btn,
+.delete-btn {
   background: rgba(0,0,0,0.7);
   border: none;
-  color: #ff4d4d;
+  color: white;
   width: 30px;
   height: 30px;
   border-radius: 50%;
@@ -526,27 +720,65 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0;
-  transition: opacity 0.2s;
+  transition: background 0.2s;
 }
-.track-card:hover .delete-btn {
-  opacity: 1;
+.edit-btn:hover {
+  background: #3b82f6;
 }
 .delete-btn:hover {
   background: #ff4d4d;
+}
+
+/* Модальное окно */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.modal-content {
+  background: #1e1e2e;
+  border: 1px solid rgba(168,85,247,0.2);
+  border-radius: 1.5rem;
+  padding: 2rem;
+  width: 90%;
+  max-width: 900px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+.modal-header h2 {
+  font-size: 1.5rem;
   color: white;
 }
+.close-btn {
+  background: none;
+  border: none;
+  color: #a0a0b0;
+  font-size: 2rem;
+  cursor: pointer;
+}
+.close-btn:hover {
+  color: white;
+}
+
 .search-input, .filter-select {
   width: auto;
   min-width: 200px;
 }
 @media (max-width: 640px) {
   .track-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr}
   }
-  .flex.justify-between {
-    flex-direction: column;
-    gap: 1rem;
-  }
-}
 </style>
