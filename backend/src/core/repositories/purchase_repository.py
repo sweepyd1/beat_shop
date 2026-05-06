@@ -1,8 +1,8 @@
 # core/repositories/purchase_repository.py
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from database.models import LicenseType, Purchase, Track
-
+from database.models import Author, LicenseType, Purchase, Track
+from sqlalchemy.orm import selectinload
 
 class PurchaseRepository:
     def __init__(self, session: AsyncSession):
@@ -39,7 +39,15 @@ class PurchaseRepository:
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none()
 
-    async def get_by_id(self, purchase_id: int) -> Purchase | None:
-        stmt = select(Purchase).where(Purchase.id == purchase_id)
+    async def get_by_id(self, purchase_id: int):
+        stmt = (
+            select(Purchase)
+            .where(Purchase.id == purchase_id)
+            .options(
+                selectinload(Purchase.track).selectinload(Track.genre),
+                selectinload(Purchase.track).selectinload(Track.author).selectinload(Author.user),
+                selectinload(Purchase.user)
+            )
+        )
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none()

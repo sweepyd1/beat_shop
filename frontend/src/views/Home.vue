@@ -16,7 +16,7 @@
     <section class="section">
       <div class="section-header">
         <h2>Популярные биты</h2>
-        <router-link to="/search?sort=popular" class="view-all">Все →</router-link>
+        <router-link to="/genres" class="view-all">Все жанры →</router-link>
       </div>
       <div class="track-grid">
         <TrackCard
@@ -32,15 +32,15 @@
     <section class="section">
       <div class="section-header">
         <h2>Подборки по жанрам</h2>
-        <router-link to="/search" class="view-all">Все жанры →</router-link>
+        <router-link to="/genres" class="view-all">Все жанры →</router-link>
       </div>
       <div class="genre-collections">
         <div
-          v-for="collection in genreCollections"
-          :key="collection.id"
-          class="collection-card vinyl"
-          @click="$router.push(`/collection/${collection.id}`)"
-        >
+  v-for="collection in genreCollections"
+  :key="collection.id"
+  class="collection-card vinyl"
+  @click="$router.push(`/genre/${collection.id}`)"
+>
           <div class="vinyl-record">
             <img
               :src="collection.cover"

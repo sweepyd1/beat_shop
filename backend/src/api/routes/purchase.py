@@ -23,7 +23,7 @@ async def get_purchase_service(
 @router.post("/purchases", response_model=dict)
 async def create_purchase(
     data: PurchaseRequest,
-    current_user: Optional[User] = Depends(get_current_user_optional),
+    current_user: Optional[User] = Depends(get_current_user),
     service: PurchaseService = Depends(get_purchase_service)
 ):
     """

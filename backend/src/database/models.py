@@ -90,6 +90,7 @@ class Track(Base):
     price: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
     plays: Mapped[int] = mapped_column(Integer, nullable=False, default=0.0)
     bpm: Mapped[int] = mapped_column(Integer, nullable=True, default=0.0)
+    is_exclusive_sold: Mapped[bool] = mapped_column(Boolean, default=False, nullable=True)
     
 
     # Внешние ключи

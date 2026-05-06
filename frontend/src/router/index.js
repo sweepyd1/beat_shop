@@ -57,6 +57,16 @@ const routes = [
     component: AdminDashboard,
    
   },
+  {
+  path: '/genres',
+  name: 'Genres',
+  component: () => import('../views/Genres.vue')
+},
+{
+  path: '/genre/:id',
+  name: 'GenreDetail',
+  component: () => import('../views/GenreDetail.vue')
+}
 ]
 
 const router = createRouter({

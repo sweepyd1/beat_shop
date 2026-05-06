@@ -22,6 +22,7 @@ class TrackRepository(BaseRepository[Track]):
     async def get_all(self, skip: int = 0, limit: int = 100) -> List[Track]:
         result = await self.session.execute(
             select(Track)
+            .where(Track.is_exclusive_sold == False)
             .options(
                 selectinload(Track.genre),
                 selectinload(Track.author)
@@ -34,6 +35,7 @@ class TrackRepository(BaseRepository[Track]):
         """Возвращает популярные треки (по убыванию plays)."""
         result = await self.session.execute(
             select(Track)
+            .where(Track.is_exclusive_sold == False)
             .options(selectinload(Track.author), selectinload(Track.genre))
             .order_by(Track.plays.desc())
             .limit(limit)
@@ -44,6 +46,7 @@ class TrackRepository(BaseRepository[Track]):
         """Возвращает новые треки (по убыванию added_date)."""
         result = await self.session.execute(
             select(Track)
+            .where(Track.is_exclusive_sold == False)
             .options(selectinload(Track.author), selectinload(Track.genre))
             .order_by(Track.added_date.desc())
             .limit(limit)
@@ -61,7 +64,7 @@ class TrackRepository(BaseRepository[Track]):
         skip: int = 0,
         limit: int = 20
     ) -> List[Track]:
-        stmt = select(Track).options(
+        stmt = select(Track).where(Track.is_exclusive_sold == False).options(
             selectinload(Track.genre),
             selectinload(Track.author)
         )

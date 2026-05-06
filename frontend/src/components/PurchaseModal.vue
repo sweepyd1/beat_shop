@@ -60,7 +60,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import api from '../api';
 
 const props = defineProps({
@@ -77,13 +77,12 @@ const form = ref({
   agree: false
 });
 const loading = ref(false);
+const user = ref(null); // данные текущего пользователя
 
-// Форматирование цены с разделителями тысяч
-const formatPrice = (value) => {
-  return Number(value).toLocaleString('ru-RU');
-};
+// Форматирование цены (без изменений)
+const formatPrice = (value) => Number(value).toLocaleString('ru-RU');
 
-// URL обложки трека
+// Обложка трека
 const coverUrl = computed(() => {
   if (!props.track) return '';
   const url = props.track.cover_url;
@@ -93,25 +92,19 @@ const coverUrl = computed(() => {
   return `${baseUrl}${url}`;
 });
 
-// Цены для разных лицензий на основе базовой цены трека и коэффициентов
+// Цены (без изменений)
 const prices = computed(() => {
   const base = props.track?.price || 0;
   return {
     standard: base,
-    extended: base * 2.0,    // коэффициент расширенной лицензии
-    exclusive: base * 5.0    // коэффициент эксклюзивной лицензии
+    extended: base * 2.0,
+    exclusive: base * 5.0
   };
 });
 
-// Базовая (стандартная) цена — всегда используется для зачёркивания
 const basePrice = computed(() => prices.value.standard);
+const currentPrice = computed(() => prices.value[form.value.licenseType] || prices.value.standard);
 
-// Текущая цена в зависимости от выбранной лицензии
-const currentPrice = computed(() => {
-  return prices.value[form.value.licenseType] || prices.value.standard;
-});
-
-// Текст‑подсказка о выбранной лицензии
 const licenseHint = computed(() => {
   const hints = {
     standard: 'Базовая стоимость (стандартная лицензия)',
@@ -121,12 +114,12 @@ const licenseHint = computed(() => {
   return hints[form.value.licenseType] || '';
 });
 
-// Закрытие модального окна
+// Закрытие модалки
 const close = () => {
   emit('update:modelValue', false);
 };
 
-// Отправка формы покупки
+// Отправка формы (без изменений, кроме возможного использования user.id)
 const submitPurchase = async () => {
   if (!form.value.agree) {
     alert('Необходимо согласиться с условиями договора');
@@ -155,11 +148,33 @@ const submitPurchase = async () => {
   }
 };
 
-// Показ условий лицензионного договора
 const showTerms = () => {
-  // Здесь можно открыть модальное окно с текстом или перейти на страницу
   alert('Здесь будет текст лицензионного договора');
 };
+
+
+const fetchCurrentUser = async () => {
+  try {
+    const response = await api.get('/users/me');
+    user.value = response.data; 
+  } catch (e) {
+
+    user.value = null;
+  }
+};
+
+// Следим за открытием модалки
+watch(() => props.modelValue, async (isOpen) => {
+  if (isOpen) {
+    if (!user.value) {
+      await fetchCurrentUser();
+    }
+    if (user.value) {
+      form.value.name = user.value.full_name || '';
+      form.value.email = user.value.email || '';
+    }
+  }
+});
 </script>
 
 <style scoped>

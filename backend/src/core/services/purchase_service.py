@@ -62,9 +62,21 @@ class PurchaseService:
         """Универсальный метод покупки, работающий как для авторизованных, так и для гостей."""
         # 1. Проверяем существование трека
         track = await self.track_repo.get(track_id)
+        if track.is_exclusive_sold:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Трек уже продан по эксклюзивной лицензии и недоступен для покупки."
+            )
         if not track:
             raise HTTPException(status_code=404, detail="Трек не найден")
+        print(f"айди пользователя: {current_user.id}")
+        print(f"айди автора: {track.author.user_id}")
+        if current_user and track.author.user_id == current_user.id:
 
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Вы не можете купить собственный трек"
+            )
         # 3. Определяем пользователя
         if current_user:
             user = current_user
@@ -114,7 +126,7 @@ class PurchaseService:
 
         # 9. Если куплена эксклюзивная лицензия, помечаем трек как эксклюзивный (чтобы больше не продавался)
         if license_type == LicenseType.exclusive:
-            
+            track.is_exclusive_sold = True
             self.session.add(track)
 
         await self.session.commit()

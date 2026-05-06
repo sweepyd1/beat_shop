@@ -17,7 +17,6 @@ async def get_my_tracks(
     auth_service: AuthService = Depends(get_auth_service),
 
 ):
-
     access_token = request.cookies.get("access_token")
     if not access_token:
         raise HTTPException(status_code=401, detail="Not authenticated")
