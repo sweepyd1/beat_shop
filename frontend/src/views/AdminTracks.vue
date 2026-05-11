@@ -96,16 +96,7 @@
               <label class="block text-sm font-medium text-gray-300">Цена (₽) *</label>
               <input v-model.number="form.price" type="number" step="0.01" required class="input" />
             </div>
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <label class="block text-sm font-medium text-gray-300">BPM</label>
-                <input v-model.number="form.bpm" type="number" class="input" />
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-300">Длительность (сек)</label>
-                <input v-model.number="form.duration_seconds" type="number" class="input" />
-              </div>
-            </div>
+
           </div>
         </div>
 

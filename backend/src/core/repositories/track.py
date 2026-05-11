@@ -1,7 +1,8 @@
+from datetime import datetime, timedelta
 from typing import List, Optional
 from sqlalchemy import func, select, or_
 from sqlalchemy.orm import selectinload
-from database.models import Author, Genre, Purchase, Track
+from database.models import Author, Genre, Interaction, InteractionType, Purchase, Track
 from .base import BaseRepository
 
 class TrackRepository(BaseRepository[Track]):
@@ -159,3 +160,54 @@ class TrackRepository(BaseRepository[Track]):
             .limit(limit)
         )
         return result.all()
+    async def count_plays_by_author(self, author_id: int) -> int:
+        stmt = (
+            select(func.count())
+            .join(Track, Track.id == Interaction.track_id)
+            .where(Track.author_id == author_id, Interaction.interaction_type == InteractionType.listen)
+        )
+        result = await self.session.execute(stmt)
+        return result.scalar_one()
+
+    async def count_favorites_by_author(self, author_id: int) -> int:
+        stmt = (
+            select(func.count())
+            .join(Track, Track.id == Interaction.track_id)
+            .where(Track.author_id == author_id, Interaction.interaction_type == InteractionType.favorite)
+        )
+        result = await self.session.execute(stmt)
+        return result.scalar_one()
+
+    async def get_last_7_days_plays(self, author_id: int) -> list[int]:
+        start_date = datetime.now() - timedelta(days=6)
+        stmt = (
+            select(func.date(Interaction.timestamp), func.count())
+            .join(Track, Track.id == Interaction.track_id)
+            .where(
+                Track.author_id == author_id,
+                Interaction.interaction_type == InteractionType.listen,
+                Interaction.timestamp >= start_date
+            )
+            .group_by(func.date(Interaction.timestamp))
+            .order_by(func.date(Interaction.timestamp))
+        )
+        result = await self.session.execute(stmt)
+        rows = {row[0]: row[1] for row in result.all()}
+        # массив за последние 7 дней
+        today = datetime.now().date()
+        return [rows.get(today - timedelta(days=i), 0) for i in range(6, -1, -1)]
+
+
+    async def get_top_tracks_by_plays(self, author_id: int, limit: int = 5) -> list[dict]:
+        stmt = (
+            select(Track.id, Track.title, Track.cover_url, Track.plays)
+            .where(Track.author_id == author_id)
+            .order_by(Track.plays.desc())
+            .limit(limit)
+        )
+        result = await self.session.execute(stmt)
+        rows = result.all()
+        return [
+            {'track_id': row[0], 'title': row[1], 'cover_url': row[2], 'plays': row[3]}
+            for row in rows
+        ]

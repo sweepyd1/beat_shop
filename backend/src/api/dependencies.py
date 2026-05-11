@@ -1,5 +1,8 @@
 from typing import AsyncIterator
 from fastapi import Depends, HTTPException, Request
+import librosa
+import numpy as np
+import mutagen
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.security import OAuth2PasswordBearer
 from core.repositories.interaction import InteractionRepository
@@ -25,6 +28,7 @@ from core.services.file_service import FileService
 from core.services.favorite import FavoriteService
 from database.db_manager import db_manager
 from fastapi import status
+from pathlib import Path
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login", auto_error=False)
 async def get_db_session() -> AsyncIterator[AsyncSession]:
@@ -101,11 +105,14 @@ def get_subscription_repository(session: AsyncSession = Depends(get_db_session))
     return SubscriptionRepository(session)
 
 # Сервис статистики
+# dependencies.py
 def get_stats_service(
     purchase_repo: PurchaseRepository = Depends(get_purchase_repository),
-    subscription_repo: SubscriptionRepository = Depends(get_subscription_repository)
+    subscription_repo: SubscriptionRepository = Depends(get_subscription_repository),
+    track_repo: TrackRepository = Depends(get_track_repository),              # добавить
+    interaction_repo: InteractionRepository = Depends(get_interaction_repository)  # добавить
 ) -> StatsService:
-    return StatsService(purchase_repo, subscription_repo)
+    return StatsService(purchase_repo, subscription_repo, track_repo, interaction_repo)
 async def get_admin_stats_service(
     user_repo: UserRepository = Depends(get_user_repository),
     purchase_repo: PurchaseRepository = Depends(get_purchase_repository),
@@ -179,5 +186,41 @@ async def get_current_admin(
         )
     return current_user
 
+def analyze_mp3(file_path: Path) -> tuple[float, int]:
+    """
+    Возвращает (duration_seconds: float, bpm: int)
+    """
+    # 1. Длительность через mutagen (мгновенно, без декодирования)
+    try:
+        audio_info = mutagen.File(file_path)
+        if audio_info and hasattr(audio_info.info, 'length'):
+            duration = audio_info.info.length
+        else:
+            duration = 0.0
+    except Exception:
+        duration = 0.0
 
+    # 2. BPM через librosa (загружаем только первые 30 секунд для скорости)
+    try:
+        # Загружаем аудио (librosa сконвертирует в моно, sr=22050)
+        # Можно ограничить по времени: duration=30 (если трек длинный)
+        y, sr = librosa.load(file_path, sr=22050, duration=30)
+        if len(y) > 0:
+            tempo, _ = librosa.beat.beat_track(y=y, sr=sr)
+            bpm = float(tempo[0] if isinstance(tempo, (list, tuple, np.ndarray)) else tempo)
+            bpm = int(round(bpm))
+        else:
+            bpm = None
+    except Exception as e:
+        
+        print(f"BPM analysis failed: {e}")
+        bpm = None
 
+    # Если длительность не получилась через mutagen – пробуем через librosa
+    if duration == 0.0:
+        try:
+            duration = librosa.get_duration(filename=str(file_path))
+        except:
+            duration = 0.0
+
+    return duration, bpm

@@ -13,41 +13,41 @@ from sqlalchemy.orm import selectinload
 
 router = APIRouter(prefix="/admin/tracks", tags=["admin tracks"])
 
-@router.post("/", status_code=201)
-async def create_track(
-    title: str = Form(..., min_length=1, max_length=200),
-    price: float = Form(..., ge=0),
-    genre_id: int = Form(...),
-    author_id: int = Form(...),
-    duration_seconds: Optional[int] = Form(None, ge=0),
-    created_date: Optional[datetime] = Form(None),
-    cover: Optional[UploadFile] = File(None),
-    mp3_file: UploadFile = File(...),
-    admin: User = Depends(get_current_admin),
-    track_service: TrackService = Depends(get_track_service)  
-):
-    """Создание трека с загрузкой файлов"""
+# @router.post("/", status_code=201)
+# async def create_track(
+#     title: str = Form(..., min_length=1, max_length=200),
+#     price: float = Form(..., ge=0),
+#     genre_id: int = Form(...),
+#     author_id: int = Form(...),
+#     duration_seconds: Optional[int] = Form(None, ge=0),
+#     created_date: Optional[datetime] = Form(None),
+#     cover: Optional[UploadFile] = File(None),
+#     mp3_file: UploadFile = File(...),
+#     admin: User = Depends(get_current_admin),
+#     track_service: TrackService = Depends(get_track_service)  
+# ):
+#     """Создание трека с загрузкой файлов"""
 
-    cover_url = None
-    if cover:
-        cover_url = await track_service.file_service.save_cover(cover)
-    print(author_id)
-    mp3_url = await track_service.file_service.save_track(mp3_file)
+#     cover_url = None
+#     if cover:
+#         cover_url = await track_service.file_service.save_cover(cover)
+#     print(author_id)
+#     mp3_url = await track_service.file_service.save_track(mp3_file)
     
-    # Создаём трек в БД через сервис
-    track = await track_service.create_track(
-        title=title,
-        price=price,
-        genre_id=genre_id,
-        user=author_id,
-        duration_seconds=duration_seconds,
-        created_date=created_date,
-        cover_url=cover_url,
-        mp3_file_url=mp3_url
-    )
+#     # Создаём трек в БД через сервис
+#     track = await track_service.create_track(
+#         title=title,
+#         price=price,
+#         genre_id=genre_id,
+#         user=author_id,
+#         duration_seconds=duration_seconds,
+#         created_date=created_date,
+#         cover_url=cover_url,
+#         mp3_file_url=mp3_url
+#     )
     
-    # Не нужно использовать session.merge, так как track был создан через сервис и уже сохранён
-    return {"message": "Track created successfully"}
+#     # Не нужно использовать session.merge, так как track был создан через сервис и уже сохранён
+#     return {"message": "Track created successfully"}
 
     
 

@@ -274,7 +274,7 @@
                     required
                   />
                 </div>
-                <div class="form-group">
+                <!-- <div class="form-group">
                   <label>BPM</label>
                   <input
                     type="number"
@@ -282,7 +282,7 @@
                     min="0"
                     step="5"
                   />
-                </div>
+                </div> -->
               </div>
               <div class="form-group file-group">
                 <label>Обложка *</label>

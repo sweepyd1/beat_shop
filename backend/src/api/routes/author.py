@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
+from schemas.author_stats import AuthorFullStatsResponse
 from core.services.author import AuthorService
 from core.services.stats import StatsService
 from core.services.track import TrackService
@@ -97,3 +98,16 @@ async def get_author(
     response = AuthorDetailResponse.model_validate(author)
     response.tracks_count = tracks_count
     return response
+
+@router.get("/me/full-stats", response_model=AuthorFullStatsResponse)
+async def get_my_full_stats(
+    current_user: User = Depends(get_current_user),
+    author_service: AuthorService = Depends(get_author_service),
+    stats_service: StatsService = Depends(get_stats_service)
+):
+    if current_user.role.value != "author":
+        raise HTTPException(403, "Пользователь не является автором")
+    author = await author_service.get_author_by_user_id(current_user.id)
+    if not author:
+        raise HTTPException(404, "Профиль автора не найден")
+    return await stats_service.get_author_full_stats(author.id)

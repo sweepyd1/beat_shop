@@ -126,3 +126,88 @@ class PurchaseRepository(BaseRepository[Purchase]):
             full.append((d, cnt, amt))
         return full
 
+    async def get_monthly_earnings_last_n_months(self, author_id: int, months: int = 6) -> list[dict]:
+        """Возвращает список {'month': 'YYYY-MM', 'amount': float} за последние N месяцев"""
+        now = datetime.now()
+        first_day_current = datetime(now.year, now.month, 1)
+        start_date = first_day_current - timedelta(days=(months-1)*30)  # приблизительно
+        stmt = (
+            select(
+                func.to_char(Purchase.purchase_date, 'YYYY-MM').label('month'),
+                func.sum(Purchase.amount).label('amount')
+            )
+            .join(Track, Track.id == Purchase.track_id)
+            .where(Track.author_id == author_id, Purchase.purchase_date >= start_date)
+            .group_by('month')
+            .order_by('month')
+        )
+        result = await self.session.execute(stmt)
+        rows = result.all()
+        return [{'month': row.month, 'amount': float(row.amount)} for row in rows]
+
+    async def get_sales_by_license_type(self, author_id: int) -> list[dict]:
+        """Возвращает список с license_type, count, total_amount"""
+        stmt = (
+            select(
+                Purchase.license_type,
+                func.count(Purchase.id).label('count'),
+                func.sum(Purchase.amount).label('total_amount')
+            )
+            .join(Track, Track.id == Purchase.track_id)
+            .where(Track.author_id == author_id)
+            .group_by(Purchase.license_type)
+        )
+        result = await self.session.execute(stmt)
+        rows = result.all()
+        return [
+            {
+                'license_type': row.license_type.value,  # если license_type это Enum
+                'count': row.count,
+                'total_amount': float(row.total_amount)
+            }
+            for row in rows
+        ]
+
+    async def get_top_tracks_by_sales(self, author_id: int, limit: int = 5) -> list[dict]:
+        """Топ треков по количеству продаж и выручке"""
+        stmt = (
+            select(
+                Track.id,
+                Track.title,
+                Track.cover_url,
+                func.count(Purchase.id).label('sales_count'),
+                func.sum(Purchase.amount).label('revenue')
+            )
+            .outerjoin(Purchase, Purchase.track_id == Track.id)
+            .where(Track.author_id == author_id)
+            .group_by(Track.id)
+            .order_by(func.count(Purchase.id).desc())
+            .limit(limit)
+        )
+        result = await self.session.execute(stmt)
+        rows = result.all()
+        return [
+            {
+                'track_id': row.id,
+                'title': row.title,
+                'cover_url': row.cover_url,
+                'sales_count': row.sales_count or 0,
+                'revenue': float(row.revenue or 0.0)
+            }
+            for row in rows
+        ]
+
+    async def get_last_7_days_sales_count(self, author_id: int) -> list[int]:
+        """Количество продаж за последние 7 дней (массив из 7 чисел)"""
+        now = datetime.now()
+        days = []
+        for i in range(6, -1, -1):
+            day_start = (now - timedelta(days=i)).replace(hour=0, minute=0, second=0)
+            day_end = (now - timedelta(days=i-1)).replace(hour=0, minute=0, second=0) if i > 0 else now
+            result = await self.session.execute(
+                select(func.count(Purchase.id))
+                .join(Track, Track.id == Purchase.track_id)
+                .where(Track.author_id == author_id, Purchase.purchase_date >= day_start, Purchase.purchase_date < day_end)
+            )
+            days.append(result.scalar_one() or 0)
+        return days

@@ -1,4 +1,6 @@
 import os
+from pathlib import Path
+import tempfile
 from typing import List, Optional
 from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, Request, UploadFile
 from fastapi.responses import FileResponse
@@ -8,7 +10,7 @@ from database.models import User
 from schemas.track import TrackResponse, TrackCreate, TrackUpdate
 from core.services.track import TrackService
 from api.dependencies import get_auth_service, get_track_service
-
+from api.dependencies import analyze_mp3
 router = APIRouter(prefix="/tracks", tags=["tracks"])
 @router.get("/me", response_model=List[TrackResponse])
 async def get_my_tracks(
@@ -86,7 +88,6 @@ async def create_track(
     title: str = Form(..., min_length=1, max_length=200),
     genre_id: int = Form(...),
     price: float = Form(..., ge=0),
-    bpm: Optional[int] = Form(None, ge=0),
     cover: UploadFile = File(...),
     mp3: UploadFile = File(...),
     auth_service: AuthService = Depends(get_auth_service),
@@ -98,6 +99,19 @@ async def create_track(
         raise HTTPException(status_code=401, detail="Not authenticated")
     user = await auth_service.get_user_from_token(access_token)
     """Создание нового трека (только для авторов)"""
+    mp3_content = await mp3.read()
+    mp3_filename = mp3.filename or "track.mp3"
+    
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tmp_file:
+        tmp_file.write(mp3_content)
+        tmp_path = Path(tmp_file.name)
+    try:
+        duration, bpm = analyze_mp3(tmp_path)
+    finally:
+        # 🧹 Удаляем временный файл
+        if tmp_path.exists():
+            tmp_path.unlink()
+
     track = await track_service.create_track(
         user=user,
         title=title,
@@ -105,7 +119,8 @@ async def create_track(
         price=price,
         cover=cover,
         mp3=mp3,
-        bpm=bpm
+        bpm=bpm,
+        duration=duration
     )
     
 

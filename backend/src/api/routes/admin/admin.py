@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
+import librosa
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -15,16 +16,19 @@ from schemas.admin_stats import (
 )
 from core.services.admin_stats import AdminStatsService
 from api.dependencies import get_admin_stats_service, get_track_service
-from api.dependencies import get_db_session, get_current_admin
+from api.dependencies import get_db_session, get_current_admin, analyze_mp3
 from database.models import User, Track
 from schemas.track import TrackResponse
-
+import mutagen
+import numpy as np
 router = APIRouter(prefix="/admin", tags=["admin"])
 
 UPLOAD_DIR = Path("storage/tracks")
 COVER_DIR = Path("storage/covers")
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 COVER_DIR.mkdir(parents=True, exist_ok=True)
+
+
 
 @router.get("/tracks", response_model=list[TrackResponse])
 async def get_all_tracks(
@@ -71,32 +75,31 @@ async def get_genre_sales(
     current_user: User = Depends(get_current_admin)
 ):
     return await stats_service.get_genre_sales()
+
 @router.post("/tracks")
 async def create_track(
     title: str = Form(...),
     genre_id: int = Form(...),
     author_id: int = Form(...),
     price: float = Form(...),
-    bpm: Optional[int] = Form(None),
-    duration_seconds: Optional[int] = Form(None),
     mp3_file: UploadFile = File(...),
     cover: UploadFile = File(...),
     current_user: User = Depends(get_current_admin),
     session: AsyncSession = Depends(get_db_session),
 ):
+    # ... проверки расширений ...
     if not mp3_file.filename.endswith('.mp3'):
         raise HTTPException(400, "Только MP3")
     if not cover.filename.lower().endswith(('.jpg','.jpeg','.png')):
         raise HTTPException(400, "Только изображения (jpg,png)")
 
-    # Генерация имён файлов
+    # Генерация имён
     mp3_filename = f"{uuid.uuid4().hex}.mp3"
     cover_filename = f"{uuid.uuid4().hex}{Path(cover.filename).suffix}"
-
     mp3_path = UPLOAD_DIR / mp3_filename
     cover_path = COVER_DIR / cover_filename
 
-    # Сохранение файлов
+    # Сохраняем файлы
     try:
         with open(mp3_path, "wb") as f:
             shutil.copyfileobj(mp3_file.file, f)
@@ -105,16 +108,26 @@ async def create_track(
     except Exception as e:
         raise HTTPException(500, f"Ошибка сохранения: {str(e)}")
 
-    # Создание записи в БД
+    # 🎯 Автоматически определяем длительность и BPM
+    duration_seconds, bpm = analyze_mp3(mp3_path)
+
+    # Если длительность не удалось определить – можно вернуть ошибку
+    if duration_seconds == 0:
+        # Удаляем уже сохранённые файлы, чтобы не мусорить
+        mp3_path.unlink(missing_ok=True)
+        cover_path.unlink(missing_ok=True)
+        raise HTTPException(400, "Не удалось прочитать длительность трека (файл повреждён?)")
+
+    # Создаём запись в БД
     track_data = {
         "title": title,
         "cover_url": f"/storage/covers/{cover_filename}",
-        "duration_seconds": duration_seconds,
+        "duration_seconds": int(duration_seconds),  # округляем до секунд
         "created_date": datetime.utcnow(),
         "mp3_file_url": f"/storage/tracks/{mp3_filename}",
         "price": price,
         "plays": 0,
-        "bpm": bpm,
+        "bpm": bpm,          # может быть None, если BPM не определился
         "genre_id": genre_id,
         "author_id": author_id,
     }
@@ -122,6 +135,8 @@ async def create_track(
     session.add(track)
     await session.commit()
     await session.refresh(track)
+
+
 
 
 @router.get("/stats/user-metrics", response_model=UserMetricsResponse)
