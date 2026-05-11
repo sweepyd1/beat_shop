@@ -211,3 +211,30 @@ class TrackRepository(BaseRepository[Track]):
             {'track_id': row[0], 'title': row[1], 'cover_url': row[2], 'plays': row[3]}
             for row in rows
         ]
+    
+    async def get_trends(self, start_date: datetime, limit: int = 10) -> List[Track]:
+        """
+        Получение трендовых треков за период.
+        Тренды рассчитываются на основе количества прослушиваний (interactions типа listen) за период.
+        """
+        from database.models import Interaction, InteractionType
+        
+        stmt = (
+            select(Track)
+            .where(Track.is_exclusive_sold == False)
+            .join(Interaction, Interaction.track_id == Track.id)
+            .where(
+                Interaction.interaction_type == InteractionType.listen,
+                Interaction.timestamp >= start_date
+            )
+            .options(
+                selectinload(Track.author),
+                selectinload(Track.genre)
+            )
+            .group_by(Track.id)
+            .order_by(func.count(Interaction.id).desc())
+            .limit(limit)
+        )
+        
+        result = await self.session.execute(stmt)
+        return result.scalars().all()

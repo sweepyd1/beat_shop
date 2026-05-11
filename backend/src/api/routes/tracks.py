@@ -12,6 +12,7 @@ from core.services.track import TrackService
 from api.dependencies import get_auth_service, get_track_service
 from api.dependencies import analyze_mp3
 router = APIRouter(prefix="/tracks", tags=["tracks"])
+
 @router.get("/me", response_model=List[TrackResponse])
 async def get_my_tracks(
     request:Request,
@@ -80,6 +81,29 @@ async def new_tracks(
     tracks = await service.get_new_tracks(limit)
     return tracks
 
+@router.get("/trends", response_model=list[TrackResponse])
+async def get_trends(
+    period: str = Query("week", pattern="^(day|week|month)$", description="Период для трендов"),
+    limit: int = Query(10, ge=1, le=50),
+    service: TrackService = Depends(get_track_service)
+):
+    """
+    Возвращает трендовые треки за указанный период.
+    Тренды рассчитываются на основе количества прослушиваний и продаж.
+    """
+    from datetime import datetime, timedelta
+    
+    # Определяем дату начала периода
+    now = datetime.now()
+    if period == "day":
+        start_date = now - timedelta(days=1)
+    elif period == "week":
+        start_date = now - timedelta(weeks=1)
+    else:  # month
+        start_date = now - timedelta(days=30)
+    
+    trends = await service.repo.get_trends(start_date=start_date, limit=limit)
+    return trends
 
 
 @router.post("/")
