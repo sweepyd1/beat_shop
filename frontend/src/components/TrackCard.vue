@@ -8,7 +8,11 @@
     </div>
     <div class="track-info">
       <h3>{{ track.title }}</h3>
-      <p>{{ track.artist }}</p>
+      <p class="artist-name">
+        <router-link :to="`/artist/${track.author_id}`" class="artist-link">
+          {{ track.author?.full_name || track.artist || 'Неизвестный автор' }}
+        </router-link>
+      </p>
     </div>
   </div>
 </template>
@@ -112,5 +116,16 @@ const goToTrack = () => {
 .track-info p {
   font-size: 0.85rem;
   color: #a0a0b0;
+}
+
+.artist-link {
+  color: #a855f7;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.artist-link:hover {
+  color: #c084fc;
+  text-decoration: underline;
 }
 </style>

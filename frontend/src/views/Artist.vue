@@ -1,102 +1,110 @@
 <!-- Файл: Artist.vue (обновлённый) -->
 <template>
   <div class="artist-profile">
-    <div class="artist-header">
-      <div class="avatar-wrapper">
-        <img
-          :src="artist.avatar"
-          :alt="artist.name"
-          class="avatar"
-          @error="handleImageError"
-        />
-        <div class="avatar-ring"></div>
-      </div>
-      <div class="artist-info">
-        <h1>{{ artist.name }}</h1>
-        <p class="bio">{{ artist.bio }}</p>
-        <div class="stats">
-          <div class="stat-item">
-            <span class="stat-value" ref="followersRef">{{ formatNumber(artist.followers) }}</span>
-            <span class="stat-label">подписчиков</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value" ref="earningsRef">{{ formatNumber(artist.totalEarnings) }} ₽</span>
-            <span class="stat-label">выручка</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value">{{ artist.tracks.length }}</span>
-            <span class="stat-label">битов</span>
-          </div>
-        </div>
-        <button class="follow-btn" :class="{ followed: isFollowed }" @click="toggleFollow">
-          <i :class="isFollowed ? 'fas fa-check' : 'fas fa-plus'"></i>
-          {{ isFollowed ? "Отписаться" : "Подписаться" }}
-        </button>
-      </div>
+    <div v-if="loading" class="loading-state">
+      <i class="fas fa-spinner fa-spin"></i>
+      <p>Загрузка профиля автора...</p>
     </div>
 
-    <!-- Статистика продаж с мини-графиком -->
-    <div class="sales-stats">
-      <h2><i class="fas fa-chart-line"></i> Статистика продаж</h2>
-      <div class="stats-grid">
-        <div class="stat-card">
-          <i class="fas fa-shopping-cart"></i>
-          <div>
-            <span class="stat-card-value">{{ artist.salesThisMonth }}</span>
-            <span class="stat-card-label">продаж в этом месяце</span>
-          </div>
-        </div>
-        <div class="stat-card">
-          <i class="fas fa-wallet"></i>
-          <div>
-            <span class="stat-card-value">{{ artist.monthlyEarnings }} ₽</span>
-            <span class="stat-card-label">доход за месяц</span>
-          </div>
-        </div>
-        <div class="stat-card">
-          <i class="fas fa-star"></i>
-          <div>
-            <span class="stat-card-value">{{ artist.averageRating }}</span>
-            <span class="stat-card-label">средний рейтинг</span>
-          </div>
-        </div>
-      </div>
-      <!-- Мини-график продаж (эмуляция) -->
-      <div class="mini-chart">
-        <div class="bar" style="height: 40px;"></div>
-        <div class="bar" style="height: 60px;"></div>
-        <div class="bar" style="height: 30px;"></div>
-        <div class="bar" style="height: 80px;"></div>
-        <div class="bar" style="height: 50px;"></div>
-        <div class="bar" style="height: 70px;"></div>
-        <div class="bar" style="height: 90px;"></div>
-      </div>
+    <div v-else-if="error" class="error-state">
+      <i class="fas fa-exclamation-triangle"></i>
+      <p>{{ error }}</p>
+      <router-link to="/" class="btn-primary">На главную</router-link>
     </div>
 
-    <!-- Биты артиста -->
-    <div class="beats-section">
-      <h2><i class="fas fa-headphones"></i> Биты артиста</h2>
-      <div class="beats-grid">
-        <div v-for="beat in artist.tracks" :key="beat.id" class="beat-card">
+    <div v-else class="artist-content">
+      <div class="artist-header">
+        <div class="avatar-wrapper">
           <img
-            :src="beat.cover"
-            :alt="beat.title"
-            class="beat-cover"
+            :src="artist.photo_url || '/default-avatar.png'"
+            :alt="artist.full_name"
+            class="avatar"
             @error="handleImageError"
           />
-          <div class="beat-overlay">
-            <button class="play-btn" @click="playTrack(beat)">
-              <i class="fas fa-play"></i>
-            </button>
-            <button class="like-btn"><i class="far fa-heart"></i></button>
-          </div>
-          <div class="beat-info">
-            <div>
-              <h3>{{ beat.title }}</h3>
-              <p class="beat-meta">{{ beat.plays || 2300 }}\) просмотров · {{ beat.sales || 128 }} продаж</p>
+          <div class="avatar-ring"></div>
+        </div>
+        <div class="artist-info">
+          <h1>{{ artist.full_name }}</h1>
+          <p class="bio">{{ artist.bio || 'Биография не указана' }}</p>
+          <div class="stats">
+            <div class="stat-item">
+              <span class="stat-value">{{ formatNumber(artist.followers_count || 0) }}</span>
+              <span class="stat-label">подписчиков</span>
             </div>
-            <p class="beat-price">{{ beat.price }} ₽</p>
+            <div class="stat-item">
+              <span class="stat-value">{{ formatNumber(Math.round(artist.total_earnings || 0)) }} ₽</span>
+              <span class="stat-label">выручка</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value">{{ artist.tracks_count || 0 }}</span>
+              <span class="stat-label">битов</span>
+            </div>
           </div>
+          <button 
+            v-if="isLoggedIn && !isOwnProfile" 
+            class="follow-btn" 
+            :class="{ followed: isFollowed }" 
+            @click="toggleFollow"
+          >
+            <i :class="isFollowed ? 'fas fa-check' : 'fas fa-plus'"></i>
+            {{ isFollowed ? "Отписаться" : "Подписаться" }}
+          </button>
+          <router-link v-if="isOwnProfile" to="/profile?tab=studio" class="btn-primary">
+            <i class="fas fa-cog"></i> Управление профилем
+          </router-link>
+        </div>
+      </div>
+
+      <!-- Статистика продаж с мини-графиком -->
+      <div class="sales-stats">
+        <h2><i class="fas fa-chart-line"></i> Статистика продаж</h2>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <i class="fas fa-shopping-cart"></i>
+            <div>
+              <span class="stat-card-value">{{ artistStats?.sales_this_month || 0 }}</span>
+              <span class="stat-card-label">продаж в этом месяце</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <i class="fas fa-wallet"></i>
+            <div>
+              <span class="stat-card-value">{{ Math.round(artistStats?.monthly_earnings || 0) }} ₽</span>
+              <span class="stat-card-label">доход за месяц</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <i class="fas fa-star"></i>
+            <div>
+              <span class="stat-card-value">{{ artistStats?.average_rating || 'N/A' }}</span>
+              <span class="stat-card-label">средний рейтинг</span>
+            </div>
+          </div>
+        </div>
+        <!-- Мини-график продаж (эмуляция) -->
+        <div class="mini-chart">
+          <div 
+            v-for="(value, index) in salesChart" 
+            :key="index" 
+            class="bar" 
+            :style="`height: ${value}px;`"
+          ></div>
+        </div>
+      </div>
+
+      <!-- Биты артиста -->
+      <div class="beats-section">
+        <h2><i class="fas fa-headphones"></i> Биты артиста</h2>
+        <div v-if="!tracks || tracks.length === 0" class="empty-state">
+          <i class="fas fa-music empty-icon"></i>
+          <p>У этого автора ещё нет треков</p>
+        </div>
+        <div v-else class="beats-grid">
+          <TrackCard
+            v-for="track in tracks"
+            :key="track.id"
+            :track="track"
+          />
         </div>
       </div>
     </div>
@@ -104,46 +112,82 @@
 </template>
 
 <script setup>
-import { ref, inject, onMounted } from "vue";
+import { ref, computed, onMounted, inject } from "vue";
+import { useRoute } from "vue-router";
+import { useAuthStore } from "../stores/auth";
+import TrackCard from "../components/TrackCard.vue";
+import api from "../api";
 
+const route = useRoute();
+const authStore = useAuthStore();
 const { playTrack } = inject("player", { playTrack: (t) => console.log("play", t) });
 
+const loading = ref(true);
+const error = ref(null);
+const artist = ref(null);
+const artistStats = ref(null);
+const tracks = ref([]);
 const isFollowed = ref(false);
-const toggleFollow = () => {
-  isFollowed.value = !isFollowed.value;
-};
+const isLoggedIn = computed(() => !!authStore.user);
+const currentUserId = computed(() => authStore.user?.id);
+const isOwnProfile = computed(() => {
+  if (!artist.value || !currentUserId.value) return false;
+  return artist.value.user_id === currentUserId.value;
+});
 
 const formatNumber = (num) => {
   return new Intl.NumberFormat('ru-RU').format(num);
 };
 
-const placeholderSVG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 24 24' fill='%23cccccc'%3E%3Cpath d='M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z'/%3E%3C/svg%3E";
-
 const handleImageError = (e) => {
+  const placeholderSVG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 24 24' fill='%23cccccc'%3E%3Cpath d='M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z'/%3E%3C/svg%3E";
   e.target.src = placeholderSVG;
 };
 
-const artist = ref({
-  id: 1,
-  name: "Arctica Beats",
-  avatar: "https://picsum.photos/400/400?random=101",
-  bio: "Профессиональный битмейкер. Создаю треки в жанрах trap, drill, lo-fi. Более 5 лет опыта, сотрудничаю с лейблами. Резидент BeatStars.",
-  followers: 15400,
-  totalEarnings: 1520000,
-  tracks: [
-    { id: 1, title: "Neon Dreams", price: 1500, cover: "https://picsum.photos/200/200?random=1", plays: 12400, sales: 342 },
-    { id: 2, title: "Dark Alley", price: 2000, cover: "https://picsum.photos/200/200?random=2", plays: 8700, sales: 215 },
-    { id: 3, title: "Sunset Vibes", price: 1200, cover: "https://picsum.photos/200/200?random=3", plays: 5300, sales: 98 },
-    { id: 4, title: "Moscow Nights", price: 1800, cover: "https://picsum.photos/200/200?random=4", plays: 3200, sales: 76 },
-  ],
-  salesThisMonth: 42,
-  monthlyEarnings: 89000,
-  averageRating: 4.8,
-});
+const salesChart = ref([40, 60, 30, 80, 50, 70, 90]);
 
-// Анимация счётчиков (простая)
+const toggleFollow = async () => {
+  if (!isLoggedIn.value) {
+    alert('Пожалуйста, войдите чтобы подписаться');
+    return;
+  }
+  try {
+    if (isFollowed.value) {
+      await api.delete(`/authors/${artist.value.id}/subscribe`);
+    } else {
+      await api.post(`/authors/${artist.value.id}/subscribe`);
+    }
+    isFollowed.value = !isFollowed.value;
+  } catch (err) {
+    console.error('Ошибка подписки:', err);
+    alert('Ошибка при изменении подписки');
+  }
+};
+
+const fetchArtistData = async () => {
+  loading.value = true;
+  error.value = null;
+  
+  try {
+    const authorId = route.params.id;
+    const response = await api.get(`/authors/${authorId}`);
+    artist.value = response.data;
+    tracks.value = response.data.tracks || [];
+    artistStats.value = response.data;
+    
+    // Генерируем случайные данные для графика
+    salesChart.value = Array.from({ length: 7 }, () => Math.floor(Math.random() * 80) + 20);
+    
+  } catch (err) {
+    console.error('Ошибка загрузки данных автора:', err);
+    error.value = err.response?.data?.detail || 'Ошибка загрузки профиля автора';
+  } finally {
+    loading.value = false;
+  }
+};
+
 onMounted(() => {
-  // Здесь можно реализовать анимацию чисел, но для краткости оставим как есть
+  fetchArtistData();
 });
 </script>
 
@@ -432,6 +476,39 @@ onMounted(() => {
   color: #a855f7;
   font-weight: 700;
   font-size: 1.2rem;
+}
+
+/* Loading and error states */
+.loading-state, .error-state {
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.loading-state i, .error-state i {
+  font-size: 3rem;
+  color: #a855f7;
+  margin-bottom: 1rem;
+}
+
+.loading-state p, .error-state p {
+  color: #a0a0b0;
+  font-size: 1.1rem;
+}
+
+.error-state i {
+  color: #ef4444;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: #a0a0b0;
+}
+
+.empty-state .empty-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: #a855f7;
 }
 
 @media (max-width: 768px) {

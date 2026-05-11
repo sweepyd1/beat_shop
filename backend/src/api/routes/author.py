@@ -9,6 +9,7 @@ from schemas.author import AuthorResponse, AuthorDetailResponse
 from core.repositories.author import AuthorRepository
 from api.dependencies import get_author_service, get_current_user, get_db_session, get_stats_service, get_track_service
 from schemas.track import AuthorTrackResponse, TrackResponse
+from typing import List
 
 
 router = APIRouter(prefix="/authors", tags=["authors"])
@@ -84,19 +85,43 @@ async def get_my_stats(
     stats = await stats_service.get_author_stats(author.id)
     return stats
 
-@router.get("/{author_id}", response_model=AuthorDetailResponse)
-async def get_author(
+class AuthorPublicResponse(AuthorDetailResponse):
+    tracks: List[TrackResponse] = []
+
+@router.get("/{author_id}", response_model=AuthorPublicResponse)
+async def get_author_public(
     author_id: int,
-    session: AsyncSession = Depends(get_db_session)
+    session: AsyncSession = Depends(get_db_session),
+    stats_service: StatsService = Depends(get_stats_service),
+    track_service: TrackService = Depends(get_track_service)
 ):
+    """Публичная страница автора - доступна всем пользователям"""
     repo = AuthorRepository(session)
     author = await repo.get(author_id)
     if not author:
         raise HTTPException(404, "Автор не найден")
-    # Подсчёт количества треков
-    tracks_count = len(author.tracks) if author.tracks else 0
-    response = AuthorDetailResponse.model_validate(author)
-    response.tracks_count = tracks_count
+    
+    # Получаем статистику
+    stats = await stats_service.get_author_stats(author.id)
+    total_earnings = await stats_service.get_total_earnings(author.id)
+    tracks_count = await track_service.get_tracks_count(author.id)
+    
+    # Получаем треки автора
+    tracks = await track_service.get_author_tracks(author.id)
+    
+    # Создаем ответ
+    response = AuthorPublicResponse(
+        id=author.id,
+        user_id=author.user_id,
+        full_name=author.full_name,
+        photo_url=author.photo_url,
+        bio=author.bio,
+        followers_count=stats.followers_count,
+        total_earnings=total_earnings,
+        tracks_count=tracks_count,
+        average_rating=stats.average_rating,
+        tracks=tracks
+    )
     return response
 
 @router.get("/me/full-stats", response_model=AuthorFullStatsResponse)
