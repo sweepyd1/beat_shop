@@ -396,6 +396,7 @@ import TrackCard from "../components/TrackCard.vue";
 import ArtistDashboard from "../components/ArtistDashboard.vue";
 import { useProfile } from "../composables/useProfile";
 import api from "../api";
+import router from "@/router";
 
 const authStore = useAuthStore();
 const user = computed(() => authStore.user);
@@ -666,11 +667,17 @@ const formatDate = (dateString) => {
 };
 
 onMounted(async () => {
+  if (!user.value) {
+    router.push('/');
+    return;
+  }
   await fetchAll();
+  
   if (user.value?.role === "author") {
     await fetchAuthorTracks();
     await fetchGenres();
   }
+  
   window.addEventListener('favorites-updated', fetchAll);
   console.log(purchases.value)
 });

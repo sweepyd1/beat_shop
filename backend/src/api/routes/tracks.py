@@ -91,10 +91,10 @@ async def get_trends(
     Возвращает трендовые треки за указанный период.
     Тренды рассчитываются на основе количества прослушиваний и продаж.
     """
-    from datetime import datetime, timedelta
+    from datetime import datetime, timedelta, timezone
     
     # Определяем дату начала периода
-    now = datetime.now()
+    now = datetime.now(timezone.utc)
     if period == "day":
         start_date = now - timedelta(days=1)
     elif period == "week":

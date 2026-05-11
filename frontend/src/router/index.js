@@ -11,9 +11,10 @@ import About from '../views/About.vue'
 import Contacts from '../views/Contacts.vue'
 import Login from '@/views/Login.vue'
 import Register from '@/views/Register.vue'
-import TrackDetail from '../views/TrackDetail.vue'; // новый импорт
+import TrackDetail from '../views/TrackDetail.vue'; 
 import AdminStats from '@/views/AdminStats.vue';
 import AdminDashboard from '@/views/AdminDashboard.vue'
+import { useAuthStore } from '@/stores/auth'
 const routes = [
   { path: '/', component: Home },
   { path: '/search', component: Search },
@@ -22,7 +23,7 @@ const routes = [
 
   { path: '/cart', component: Cart },
   { path: '/checkout', component: Checkout },
-  { path: '/profile', component: Profile },
+  { path: '/profile', component: Profile,  meta: { requiresAuth: true }  },
   { path: '/trends', component: Trends },
   { path: '/about', component: About },
   { path: '/contacts', component: Contacts },
@@ -73,5 +74,19 @@ const router = createRouter({
   history: createWebHistory(),
   routes,
 })
+
+router.beforeEach(async (to, from, next) => {
+  const authStore = useAuthStore();
+  
+  // Ждём, пока стор восстановит пользователя из куки
+  await authStore.restoreSession();
+
+  if (to.meta.requiresAuth && !authStore.user) {
+    // Сохраняем целевой путь для возврата после логина
+    next({ path: '/login', query: { redirect: to.fullPath } });
+  } else {
+    next();
+  }
+});
 
 export default router

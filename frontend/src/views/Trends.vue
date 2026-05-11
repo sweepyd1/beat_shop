@@ -81,20 +81,12 @@
                 <span class="stat-label">прослушиваний</span>
               </div>
             </div>
-            <div class="stat-item">
-              <i class="fas fa-shopping-cart stat-icon"></i>
-              <div class="stat-data">
-                <span class="stat-value">{{ track.sales || 0 }}</span>
-                <span class="stat-label">продаж</span>
-              </div>
-            </div>
+      
           </div>
 
           <!-- Премиум-кнопка действия -->
           <div class="action-buttons">
-            <button class="btn-icon" @click="addToFavorites(track)" title="В избранное">
-              <i class="far fa-heart"></i>
-            </button>
+
             <button class="btn-icon" @click="buyTrack(track)" title="Купить">
               <i class="fas fa-shopping-bag"></i>
             </button>
@@ -121,7 +113,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, inject } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 // import { usePlayerStore } from '@/stores/player';
@@ -130,7 +122,7 @@ import { useAuthStore } from '@/stores/auth';
 const router = useRouter();
 // const playerStore = usePlayerStore();
 const authStore = useAuthStore();
-
+const player = inject('player');   // ← получаем плеер из композабла
 const period = ref('week');
 const periods = [
   { value: 'day', label: 'За день' },
@@ -211,15 +203,9 @@ const getTrendIcon = (trend) => {
   return 'fas fa-minus';
 };
 
-// const playTrack = (track) => {
-//   playerStore.playTrack({
-//     id: track.id,
-//     title: track.title,
-//     artist: track.author?.full_name || 'Неизвестный',
-//     cover: track.cover_url || '/default-cover.png',
-//     audioUrl: `http://localhost:8000/tracks/${track.id}/stream`
-//   });
-// };
+const playTrack = (track) => {
+  player.playTrack(track);   // track – это исходный объект из trends
+};
 
 const addToFavorites = async (track) => {
   if (!authStore.isAuthenticated) {

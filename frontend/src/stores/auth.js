@@ -1,3 +1,4 @@
+// stores/auth.js (обновлённый)
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import api from '@/api/index';
@@ -5,11 +6,10 @@ import api from '@/api/index';
 export const useAuthStore = defineStore('auth', () => {
   const user = ref(null);
   const isLoading = ref(false);
+  const initialized = ref(false);             // ← новое поле
 
-  // Добавляем computed свойство isAuthenticated
   const isAuthenticated = computed(() => !!user.value);
 
-  // Получение данных текущего пользователя (проверка авторизации)
   const fetchUser = async () => {
     try {
       isLoading.value = true;
@@ -26,7 +26,13 @@ export const useAuthStore = defineStore('auth', () => {
     }
   };
 
-  // Вход
+  // Восстановление сессии – вызывается только один раз
+  const restoreSession = async () => {
+    if (initialized.value) return;             // уже проверяли
+    initialized.value = true;
+    await fetchUser();
+  };
+
   const login = async (credentials) => {
     try {
       const formData = new FormData();
@@ -35,9 +41,8 @@ export const useAuthStore = defineStore('auth', () => {
       const response = await api.post('/auth/login', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
-      console.log('Login response:', response.data);
-      // После успешного входа сервер установил куки, получаем пользователя
       await fetchUser();
+      initialized.value = true;               // после входа сессия активна
       return response;
     } catch (error) {
       console.error('Login error:', error);
@@ -45,13 +50,11 @@ export const useAuthStore = defineStore('auth', () => {
     }
   };
 
-  // Регистрация
   const register = async (userData) => {
     try {
       const response = await api.post('/auth/register', userData);
-      console.log('Register response:', response.data);
-      // После регистрации сервер тоже устанавливает куки (автоматический вход)
       await fetchUser();
+      initialized.value = true;               // после регистрации сразу вошли
       return response;
     } catch (error) {
       console.error('Register error:', error);
@@ -59,7 +62,6 @@ export const useAuthStore = defineStore('auth', () => {
     }
   };
 
-  // Выход
   const logout = async () => {
     try {
       await api.post('/auth/logout');
@@ -67,14 +69,17 @@ export const useAuthStore = defineStore('auth', () => {
       console.error('Logout error:', error);
     } finally {
       user.value = null;
+      initialized.value = false;              // можно заново восстановить при следующем заходе
     }
   };
 
   return { 
     user, 
     isLoading, 
-    isAuthenticated,  // обязательно возвращаем!
-    fetchUser, 
+    isAuthenticated,
+    initialized,
+    fetchUser,
+    restoreSession,        // ← экспортируем
     login, 
     register, 
     logout 

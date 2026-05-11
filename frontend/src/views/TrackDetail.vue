@@ -82,6 +82,9 @@
 import { ref, onMounted, computed, inject } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import api from '../api';
+import { useAuthStore } from '../stores/auth';  
+
+
 import PurchaseModal from '../components/PurchaseModal.vue';
 
 const route = useRoute();
@@ -89,7 +92,7 @@ const router = useRouter();
 const track = ref(null);
 const showPurchaseModal = ref(false);
 const { playTrack } = inject('player');
-
+const authStore = useAuthStore();
 const coverUrl = computed(() => {
   if (!track.value) return '';
   const url = track.value.cover_url;
@@ -124,9 +127,12 @@ const formatDate = (dateStr) => {
 };
 
 const openPurchaseModal = () => {
+  if (!authStore.user) {
+    router.push({ path: '/login', query: { redirect: route.fullPath } });
+    return;
+  }
   showPurchaseModal.value = true;
 };
-
 const handlePurchaseComplete = (purchaseData) => {
   // Можно показать уведомление об успешной покупке
   alert(`Покупка успешно оформлена! Договор отправлен на ${purchaseData.email}`);
