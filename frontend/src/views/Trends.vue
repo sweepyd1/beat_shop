@@ -49,7 +49,11 @@
 
           <!-- Обложка с эффектом свечения -->
           <div class="cover-wrapper">
-            <img :src="track.cover_url || '/default-cover.png'" :alt="track.title" class="track-cover" />
+            <img 
+  :src="getCoverUrl(track)" 
+  :alt="track.title" 
+  class="track-cover" 
+/>
             <div class="cover-overlay">
               <button class="quick-play" @click="playTrack(track)">
                 <i class="fas fa-play"></i>
@@ -101,23 +105,7 @@
         </div>
       </TransitionGroup>
 
-      <!-- Блок с дополнительной аналитикой (эффектный) -->
-      <div v-if="trends.length > 0" class="analytics-card">
-        <div class="analytics-header">
-          <i class="fas fa-chart-simple"></i>
-          <h3>Аналитика периода</h3>
-        </div>
-        <div class="analytics-grid">
-          <div class="analytics-item">
-            <span class="analytics-value">{{ totalPlays }}</span>
-            <span class="analytics-label">всего прослушиваний</span>
-          </div>
-          <div class="analytics-item">
-            <span class="analytics-value">{{ totalSales }}</span>
-            <span class="analytics-label">продано треков</span>
-          </div>
-        </div>
-      </div>
+
 
       <!-- Сообщение о загрузке или отсутствии данных -->
       <div v-if="loading" class="loading-message">
@@ -136,11 +124,11 @@
 import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
-import { usePlayerStore } from '@/stores/player';
+// import { usePlayerStore } from '@/stores/player';
 import { useAuthStore } from '@/stores/auth';
 
 const router = useRouter();
-const playerStore = usePlayerStore();
+// const playerStore = usePlayerStore();
 const authStore = useAuthStore();
 
 const period = ref('week');
@@ -165,7 +153,14 @@ const loadTrends = async () => {
     loading.value = false;
   }
 };
-
+const getCoverUrl = (track) => {
+  if (!track) return '/default-cover.jpg';
+  const url = track.cover_url;
+  if (!url) return '/default-cover.jpg';
+  if (url.startsWith('http')) return url;
+  const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+  return `${baseUrl}${url}`;
+};
 onMounted(() => {
   loadTrends();
 });
@@ -216,15 +211,15 @@ const getTrendIcon = (trend) => {
   return 'fas fa-minus';
 };
 
-const playTrack = (track) => {
-  playerStore.playTrack({
-    id: track.id,
-    title: track.title,
-    artist: track.author?.full_name || 'Неизвестный',
-    cover: track.cover_url || '/default-cover.png',
-    audioUrl: `http://localhost:8000/tracks/${track.id}/stream`
-  });
-};
+// const playTrack = (track) => {
+//   playerStore.playTrack({
+//     id: track.id,
+//     title: track.title,
+//     artist: track.author?.full_name || 'Неизвестный',
+//     cover: track.cover_url || '/default-cover.png',
+//     audioUrl: `http://localhost:8000/tracks/${track.id}/stream`
+//   });
+// };
 
 const addToFavorites = async (track) => {
   if (!authStore.isAuthenticated) {
@@ -232,9 +227,9 @@ const addToFavorites = async (track) => {
     return;
   }
   try {
-    await axios.post('http://localhost:8000/favorites/', { track_id: track.id }, {
-      withCredentials: true
-    });
+    await axios.post(`http://localhost:8000/favorites/${track.id}`, {}, {
+  withCredentials: true
+});
     alert('Добавлено в избранное');
   } catch (error) {
     console.error('Ошибка добавления в избранное:', error);
@@ -248,7 +243,7 @@ const buyTrack = (track) => {
 
 const goToAuthor = (authorId) => {
   if (authorId) {
-    router.push(`/authors/${authorId}`);
+    router.push(`/artist/${authorId}`);
   }
 };
 </script>
