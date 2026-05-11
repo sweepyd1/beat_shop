@@ -157,13 +157,31 @@ class TrackService:
         result = []
         for track in tracks:
             sales = await self.repo.get_sales_count(track.id)
+            # Получаем жанр и автора для трека
+            genre = None
+            if hasattr(track, 'genre') and track.genre:
+                from schemas.track import GenreShortResponse
+                genre = GenreShortResponse(id=track.genre.id, name=track.genre.name)
+            
+            author = None
+            if hasattr(track, 'author') and track.author:
+                from schemas.track import AuthorShortResponse
+                author = AuthorShortResponse(id=track.author.id, full_name=track.author.full_name)
+            
             result.append(AuthorTrackResponse(
                 id=track.id,
                 title=track.title,
                 cover_url=track.cover_url,
                 price=track.price,
                 plays=track.plays or 0,
-                sales=sales
+                sales=sales,
+                duration_seconds=track.duration_seconds,
+                created_date=track.created_date,
+                added_date=track.added_date,
+                mp3_file_url=track.mp3_file_url,
+                bpm=track.bpm,
+                genre=genre,
+                author=author
             ))
         return result
     async def get_tracks_count(self, author_id: int) -> int:

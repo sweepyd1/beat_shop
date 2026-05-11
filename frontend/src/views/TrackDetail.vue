@@ -25,8 +25,8 @@
       <div class="track-info-section">
         <h1>{{ track.title }}</h1>
         <div class="author">
-          <router-link :to="`/artist/${track.author_id}`" class="author-link">
-            {{ track.author.full_name || 'Неизвестный автор' }}
+          <router-link :to="`/artist/${track.author?.id || track.author_id}`" class="author-link">
+            {{ track.author?.full_name || 'Неизвестный автор' }}
           </router-link>
         </div>
 

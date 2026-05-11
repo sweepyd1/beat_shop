@@ -86,7 +86,7 @@ async def get_my_stats(
     return stats
 
 class AuthorPublicResponse(AuthorDetailResponse):
-    tracks: List[TrackResponse] = []
+    tracks: List[AuthorTrackResponse] = []
 
 @router.get("/{author_id}", response_model=AuthorPublicResponse)
 async def get_author_public(

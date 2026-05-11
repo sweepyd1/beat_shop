@@ -254,7 +254,14 @@ class AuthorTrackResponse(BaseModel):
     cover_url: Optional[str] = None
     price: float
     plays: int = 0
-    sales: int = 0   # количество продаж
+    sales: int = 0
+    duration_seconds: Optional[int] = None
+    created_date: Optional[datetime] = None
+    added_date: Optional[datetime] = None
+    mp3_file_url: Optional[str] = None
+    bpm: Optional[int] = None
+    genre: Optional[GenreShortResponse] = None
+    author: Optional[AuthorShortResponse] = None
 
 
 AuthorDetailResponse.model_rebuild()

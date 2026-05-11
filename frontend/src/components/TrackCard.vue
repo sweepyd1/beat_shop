@@ -9,7 +9,7 @@
     <div class="track-info">
       <h3>{{ track.title }}</h3>
       <p class="artist-name">
-        <router-link :to="`/artist/${track.author_id}`" class="artist-link">
+        <router-link :to="`/artist/${track.author?.id || track.author_id}`" class="artist-link">
           {{ track.author?.full_name || track.artist || 'Неизвестный автор' }}
         </router-link>
       </p>
