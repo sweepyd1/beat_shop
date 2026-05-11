@@ -119,6 +119,12 @@ class TrackService:
         """Бизнес-логика для новых треков."""
         tracks = await self.repo.get_new(limit)
         return tracks
+
+    async def get_trends(self, start_date: datetime, limit: int = 10):
+        """Бизнес-логика для трендовых треков."""
+        tracks = await self.repo.get_trends(start_date=start_date, limit=limit)
+        return tracks
+
     async def search_tracks(
         self,
         query: Optional[str] = None,

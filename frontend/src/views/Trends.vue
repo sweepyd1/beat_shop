@@ -49,7 +49,7 @@
 
           <!-- Обложка с эффектом свечения -->
           <div class="cover-wrapper">
-            <img :src="track.cover" :alt="track.title" class="track-cover" />
+            <img :src="track.cover_url || '/default-cover.png'" :alt="track.title" class="track-cover" />
             <div class="cover-overlay">
               <button class="quick-play" @click="playTrack(track)">
                 <i class="fas fa-play"></i>
@@ -61,9 +61,11 @@
           <div class="track-info">
             <div class="track-title-wrapper">
               <h3 class="track-title">{{ track.title }}</h3>
-              <span v-if="track.isHot" class="hot-badge">HOT</span>
+              <span v-if="track.plays && track.plays > 1000" class="hot-badge">HOT</span>
             </div>
-            <p class="track-artist">{{ track.artist }}</p>
+            <p class="track-artist" @click.stop="goToAuthor(track.author?.id)" style="cursor: pointer;">
+              {{ track.author?.full_name || 'Неизвестный' }}
+            </p>
           </div>
 
           <!-- Статистика с динамикой -->
@@ -71,23 +73,15 @@
             <div class="stat-item">
               <i class="fas fa-headphones stat-icon"></i>
               <div class="stat-data">
-                <span class="stat-value">{{ formatNumber(track.plays) }}</span>
+                <span class="stat-value">{{ formatNumber(track.plays || 0) }}</span>
                 <span class="stat-label">прослушиваний</span>
-              </div>
-              <div class="trend-indicator" :class="getTrendClass(track.playsTrend)">
-                <i :class="getTrendIcon(track.playsTrend)"></i>
-                <span>{{ track.playsTrend }}%</span>
               </div>
             </div>
             <div class="stat-item">
               <i class="fas fa-shopping-cart stat-icon"></i>
               <div class="stat-data">
-                <span class="stat-value">{{ track.sales }}</span>
+                <span class="stat-value">{{ track.sales || 0 }}</span>
                 <span class="stat-label">продаж</span>
-              </div>
-              <div class="trend-indicator" :class="getTrendClass(track.salesTrend)">
-                <i :class="getTrendIcon(track.salesTrend)"></i>
-                <span>{{ track.salesTrend }}%</span>
               </div>
             </div>
           </div>
@@ -108,7 +102,7 @@
       </TransitionGroup>
 
       <!-- Блок с дополнительной аналитикой (эффектный) -->
-      <div class="analytics-card">
+      <div v-if="trends.length > 0" class="analytics-card">
         <div class="analytics-header">
           <i class="fas fa-chart-simple"></i>
           <h3>Аналитика периода</h3>
@@ -122,18 +116,32 @@
             <span class="analytics-value">{{ totalSales }}</span>
             <span class="analytics-label">продано треков</span>
           </div>
-          <div class="analytics-item">
-            <span class="analytics-value">{{ avgGrowth }}%</span>
-            <span class="analytics-label">средний рост</span>
-          </div>
         </div>
+      </div>
+
+      <!-- Сообщение о загрузке или отсутствии данных -->
+      <div v-if="loading" class="loading-message">
+        <i class="fas fa-spinner fa-spin"></i>
+        <p>Загрузка трендов...</p>
+      </div>
+      <div v-else-if="trends.length === 0 && !loading" class="empty-message">
+        <i class="fas fa-chart-line"></i>
+        <p>Тренды за этот период отсутствуют</p>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import axios from 'axios';
+import { useRouter } from 'vue-router';
+import { usePlayerStore } from '@/stores/player';
+import { useAuthStore } from '@/stores/auth';
+
+const router = useRouter();
+const playerStore = usePlayerStore();
+const authStore = useAuthStore();
 
 const period = ref('week');
 const periods = [
@@ -142,34 +150,24 @@ const periods = [
   { value: 'month', label: 'За месяц' }
 ];
 
-// Моковые данные для разных периодов (имитация реальных)
-const mockData = {
-  day: [
-    { id: 1, title: 'Neon Dreams', artist: 'Arctica', cover: 'https://picsum.photos/id/29/200/200', plays: 3400, sales: 42, playsTrend: 12, salesTrend: 8, isHot: true },
-    { id: 2, title: 'Drill Szn', artist: 'Glock Beats', cover: 'https://picsum.photos/id/30/200/200', plays: 2800, sales: 35, playsTrend: 25, salesTrend: 18, isHot: true },
-    { id: 3, title: 'Lost in Space', artist: 'Cosmic', cover: 'https://picsum.photos/id/31/200/200', plays: 2100, sales: 28, playsTrend: 5, salesTrend: 2, isHot: false },
-    { id: 4, title: 'Echoes', artist: 'The Waves', cover: 'https://picsum.photos/id/32/200/200', plays: 1500, sales: 19, playsTrend: -3, salesTrend: -1, isHot: false },
-    { id: 5, title: 'Midnight', artist: 'Luna', cover: 'https://picsum.photos/id/33/200/200', plays: 1200, sales: 14, playsTrend: 7, salesTrend: 5, isHot: false },
-  ],
-  week: [
-    { id: 1, title: 'Neon Dreams', artist: 'Arctica', cover: 'https://picsum.photos/id/29/200/200', plays: 12400, sales: 342, playsTrend: 18, salesTrend: 12, isHot: true },
-    { id: 2, title: 'Lost in Space', artist: 'Cosmic', cover: 'https://picsum.photos/id/31/200/200', plays: 8700, sales: 215, playsTrend: 9, salesTrend: 6, isHot: true },
-    { id: 3, title: 'Echoes', artist: 'The Waves', cover: 'https://picsum.photos/id/32/200/200', plays: 5300, sales: 98, playsTrend: 22, salesTrend: 15, isHot: false },
-    { id: 4, title: 'Midnight', artist: 'Luna', cover: 'https://picsum.photos/id/33/200/200', plays: 3200, sales: 76, playsTrend: -5, salesTrend: -2, isHot: false },
-    { id: 5, title: 'Drill Szn', artist: 'Glock Beats', cover: 'https://picsum.photos/id/30/200/200', plays: 2800, sales: 45, playsTrend: 45, salesTrend: 30, isHot: true },
-    { id: 6, title: 'Lofi Dreams', artist: 'Sleepy', cover: 'https://picsum.photos/id/34/200/200', plays: 1500, sales: 23, playsTrend: 3, salesTrend: 1, isHot: false },
-  ],
-  month: [
-    { id: 1, title: 'Neon Dreams', artist: 'Arctica', cover: 'https://picsum.photos/id/29/200/200', plays: 45600, sales: 1250, playsTrend: 32, salesTrend: 28, isHot: true },
-    { id: 2, title: 'Lost in Space', artist: 'Cosmic', cover: 'https://picsum.photos/id/31/200/200', plays: 32100, sales: 890, playsTrend: 24, salesTrend: 19, isHot: true },
-    { id: 3, title: 'Echoes', artist: 'The Waves', cover: 'https://picsum.photos/id/32/200/200', plays: 19800, sales: 540, playsTrend: 41, salesTrend: 33, isHot: false },
-    { id: 4, title: 'Drill Szn', artist: 'Glock Beats', cover: 'https://picsum.photos/id/30/200/200', plays: 15400, sales: 410, playsTrend: 78, salesTrend: 65, isHot: true },
-    { id: 5, title: 'Midnight', artist: 'Luna', cover: 'https://picsum.photos/id/33/200/200', plays: 8900, sales: 210, playsTrend: -2, salesTrend: -5, isHot: false },
-  ]
+const trends = ref([]);
+const loading = ref(false);
+
+const loadTrends = async () => {
+  loading.value = true;
+  try {
+    const response = await axios.get(`http://localhost:8000/tracks/trends?period=${period.value}&limit=10`);
+    trends.value = response.data;
+  } catch (error) {
+    console.error('Ошибка загрузки трендов:', error);
+    trends.value = [];
+  } finally {
+    loading.value = false;
+  }
 };
 
-const trends = computed(() => {
-  return (mockData[period.value] || mockData.week).sort((a, b) => b.sales - a.sales).slice(0, 10);
+onMounted(() => {
+  loadTrends();
 });
 
 const currentPeriodLabel = computed(() => {
@@ -185,13 +183,12 @@ const totalSales = computed(() => {
 });
 
 const avgGrowth = computed(() => {
-  const avg = trends.value.reduce((sum, t) => sum + (t.salesTrend || 0), 0) / trends.value.length;
-  return avg.toFixed(1);
+  return 0;
 });
 
 const changePeriod = (newPeriod) => {
   period.value = newPeriod;
-  // Анимация: можно добавить класс загрузки, но для плавности просто обновляется
+  loadTrends();
 };
 
 const formatNumber = (num) => {
@@ -220,16 +217,39 @@ const getTrendIcon = (trend) => {
 };
 
 const playTrack = (track) => {
-  console.log('Play', track);
-  // Здесь можно вызвать глобальный плеер
+  playerStore.playTrack({
+    id: track.id,
+    title: track.title,
+    artist: track.author?.full_name || 'Неизвестный',
+    cover: track.cover_url || '/default-cover.png',
+    audioUrl: `http://localhost:8000/tracks/${track.id}/stream`
+  });
 };
 
-const addToFavorites = (track) => {
-  console.log('Add to favorites', track);
+const addToFavorites = async (track) => {
+  if (!authStore.isAuthenticated) {
+    alert('Войдите, чтобы добавлять в избранное');
+    return;
+  }
+  try {
+    await axios.post('http://localhost:8000/favorites/', { track_id: track.id }, {
+      withCredentials: true
+    });
+    alert('Добавлено в избранное');
+  } catch (error) {
+    console.error('Ошибка добавления в избранное:', error);
+    alert('Ошибка при добавлении в избранное');
+  }
 };
 
 const buyTrack = (track) => {
-  console.log('Buy track', track);
+  router.push(`/track/${track.id}`);
+};
+
+const goToAuthor = (authorId) => {
+  if (authorId) {
+    router.push(`/authors/${authorId}`);
+  }
 };
 </script>
 
@@ -692,5 +712,22 @@ const buyTrack = (track) => {
   .rank-badge {
     width: 50px;
   }
+}
+
+/* Сообщения о загрузке и пустом состоянии */
+.loading-message,
+.empty-message {
+  text-align: center;
+  padding: 3rem;
+  color: #a0a0b0;
+  font-size: 1.2rem;
+}
+
+.loading-message i,
+.empty-message i {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  display: block;
+  color: #a855f7;
 }
 </style>
