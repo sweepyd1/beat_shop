@@ -88,7 +88,7 @@
           <div v-if="purchases.length === 0" class="empty-state">
             <i class="fas fa-shopping-cart empty-icon"></i>
             <p>У вас пока нет покупок</p>
-            <router-link to="/catalog" class="btn-outline"
+            <router-link to="/search" class="btn-outline"
               >Перейти в каталог</router-link
             >
           </div>

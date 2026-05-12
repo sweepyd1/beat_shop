@@ -102,6 +102,9 @@ export function usePlayer() {
       console.warn('⚠️ Вы в конце истории');
     }
   };
+  const togglePlay = () => {
+  isPlaying.value = !isPlaying.value;
+};
 
   const player = {
     currentTrack: readonly(currentTrack),
@@ -110,6 +113,7 @@ export function usePlayer() {
     nextTrack,
     prevTrack,
     forwardTrack,            // если хотите добавить кнопку "вперёд"
+    togglePlay,  
     history: readonly(history),
     historyIndex: readonly(historyIndex),
   };

@@ -89,7 +89,7 @@ const player = inject("player");
 if (!player) {
   console.error("Player: no player injected");
 }
-const { currentTrack, isPlaying, nextTrack, prevTrack } = player || {};
+const { currentTrack, isPlaying, nextTrack, prevTrack, togglePlay: globalTogglePlay } = player || {};
 
 // Локальный трек (реактивный)
 const track = computed(() => currentTrack?.value);
@@ -232,7 +232,7 @@ onUnmounted(() => {
 });
 
 const togglePlay = () => {
-  if (isPlaying) isPlaying.value = !isPlaying.value;
+  if (globalTogglePlay) globalTogglePlay();
 };
 
 const formatTime = (sec) => {
