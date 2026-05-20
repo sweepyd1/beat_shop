@@ -180,16 +180,6 @@ class PurchaseResponse(BaseModel):
 
 
 # ---------- Contract Schemas ----------
-class ContractBase(BaseModel):
-    purchase_id: int
-    contract_number: str
-    document_url: Optional[str] = None
-
-
-class ContractCreate(ContractBase):
-    pass
-
-
 class ContractResponse(BaseModel):
     id: int
     purchase_id: int

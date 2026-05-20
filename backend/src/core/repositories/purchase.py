@@ -2,7 +2,7 @@ from datetime import date, datetime, timedelta
 from typing import List
 from sqlalchemy import func, select
 from sqlalchemy.orm import selectinload
-from database.models import Genre, Purchase, Track
+from database.models import Author, Genre, LicenseType, Purchase, Track
 from .base import BaseRepository
 
 class PurchaseRepository(BaseRepository[Purchase]):
@@ -211,3 +211,47 @@ class PurchaseRepository(BaseRepository[Purchase]):
             )
             days.append(result.scalar_one() or 0)
         return days
+    
+    async def create(self, user_id: int, track_id: int, amount: float, license_type: LicenseType, comment: str = None, status: str = "completed") -> Purchase:
+        purchase = Purchase(
+            user_id=user_id,
+            track_id=track_id,
+            amount=amount,
+            license_type=license_type,
+            comment=comment,
+            status=status
+        )
+        self.session.add(purchase)
+        await self.session.flush()
+        return purchase
+
+    async def get_user_purchase_for_track(self, user_id: int, track_id: int) -> Purchase | None:
+        stmt = select(Purchase).where(
+            Purchase.user_id == user_id,
+            Purchase.track_id == track_id,
+            Purchase.status == "completed"
+        )
+        result = await self.session.execute(stmt)
+        return result.scalar_one_or_none()
+
+    async def get_exclusive_purchase_for_track(self, track_id: int) -> Purchase | None:
+        """Возвращает первую завершённую покупку эксклюзивного трека (если есть)"""
+        stmt = select(Purchase).join(Track).where(
+            Track.id == track_id,
+            Purchase.status == "completed"
+        ).limit(1)
+        result = await self.session.execute(stmt)
+        return result.scalar_one_or_none()
+
+    async def get_by_id(self, purchase_id: int):
+        stmt = (
+            select(Purchase)
+            .where(Purchase.id == purchase_id)
+            .options(
+                selectinload(Purchase.track).selectinload(Track.genre),
+                selectinload(Purchase.track).selectinload(Track.author).selectinload(Author.user),
+                selectinload(Purchase.user)
+            )
+        )
+        result = await self.session.execute(stmt)
+        return result.scalar_one_or_none()

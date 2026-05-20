@@ -68,7 +68,7 @@ async def get_contract_file(
     if not contract:
         raise HTTPException(status_code=404, detail="Договор не найден")
 
-    from core.repositories.purchase_repository import PurchaseRepository
+    from core.repositories.purchase import PurchaseRepository
     purchase_repo = PurchaseRepository(session)
     purchase = await purchase_repo.get_by_id(purchase_id)
     if not purchase or purchase.user_id != current_user.id:
@@ -92,33 +92,3 @@ async def download_contract(
     file_service: FileService = Depends(lambda: FileService())
 ):
     return await get_contract_file(purchase_id, current_user, session, file_service)
-@router.get("/contract/{purchase_id}/download")
-async def download_contract(
-    purchase_id: int,
-    current_user: User = Depends(get_current_user),
-    session: AsyncSession = Depends(get_db_session),
-    file_service: FileService = Depends(lambda: FileService())
-):
-    """Скачать договор в формате PDF."""
-    contract_service = ContractService(session, file_service)
-    contract = await contract_service.get_contract_by_purchase_id(purchase_id)
-    if not contract:
-        raise HTTPException(status_code=404, detail="Договор не найден")
-
-    # Проверяем, что текущий пользователь является покупателем этого договора
-    # Для этого нужно получить покупку
-    from core.repositories.purchase_repository import PurchaseRepository
-    purchase_repo = PurchaseRepository(session)
-    purchase = await purchase_repo.get_by_id(purchase_id)
-    if not purchase or purchase.user_id != current_user.id:
-        raise HTTPException(status_code=403, detail="У вас нет доступа к этому договору")
-
-    if not contract.document_url:
-        raise HTTPException(status_code=404, detail="Файл договора не найден")
-
-    # Формируем полный путь к файлу
-    file_path = os.path.join("uploads", contract.document_url.lstrip("/uploads/"))
-    if not os.path.exists(file_path):
-        raise HTTPException(status_code=404, detail="Файл договора отсутствует на сервере")
-
-    return FileResponse(file_path, media_type="application/pdf", filename=f"contract_{contract.contract_number}.pdf")

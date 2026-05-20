@@ -2,7 +2,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException, status
 from schemas.track import TrackResponse
-from core.repositories.purchase_repository import PurchaseRepository
+from core.repositories.purchase import PurchaseRepository
 from core.repositories.track import TrackRepository
 from core.repositories.user import UserRepository
 from core.services.contract_service import ContractService

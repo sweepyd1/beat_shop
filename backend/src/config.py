@@ -150,8 +150,3 @@ def setup_environment():
         level=getattr(std_logging, cfg.logging.level),
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     )
-
-class AdminConfig(BaseModel):
-    login: str = "admin"
-    password: str = Field(default_factory=lambda: os.getenv("ADMIN_PASSWORD", "admin123"))
-    email: str = "admin@musicstore.local"

@@ -4,7 +4,7 @@ from datetime import datetime
 from fpdf import FPDF
 from sqlalchemy.ext.asyncio import AsyncSession
 from core.repositories.contract_repository import ContractRepository
-from core.repositories.purchase_repository import PurchaseRepository
+from core.repositories.purchase import PurchaseRepository
 from core.repositories.track import TrackRepository
 from core.repositories.user import UserRepository
 from core.services.file_service import FileService
