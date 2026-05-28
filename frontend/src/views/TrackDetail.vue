@@ -135,7 +135,7 @@ const openPurchaseModal = () => {
 };
 const handlePurchaseComplete = (purchaseData) => {
   // Можно показать уведомление об успешной покупке
-  alert(`Покупка успешно оформлена! Договор отправлен на ${purchaseData.email}`);
+  alert(`Покупка успешно оформлена! Договор можно получить в личном кабинете`);
   showPurchaseModal.value = false;
 };
 

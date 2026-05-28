@@ -12,6 +12,10 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.service import Service
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 import time
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service as ChromeService
+from webdriver_manager.chrome import ChromeDriverManager
+import pytest
 
 
 # Базовый URL приложения
@@ -20,14 +24,17 @@ BASE_URL = "http://localhost:5173"
 
 @pytest.fixture(scope="module")
 def driver():
-    """Фикстура для инициализации WebDriver"""
     options = webdriver.ChromeOptions()
     options.add_argument("--start-maximized")
     options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     
-    driver = webdriver.Chrome(options=options)
+    # Автоматически устанавливает правильную версию ChromeDriver
+    driver = webdriver.Chrome(
+        service=ChromeService(ChromeDriverManager().install()),
+        options=options
+    )
     driver.implicitly_wait(10)
     yield driver
     driver.quit()
@@ -107,12 +114,11 @@ class TestAuthorization:
         driver.get(f"{BASE_URL}/login")
         wait = WebDriverWait(driver, 10)
         
-        # Используем существующего тестового пользователя
+
         login = "testuser"
         password = "12345678"
         
-        # Шаги выполнения
-        # 1. Ввести логин или email
+
         login_input = wait.until(EC.presence_of_element_located((By.ID, "email")))
         login_input.clear()
         login_input.send_keys(login)

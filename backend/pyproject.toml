@@ -26,4 +26,5 @@ dependencies = [
     "selenium>=4.44.0",
     "sqlalchemy[asyncio]>=2.0.48",
     "uvicorn[standard]>=0.41.0",
+    "webdriver-manager>=4.1.1",
 ]
