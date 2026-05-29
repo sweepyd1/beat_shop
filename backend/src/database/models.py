@@ -76,6 +76,7 @@ class Genre(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     name: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
+    photo_url: Mapped[str | None] = mapped_column(String(200))
 
     tracks = relationship("Track", back_populates="genre")
 
