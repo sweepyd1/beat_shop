@@ -137,8 +137,8 @@ class ContractService:
             "Продавец передает, а Покупатель принимает исключительное право на использование музыкального произведения "
             "(далее – «Произведение») в порядке и на условиях, определенных настоящим договором."
         )
-        pdf.official_line("Название произведения:", track.title)
-        pdf.official_line("Автор (правообладатель):", track.author.full_name)
+        pdf.official_line("Название:", track.title)
+        pdf.official_line("Автор:", track.author.full_name)
         # Жанр: track.genre.name, но нужно быть уверенным, что жанр подгружен
         genre_name = track.genre.name if track.genre else "Не указан"
         pdf.official_line("Жанр:", genre_name)
