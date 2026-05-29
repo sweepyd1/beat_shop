@@ -397,9 +397,12 @@ import ArtistDashboard from "../components/ArtistDashboard.vue";
 import { useProfile } from "../composables/useProfile";
 import api from "../api";
 import router from "@/router";
-
+import { showError, showSuccess } from '@/utils/alert';  // <-- импорт
 const authStore = useAuthStore();
 const user = computed(() => authStore.user);
+
+const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+const ALLOWED_AUDIO_TYPES = ['audio/mpeg', 'audio/mp3'];  // audio/mpeg — это и есть MP3
 
 const {
   purchases,
@@ -515,10 +518,11 @@ const saveProfile = async () => {
       formData.append("avatar", editForm.value.avatar_file);
     }
     await updateProfile(formData);
+    await authStore.fetchUser(); 
     closeEditModal();
   } catch (err) {
     console.error("Save failed", err);
-    alert("Не удалось сохранить изменения");
+    showError("Не удалось сохранить изменения");
   } finally {
     saving.value = false;
   }
@@ -546,6 +550,12 @@ const fetchGenres = async () => {
 const handleCoverChange = (event) => {
   const file = event.target.files[0];
   if (!file) return;
+  if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+    showError('Неподдерживаемый формат изображения. Используйте JPG, PNG, GIF или WebP.');
+    // Очищаем input, чтобы можно было выбрать заново
+    event.target.value = '';
+    return;
+  }
   newTrack.value.cover_file = file;
   const reader = new FileReader();
   reader.onload = (e) => {
@@ -557,6 +567,11 @@ const handleCoverChange = (event) => {
 const handleMp3Change = (event) => {
   const file = event.target.files[0];
   if (!file) return;
+   if (!ALLOWED_AUDIO_TYPES.includes(file.type)) {
+    showError('Неподдерживаемый аудиоформат. Пожалуйста, загрузите MP3 файл.');
+    event.target.value = '';
+    return;
+  }
   newTrack.value.mp3_file = file;
 };
 
@@ -592,7 +607,7 @@ const submitTrack = async () => {
       headers: { "Content-Type": undefined },
     });
 
-    alert("Трек успешно загружен");
+    showSuccess("Трек успешно загружен");
     newTrack.value = {
       title: "",
       genre_id: null,
@@ -612,7 +627,7 @@ const submitTrack = async () => {
   } catch (err) {
     console.error("Upload failed", err);
     const message = err.response?.data?.detail || "Ошибка загрузки трека";
-    alert(message);
+    showError(message);
   } finally {
     uploading.value = false;
   }
@@ -627,10 +642,10 @@ const deleteTrack = async (trackId) => {
   try {
     await api.delete(`/tracks/${trackId}`);
     authorTracks.value = authorTracks.value.filter((t) => t.id !== trackId);
-    alert("Трек удалён");
+    showSuccess("Трек удалён");
   } catch (err) {
     console.error("Delete failed", err);
-    alert("Не удалось удалить трек");
+    showError("Не удалось удалить трек");
   }
 };
 
@@ -647,7 +662,7 @@ const downloadContract = async (purchaseId) => {
     window.URL.revokeObjectURL(url);
   } catch (err) {
     console.error("Failed to download contract", err);
-    alert("Не удалось скачать договор");
+    showError("Не удалось скачать договор");
   }
 };
 const getImageUrl = (url) => {

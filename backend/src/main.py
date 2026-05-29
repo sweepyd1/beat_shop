@@ -1,7 +1,9 @@
 from contextlib import asynccontextmanager
 from pathlib import Path
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import select
 import uvicorn
@@ -14,6 +16,8 @@ from database.models import User
 from config import cfg, setup_environment
 from api.routes import auth, tracks, genres, user, favorites, purchase, listen, author, recommendations
 from api.routes.admin import authors as admin_authors, genre as admin_genres, tracks as admin_tracks, admin as admin_stats, users as admin_users
+from api.routes.contact import router as contact_router
+
 # @asynccontextmanager
 # async def lifespan(app: FastAPI):
 #     # Действия при старте
@@ -58,7 +62,34 @@ app = FastAPI(
     debug=cfg.app.debug,
     # lifespan=lifespan
 )
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    errors = []
+    for error in exc.errors():
+        new_error = dict(error)
+        err_type = error.get("type", "")
+        msg = error.get("msg", "")
+        ctx = error.get("ctx", {})
 
+        # Переводим стандартные типы ошибок
+        if err_type == "missing":
+            new_error["msg"] = "Обязательное поле"
+        elif err_type == "string_too_short":
+            min_len = ctx.get("min_length", "?")
+            new_error["msg"] = f"Минимальная длина: {min_len} симв."
+        elif err_type == "string_too_long":
+            max_len = ctx.get("max_length", "?")
+            new_error["msg"] = f"Максимальная длина: {max_len} симв."
+        elif err_type == "value_error":
+            if "email" in msg.lower():
+                new_error["msg"] = "Некорректный формат email"
+            else:
+                new_error["msg"] = "Некорректное значение"
+        # При необходимости добавьте другие типы
+
+        errors.append(new_error)
+
+    return JSONResponse(status_code=422, content={"detail": errors})
 app.add_middleware(
     CORSMiddleware,
     allow_origins=cfg.app.cors_origins,
@@ -83,6 +114,7 @@ app.include_router(admin_genres.router)
 app.include_router(admin_tracks.router)
 app.include_router(admin_stats.router)
 app.include_router(admin_users.router)
+app.include_router(contact_router)
 
 @app.get("/")
 async def root():
@@ -95,6 +127,8 @@ async def root():
 @app.get("/health")
 async def health():
     return {"status": "ok"}
+
+
 
 if __name__ == "__main__":
     uvicorn.run(app=app)

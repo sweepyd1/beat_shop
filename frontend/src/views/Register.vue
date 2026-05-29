@@ -95,7 +95,7 @@
 import { ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
-
+import { showError, showSuccess } from '@/utils/alert';  // <-- импорт
 const authStore = useAuthStore();
 const router = useRouter();
 
@@ -105,17 +105,19 @@ const password = ref('');
 const confirmPassword = ref('');
 const role = ref('user');      // по умолчанию "Покупатель"
 const agree = ref(false);
+const isLoading = ref(false);
 
 const handleRegister = async () => {
   if (password.value !== confirmPassword.value) {
-    alert('Пароли не совпадают');
+    showError('Пароли не совпадают');
     return;
   }
   if (!agree.value) {
-    alert('Примите условия использования');
+    showError('Примите условия использования');
     return;
   }
 
+  isLoading.value = true;
   try {
     await authStore.register({
       full_name: username.value,
@@ -124,10 +126,13 @@ const handleRegister = async () => {
       password: password.value,
       role: role.value
     });
+    showSuccess('Регистрация прошла успешно!');
     router.push('/');
   } catch (error) {
-    console.error('Registration error:', error.response?.data?.detail || error.message);
-    alert('Ошибка регистрации: ' + (error.response?.data?.detail || 'Неизвестная ошибка'));
+    console.error('Registration error:', error);
+    showError(error);   // Функция сама извлечёт понятное сообщение
+  } finally {
+    isLoading.value = false;
   }
 };
 </script>

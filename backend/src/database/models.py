@@ -42,6 +42,8 @@ class User(Base):
     interactions = relationship("Interaction", back_populates="user", cascade="all, delete-orphan")
     subscriptions = relationship("Subscription", back_populates="user", cascade="all, delete-orphan")
     author_profile = relationship("Author", back_populates="user", uselist=False, cascade="all, delete-orphan")
+    # внутри класса User
+    contact_messages = relationship("ContactMessage", back_populates="user", foreign_keys="[ContactMessage.user_id]")
 class Subscription(Base):
     __tablename__ = 'subscriptions'
 
@@ -172,4 +174,22 @@ class Interaction(Base):
     __table_args__ = (
         Index('idx_interaction_user_type', 'user_id', 'interaction_type'),
         Index('idx_interaction_track', 'track_id'),
+    )
+class ContactMessage(Base):
+    __tablename__ = 'contact_messages'
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    name: Mapped[str] = mapped_column(String(150), nullable=False)
+    email: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
+    message: Mapped[str] = mapped_column(Text, nullable=False)
+    created_at: Mapped[DateTime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    is_read: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+
+    # Опционально: если хотите привязывать сообщения к зарегистрированным пользователям
+    user_id: Mapped[int | None] = mapped_column(Integer, ForeignKey('users.id'), nullable=True)
+    user = relationship("User", back_populates="contact_messages", foreign_keys=[user_id])
+
+    __table_args__ = (
+        Index('idx_contact_messages_created', 'created_at'),
+        Index('idx_contact_messages_read', 'is_read'),
     )

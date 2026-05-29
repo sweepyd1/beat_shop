@@ -69,8 +69,6 @@ class PurchaseService:
             )
         if not track:
             raise HTTPException(status_code=404, detail="Трек не найден")
-        print(f"айди пользователя: {current_user.id}")
-        print(f"айди автора: {track.author.user_id}")
         if current_user and track.author.user_id == current_user.id:
 
             raise HTTPException(

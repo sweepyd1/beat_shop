@@ -70,7 +70,7 @@ const applyPromo = () => {
   if (promoCode.value === 'BEAT10') {
     discount.value = total.value * 0.1;
   } else {
-    alert('Неверный промокод');
+    showError('Неверный промокод');
   }
 };
 </script>

@@ -27,20 +27,13 @@
           <h1>{{ artist.full_name }}</h1>
           <p class="bio">{{ artist.bio || 'Биография не указана' }}</p>
           <div class="stats">
-            <div class="stat-item">
-              <span class="stat-value">{{ formatNumber(artist.followers_count || 0) }}</span>
-              <span class="stat-label">подписчиков</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-value">{{ formatNumber(Math.round(artist.total_earnings || 0)) }} ₽</span>
-              <span class="stat-label">выручка</span>
-            </div>
+     
             <div class="stat-item">
               <span class="stat-value">{{ artist.tracks_count || 0 }}</span>
               <span class="stat-label">битов</span>
             </div>
           </div>
-          <button 
+          <!-- <button 
             v-if="isLoggedIn && !isOwnProfile" 
             class="follow-btn" 
             :class="{ followed: isFollowed }" 
@@ -48,49 +41,14 @@
           >
             <i :class="isFollowed ? 'fas fa-check' : 'fas fa-plus'"></i>
             {{ isFollowed ? "Отписаться" : "Подписаться" }}
-          </button>
+          </button> -->
           <router-link v-if="isOwnProfile" to="/profile?tab=studio" class="btn-primary">
             <i class="fas fa-cog"></i> Управление профилем
           </router-link>
         </div>
       </div>
 
-      <!-- Статистика продаж с мини-графиком -->
-      <div class="sales-stats">
-        <h2><i class="fas fa-chart-line"></i> Статистика продаж</h2>
-        <div class="stats-grid">
-          <div class="stat-card">
-            <i class="fas fa-shopping-cart"></i>
-            <div>
-              <span class="stat-card-value">{{ artistStats?.sales_this_month || 0 }}</span>
-              <span class="stat-card-label">продаж в этом месяце</span>
-            </div>
-          </div>
-          <div class="stat-card">
-            <i class="fas fa-wallet"></i>
-            <div>
-              <span class="stat-card-value">{{ Math.round(artistStats?.monthly_earnings || 0) }} ₽</span>
-              <span class="stat-card-label">доход за месяц</span>
-            </div>
-          </div>
-          <div class="stat-card">
-            <i class="fas fa-star"></i>
-            <div>
-              <span class="stat-card-value">{{ artistStats?.average_rating || 'N/A' }}</span>
-              <span class="stat-card-label">средний рейтинг</span>
-            </div>
-          </div>
-        </div>
-        <!-- Мини-график продаж (эмуляция) -->
-        <div class="mini-chart">
-          <div 
-            v-for="(value, index) in salesChart" 
-            :key="index" 
-            class="bar" 
-            :style="`height: ${value}px;`"
-          ></div>
-        </div>
-      </div>
+
 
       <!-- Биты артиста -->
       <div class="beats-section">
@@ -160,7 +118,7 @@ const toggleFollow = async () => {
     isFollowed.value = !isFollowed.value;
   } catch (err) {
     console.error('Ошибка подписки:', err);
-    alert('Ошибка при изменении подписки');
+    showError('Ошибка при изменении подписки');
   }
 };
 

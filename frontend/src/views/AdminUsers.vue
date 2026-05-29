@@ -430,7 +430,7 @@ const fetchUsers = async () => {
     users.value = data;
   } catch (err) {
     console.error(err);
-    alert('Ошибка загрузки пользователей');
+    showError('Ошибка загрузки пользователей');
   } finally {
     loading.value = false;
   }
@@ -499,7 +499,7 @@ const submitUser = async () => {
     fetchUsers();
   } catch (err) {
     console.error(err);
-    alert(err.response?.data?.detail || 'Ошибка сохранения');
+    showError(err.response?.data?.detail || 'Ошибка сохранения');
   } finally {
     saving.value = false;
   }
@@ -527,7 +527,7 @@ const deleteUser = async (id) => {
     fetchUsers();
   } catch (err) {
     console.error(err);
-    alert('Ошибка удаления');
+    showError('Ошибка удаления');
   }
 };
 
@@ -540,7 +540,7 @@ const openStats = async (user) => {
     statsUser.value = data;
   } catch (err) {
     console.error(err);
-    alert('Не удалось загрузить статистику');
+    showError('Не удалось загрузить статистику');
   } finally {
     statsLoading.value = false;
   }

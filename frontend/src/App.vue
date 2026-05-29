@@ -36,7 +36,11 @@ body {
   color: #fff;
   overflow-x: hidden;
 }
-
+.swal2-popup-custom {
+  border: 1px solid rgba(168, 85, 247, 0.3) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5) !important;
+}
 /* Стили для скроллбара */
 ::-webkit-scrollbar {
   width: 8px;

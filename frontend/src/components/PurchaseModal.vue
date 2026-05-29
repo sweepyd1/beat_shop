@@ -62,7 +62,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
 import api from '../api';
-
+import { showError, showSuccess } from '@/utils/alert';  // <-- импорт
 const props = defineProps({
   modelValue: Boolean,
   track: Object
@@ -122,7 +122,7 @@ const close = () => {
 // Отправка формы (без изменений, кроме возможного использования user.id)
 const submitPurchase = async () => {
   if (!form.value.agree) {
-    alert('Необходимо согласиться с условиями договора');
+    showError('Необходимо согласиться с условиями договора, попробуйте еще раз!');
     return;
   }
   loading.value = true;
@@ -142,12 +142,28 @@ const submitPurchase = async () => {
     close();
   } catch (error) {
     console.error('Ошибка при покупке:', error);
-    alert('Произошла ошибка при оформлении покупки. Попробуйте позже.');
+    
+    // Извлекаем сообщение из ответа бэкенда
+    let errorMessage = 'Произошла ошибка при оформлении покупки';
+    
+    // FastAPI возвращает ошибки в формате { detail: "текст" }
+    if (error.response?.data?.detail) {
+      errorMessage = error.response.data.detail;
+    } 
+    // Альтернативные поля на случай других форматов
+    else if (error.response?.data?.message) {
+      errorMessage = error.response.data.message;
+    }
+    // Если сервер не ответил (сетевые ошибки)
+    else if (error.message) {
+      errorMessage = error.message;
+    }
+    
+    showError(errorMessage);
   } finally {
     loading.value = false;
   }
 };
-
 const showTerms = () => {
   alert('Здесь будет текст лицензионного договора');
 };

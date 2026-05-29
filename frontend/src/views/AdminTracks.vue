@@ -243,7 +243,7 @@ import { ref, computed, onMounted } from 'vue';
 import api from '@/api';
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
-
+import { showError, showSuccess } from '@/utils/alert';  // <-- импорт
 const authStore = useAuthStore();
 const router = useRouter();
 
@@ -323,11 +323,11 @@ const handleFileChange = (event, type) => {
   const file = event.target.files[0];
   if (file) {
     if (type === 'mp3' && !file.name.endsWith('.mp3')) {
-      alert('Файл должен быть MP3');
+      showError('Файл должен быть MP3');
       return;
     }
     if (type === 'cover' && !['image/jpeg','image/png','image/jpg'].includes(file.type)) {
-      alert('Обложка должна быть JPG или PNG');
+      showError('Обложка должна быть JPG или PNG');
       return;
     }
     form.value[`${type}_file`] = file;
@@ -340,12 +340,12 @@ const handleDrop = (event, type) => {
     if (file && file.name.endsWith('.mp3')) {
       form.value.mp3_file = file;
       dragOverMp3.value = false;
-    } else alert('Пожалуйста, перетащите MP3 файл');
+    } else showError('Пожалуйста, перетащите MP3 файл');
   } else if (type === 'cover') {
     if (file && file.type.startsWith('image/')) {
       form.value.cover_file = file;
       dragOverCover.value = false;
-    } else alert('Пожалуйста, перетащите изображение');
+    } else showError('Пожалуйста, перетащите изображение');
   }
 };
 
@@ -357,7 +357,7 @@ const clearFile = (type) => {
 
 const submitTrack = async () => {
   if (!form.value.mp3_file || !form.value.cover_file) {
-    alert('Выберите MP3 и обложку');
+    showError('Выберите MP3 и обложку');
     return;
   }
   loading.value = true;
@@ -375,14 +375,14 @@ const submitTrack = async () => {
     await api.post('/admin/tracks', fd, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
-    alert('Трек успешно добавлен');
+    showSuccess('Трек успешно добавлен');
     form.value = { title: '', genre_id: null, author_id: null, price: 0, bpm: null, duration_seconds: null, mp3_file: null, cover_file: null };
     if (coverPreview.value) URL.revokeObjectURL(coverPreview.value);
     fetchTracks();
     activeTab.value = 'list';
   } catch (err) {
     console.error(err);
-    alert(err.response?.data?.detail || 'Ошибка добавления трека');
+    showError(err.response?.data?.detail || 'Ошибка добавления трека');
   } finally {
     loading.value = false;
   }
@@ -407,7 +407,7 @@ const openEditModal = async (track) => {
     showEditModal.value = true;
   } catch (err) {
     console.error('Ошибка загрузки трека для редактирования:', err);
-    alert('Не удалось загрузить данные трека');
+    showError('Не удалось загрузить данные трека');
   }
 };
 
@@ -448,12 +448,12 @@ const submitEdit = async () => {
     await api.put(`/admin/tracks/${editingTrackId.value}`, fd, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
-    alert('Трек обновлён');
+    showSuccess('Трек обновлён');
     showEditModal.value = false;
     fetchTracks();
   } catch (err) {
     console.error(err);
-    alert(err.response?.data?.detail || 'Ошибка обновления');
+    showError(err.response?.data?.detail || 'Ошибка обновления');
   } finally {
     editLoading.value = false;
   }

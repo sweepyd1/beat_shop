@@ -7,12 +7,11 @@
         <h2>Свяжитесь с нами</h2>
         <p><i class="fas fa-envelope"></i> support@beatmarket.com</p>
         <p><i class="fas fa-phone"></i> +7 (999) 123-45-67</p>
-        <p><i class="fas fa-map-marker-alt"></i> Москва, ул. Тверская, д. 7</p>
+        <p><i class="fas fa-map-marker-alt"></i> Нижний Новгород, ул. Тверская, д. 7</p>
 
         <div class="social">
           <a href="#"><i class="fab fa-vk"></i></a>
-          <a href="#"><i class="fab fa-telegram"></i></a>
-          <a href="#"><i class="fab fa-instagram"></i></a>
+
         </div>
       </div>
 
@@ -40,13 +39,28 @@
 
 <script setup>
 import { ref } from 'vue';
-
+import api from '@/api'; // путь к вашему api.js (уточните импорт)
+// или import api from '../api';
+import { showError, showSuccess } from '@/utils/alert';  // <-- импорт
 const form = ref({ name: '', email: '', message: '' });
+const isLoading = ref(false);
 
-const sendMessage = () => {
-  console.log('Message', form.value);
-  alert('Сообщение отправлено (имитация)');
-  form.value = { name: '', email: '', message: '' };
+const sendMessage = async () => {
+  isLoading.value = true;
+  try {
+    const response = await api.post('/contacts/', form.value);
+    if (response.status === 201) {
+      showSuccess('Сообщение отправлено!');
+      form.value = { name: '', email: '', message: '' };
+    } else {
+      showError('Ошибка при отправке');
+    }
+  } catch (error) {
+    console.error('Ошибка:', error);
+    showError('Не удалось отправить сообщение. Проверьте соединение с сервером.');
+  } finally {
+    isLoading.value = false;
+  }
 };
 </script>
 
@@ -63,7 +77,19 @@ const sendMessage = () => {
   gap: 2rem;
   margin-top: 2rem;
 }
-
+.btn-primary {
+  background: #a855f7;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 0.8rem 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-primary:hover {
+  background: #9333ea;
+}
 .contact-info, .contact-form {
   background: rgba(255,255,255,0.02);
   border-radius: 20px;

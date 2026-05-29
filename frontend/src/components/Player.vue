@@ -1,5 +1,10 @@
 <template>
-  <div v-if="track" class="player">
+  <div v-if="track && isPlayerVisible" class="player">
+    <!-- Кнопка закрытия (крестик) -->
+    <button class="close-btn" @click="closePlayer">
+      <i class="fas fa-times"></i>
+    </button>
+
     <div class="track-info">
        <img :src="coverUrl" :alt="track.title" class="cover" />
       <div class="details">
@@ -13,6 +18,7 @@
       </button>
     </div>
 
+    <!-- Остальная часть шаблона без изменений -->
     <div class="player-controls">
       <button @click="prev" class="control-btn">
         <i class="fas fa-step-backward"></i>
@@ -64,41 +70,48 @@ const { isAuthenticated, user } = storeToRefs(authStore);
 const router = useRouter();
 const listenLoggedForTrack = ref(null);
 
-/**
- * Отправляет событие прослушивания на бэкенд.
- * Вызывается один раз при начале воспроизведения трека.
- */
 const logListen = async () => {
-  // Не логируем, если: нет трека, пользователь не авторизован, или уже логировали этот трек
   if (!track.value?.id || !isLoggedIn.value || listenLoggedForTrack.value === track.value.id) {
     return;
   }
-
   try {
     await api.post(`/listen/${track.value.id}`);
-    listenLoggedForTrack.value = track.value.id; // запоминаем, что залогировали
-    // console.log(`✓ Listen logged for track ${track.value.id}`);
+    listenLoggedForTrack.value = track.value.id;
   } catch (error) {
-    // Не блокируем плеер при ошибке логирования
     console.warn('Failed to log listen:', error?.response?.data || error.message);
   }
 };
 
-// Получаем глобальное состояние
+// Глобальное состояние плеера
 const player = inject("player");
 if (!player) {
   console.error("Player: no player injected");
 }
 const { currentTrack, isPlaying, nextTrack, prevTrack, togglePlay: globalTogglePlay } = player || {};
 
-// Локальный трек (реактивный)
+// Локальный трек
 const track = computed(() => currentTrack?.value);
 
-// Состояние избранного
+// Управление видимостью плеера
+const isPlayerVisible = ref(true); // показываем по умолчанию
+
+// Закрыть плеер
+const closePlayer = () => {
+  isPlayerVisible.value = false;
+  // Остановить воспроизведение
+  if (audio) {
+    audio.pause();
+    audio.currentTime = 0;
+  }
+  if (isPlaying) isPlaying.value = false;
+  // Сбросить текущий трек, чтобы избежать фонового проигрывания при повторном открытии
+  if (currentTrack) currentTrack.value = null;
+};
+
+// Избранное
 const isFavorite = ref(false);
 const isLoggedIn = isAuthenticated;
 
-// Проверка, добавлен ли трек в избранное
 const checkFavorite = async () => {
   if (!track.value?.id || !isLoggedIn.value) return;
   try {
@@ -109,7 +122,6 @@ const checkFavorite = async () => {
   }
 };
 
-// Добавить/удалить из избранного
 const toggleFavorite = async () => {
   if (!track.value?.id) return;
   if (!isLoggedIn.value) {
@@ -129,15 +141,13 @@ const toggleFavorite = async () => {
     console.error('Failed to toggle favorite', err);
   }
 };
-// Локальное состояние
+
 const currentTime = ref(0);
 const duration = ref(0);
 const volume = ref(0.7);
 const progressBar = ref(null);
-
 let audio = null;
 
-// Инициализация аудио
 const initAudio = () => {
   if (audio) {
     audio.pause();
@@ -146,22 +156,18 @@ const initAudio = () => {
   }
   if (!track.value) return;
 
-  // Используем прямой URL к mp3 из трека
   const streamUrl = track.value.mp3_file_url;
   if (!streamUrl) {
     console.error("Player: no mp3_file_url for track", track.value);
     return;
   }
-  console.log("Player: loading audio from", streamUrl);
   audio = new Audio(streamUrl);
   audio.volume = volume.value;
   audio.addEventListener("loadedmetadata", () => {
     duration.value = audio.duration;
-    console.log("Player: duration", duration.value);
   });
   audio.addEventListener("timeupdate", updateTime);
   audio.addEventListener("ended", () => {
-    console.log("Player: track ended");
     nextTrack();
   });
 };
@@ -169,6 +175,7 @@ const initAudio = () => {
 const updateTime = () => {
   if (audio) currentTime.value = audio.currentTime;
 };
+
 const coverUrl = computed(() => {
   const url = track.value?.cover_url;
   if (!url) return '/default-cover.jpg';
@@ -176,19 +183,15 @@ const coverUrl = computed(() => {
   const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
   return `${baseUrl}${url}`;
 });
-// Следим за сменой трека
-// Следим за сменой трека
+
 watch(track, (newTrack, oldTrack) => {
-  console.log("Player: track changed", newTrack);
-  
-  // Сбрасываем флаг логирования при смене трека
   if (newTrack?.id !== oldTrack?.id) {
     listenLoggedForTrack.value = null;
   }
-  
   if (newTrack) {
+    isPlayerVisible.value = true; // показываем плеер при смене трека
     initAudio();
-    checkFavorite(); // ✅ Добавлено: проверяем избранное при смене трека
+    checkFavorite();
     if (isPlaying?.value) {
       audio?.play().catch((e) => {
         console.error("Play error:", e);
@@ -203,17 +206,14 @@ watch(track, (newTrack, oldTrack) => {
   }
 });
 
-// Следим за состоянием воспроизведения
 watch(isPlaying, async (playing) => {
   if (!audio) return;
   if (playing) {
     try {
       await audio.play();
-      // ✅ Успешно начали играть — логируем прослушивание
       logListen();
     } catch (e) {
       console.error("Play error:", e);
-      // Если play() упал (например, автоплей заблокирован), не логируем
       if (isPlaying) isPlaying.value = false;
     }
   } else {
@@ -221,7 +221,6 @@ watch(isPlaying, async (playing) => {
   }
 });
 
-// Очистка
 onUnmounted(() => {
   if (audio) {
     audio.pause();
@@ -238,9 +237,7 @@ const togglePlay = () => {
 const formatTime = (sec) => {
   if (isNaN(sec)) return "0:00";
   const minutes = Math.floor(sec / 60);
-  const seconds = Math.floor(sec % 60)
-    .toString()
-    .padStart(2, "0");
+  const seconds = Math.floor(sec % 60).toString().padStart(2, "0");
   return `${minutes}:${seconds}`;
 };
 
@@ -261,24 +258,17 @@ const updateVolume = () => {
 };
 
 const next = () => {
-  console.log('Next button clicked');
-  console.log('player object:', player);
-  console.log('nextTrack function:', nextTrack);
-  if (nextTrack) {
-    nextTrack();
-  } else {
-    console.error('nextTrack is not defined');
-  }
+  if (nextTrack) nextTrack();
+  else console.error('nextTrack is not defined');
 };
+
 const prev = () => {
-  console.log('Prev button clicked');
   if (prevTrack) prevTrack();
   else console.error('prevTrack is not defined');
 };
 </script>
 
 <style scoped>
-/* Стили из вашего оригинального Player.vue (скопируйте их сюда) */
 .player {
   position: fixed;
   bottom: 0;
@@ -293,6 +283,24 @@ const prev = () => {
   justify-content: space-between;
   z-index: 200;
 }
+/* Стили кнопки закрытия */
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  color: #a0a0b0;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: color 0.2s;
+  z-index: 10;
+}
+.close-btn:hover {
+  color: #ffffff;
+}
+
+/* Остальные стили без изменений */
 .track-info {
   display: flex;
   align-items: center;

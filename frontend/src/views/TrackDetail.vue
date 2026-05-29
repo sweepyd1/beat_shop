@@ -83,7 +83,7 @@ import { ref, onMounted, computed, inject } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import api from '../api';
 import { useAuthStore } from '../stores/auth';  
-
+import { showError, showSuccess } from '@/utils/alert';  // <-- импорт
 
 import PurchaseModal from '../components/PurchaseModal.vue';
 
@@ -135,7 +135,7 @@ const openPurchaseModal = () => {
 };
 const handlePurchaseComplete = (purchaseData) => {
   // Можно показать уведомление об успешной покупке
-  alert(`Покупка успешно оформлена! Договор можно получить в личном кабинете`);
+  showSuccess(`Покупка успешно оформлена! Договор можно получить в личном кабинете`);
   showPurchaseModal.value = false;
 };
 

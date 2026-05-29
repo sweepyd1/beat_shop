@@ -118,7 +118,7 @@ import axios from 'axios';
 import { useRouter } from 'vue-router';
 // import { usePlayerStore } from '@/stores/player';
 import { useAuthStore } from '@/stores/auth';
-
+import { showError, showSuccess } from '@/utils/alert';  // <-- импорт
 const router = useRouter();
 // const playerStore = usePlayerStore();
 const authStore = useAuthStore();
@@ -216,10 +216,10 @@ const addToFavorites = async (track) => {
     await axios.post(`http://localhost:8000/favorites/${track.id}`, {}, {
   withCredentials: true
 });
-    alert('Добавлено в избранное');
+    showSuccess('Добавлено в избранное');
   } catch (error) {
     console.error('Ошибка добавления в избранное:', error);
-    alert('Ошибка при добавлении в избранное');
+    showError('Ошибка при добавлении в избранное');
   }
 };
 

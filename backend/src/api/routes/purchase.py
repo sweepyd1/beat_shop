@@ -20,6 +20,7 @@ async def get_purchase_service(
     contract_service = ContractService(session, file_service)
     return PurchaseService(session, contract_service)
 
+
 @router.post("/purchases", response_model=dict)
 async def create_purchase(
     data: PurchaseRequest,
@@ -28,7 +29,6 @@ async def create_purchase(
 ):
     """
     Создание покупки (для авторизованных и гостей).
-    Если пользователь авторизован, его данные приоритетнее.
     """
     try:
         result = await service.purchase_track_with_data(
@@ -40,12 +40,15 @@ async def create_purchase(
             current_user=current_user
         )
         return result
+    except HTTPException as e:
+        # Пробрасываем HTTP-исключения как есть (сохраняем статус и детали)
+        raise e
     except Exception as e:
-        # Логируем и возвращаем 500
-        print(f"Ошибка при создании покупки: {e}")
+        # Логируем неожиданную ошибку
+        print(f"Неожиданная ошибка при создании покупки: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Внутренняя ошибка сервера: {str(e)}"
+            detail="Внутренняя ошибка сервера. Попробуйте позже."
         )
 
 @router.post("/{track_id}", response_model=dict)

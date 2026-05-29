@@ -149,12 +149,12 @@ const playTrack = (track) => {
   const audio = new Audio(audioUrl);
   audio.play().catch((err) => {
     console.error("Playback error:", err);
-    alert("Не удалось воспроизвести трек.");
+    showError("Не удалось воспроизвести трек.");
   });
 };
 
 const buyTrack = (track) => {
-  alert(`Добавлено в корзину: ${track.title}`);
+  showSuccess(`Добавлено в корзину: ${track.title}`);
   // Здесь можно вызвать store корзины
 };
 
