@@ -10,7 +10,7 @@
       >
         <div class="vinyl-record">
           <img
-            :src="genre.cover"
+            :src="genre.displayImage"
             :alt="genre.name"
             class="genre-cover"
             @error="handleImageError(genre)"
@@ -31,36 +31,30 @@ import { ref, onMounted } from 'vue';
 import api from '../api';
 
 const genres = ref([]);
-
-// Маппинг обложек (можно вынести в отдельный файл, пока копия из Home)
-const genreCoverMap = {
-  'hip-hop': 'https://images.unsplash.com/photo-1614680376408-81e91ffe3db7?w=300&h=300&fit=crop',
-  'trap': 'https://images.unsplash.com/photo-1598387993281-cecf8b71a8f8?w=300&h=300&fit=crop',
-  'electronic': 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300&h=300&fit=crop',
-  'house': 'https://images.unsplash.com/photo-1571330735066-03aaa9429d89?w=300&h=300&fit=crop',
-  'techno': 'https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?w=300&h=300&fit=crop',
-  'rock': 'https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?w=300&h=300&fit=crop',
-  'jazz': 'https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=300&h=300&fit=crop',
-  'rnb': 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=300&h=300&fit=crop',
-  'pop': 'https://images.unsplash.com/photo-1614149162883-504ce4d13909?w=300&h=300&fit=crop',
-  'lo-fi': 'https://images.unsplash.com/photo-1487180144351-b8472da7d491?w=300&h=300&fit=crop',
-  'classical': 'https://images.unsplash.com/photo-1507838153414-b4b713384a76?w=300&h=300&fit=crop',
-  'reggae': 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=300&h=300&fit=crop',
-  'metal': 'https://images.unsplash.com/photo-1510915361819-9bd2b4d2a2fb?w=300&h=300&fit=crop',
-  'country': 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=300&h=300&fit=crop',
-  'blues': 'https://images.unsplash.com/photo-1509123777025-4be1efd6cce1?w=300&h=300&fit=crop'
-};
-
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 const DEFAULT_GENRE_COVER = 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=300&h=300&fit=crop';
 
-const getGenreCover = (name) => {
-  if (!name) return DEFAULT_GENRE_COVER;
-  const key = name.toLowerCase();
-  return genreCoverMap[key] || DEFAULT_GENRE_COVER;
+/**
+ * Формирует полный URL изображения жанра
+ */
+const getGenreImageUrl = (genre) => {
+  if (genre.image_url) {
+    // Абсолютный URL
+    if (genre.image_url.startsWith('http')) {
+      return genre.image_url;
+    }
+    // Относительный – добавляем базовый адрес бэкенда
+    return `${BASE_URL}${genre.image_url}`;
+  }
+  // Нет изображения – используем заглушку
+  return DEFAULT_GENRE_COVER;
 };
 
+/**
+ * Обработчик ошибки загрузки изображения
+ */
 const handleImageError = (genre) => {
-  genre.cover = DEFAULT_GENRE_COVER;
+  genre.displayImage = DEFAULT_GENRE_COVER;
 };
 
 onMounted(async () => {
@@ -69,8 +63,9 @@ onMounted(async () => {
     genres.value = data.map(g => ({
       id: g.id,
       name: g.name,
-      cover: getGenreCover(g.name),
-      tracks_count: g.tracks_count || 0
+      image_url: g.image_url,
+      tracks_count: g.tracks_count || 0,
+      displayImage: getGenreImageUrl(g)
     }));
   } catch (error) {
     console.error('Ошибка загрузки жанров:', error);
@@ -79,6 +74,7 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+/* Ваши стили остаются без изменений */
 .genres-page {
   max-width: 1400px;
   margin: 0 auto;

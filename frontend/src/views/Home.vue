@@ -4,7 +4,10 @@
     <section class="hero">
       <div class="hero-content">
         <h1>Покупай биты напрямую у авторов</h1>
-        <p>Тысячи эксклюзивных битов в разных жанрах. Лицензии без скрытых платежей.</p>
+        <p>
+          Тысячи эксклюзивных битов в разных жанрах. Лицензии без скрытых
+          платежей.
+        </p>
         <button class="cta-btn pulse" @click="$router.push('/search')">
           Начать поиск
         </button>
@@ -30,39 +33,41 @@
 
     <!-- Коллекции по жанрам (виниловые пластинки) -->
     <section class="section">
-      <div class="section-header">
-        <h2>Подборки по жанрам</h2>
-        <router-link to="/genres" class="view-all">Все жанры →</router-link>
-      </div>
-      <div class="genre-collections">
-        <div
-  v-for="collection in genreCollections"
-  :key="collection.id"
-  class="collection-card vinyl"
-  @click="$router.push(`/genre/${collection.id}`)"
->
-          <div class="vinyl-record">
-            <img
-              :src="collection.cover"
-              :alt="collection.genre"
-              class="collection-cover"
-              @error="handleGenreImageError(collection)"
-            />
-            <div class="vinyl-label">{{ collection.genre.substring(0, 2) }}</div>
-          </div>
-          <div class="collection-info">
-            <h3>{{ collection.genre }}</h3>
-            <p>{{ collection.tracks }} битов</p>
-          </div>
+    <div class="section-header">
+      <h2>Подборки по жанрам</h2>
+      <router-link to="/genres" class="view-all">Все жанры →</router-link>
+    </div>
+    <div class="genre-collections">
+      <div
+        v-for="collection in genreCollections"
+        :key="collection.id"
+        class="collection-card vinyl"
+        @click="$router.push(`/genre/${collection.id}`)"
+      >
+        <div class="vinyl-record">
+          <img
+            :src="collection.cover"
+            :alt="collection.genre"
+            class="collection-cover"
+            @error="handleGenreImageError(collection)"
+          />
+          <div class="vinyl-label">{{ collection.genre.substring(0, 2) }}</div>
+        </div>
+        <div class="collection-info">
+          <h3>{{ collection.genre }}</h3>
+          <p>{{ collection.tracks }} битов</p>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
     <!-- Новые релизы -->
     <section class="section">
       <div class="section-header">
         <h2>Новые релизы</h2>
-        <router-link to="/search?sort=newest" class="view-all">Все новинки →</router-link>
+        <router-link to="/search?sort=newest" class="view-all"
+          >Все новинки →</router-link
+        >
       </div>
       <div class="track-grid">
         <TrackCard
@@ -86,7 +91,9 @@ const popularTracks = ref([]);
 const newReleases = ref([]);
 const genreCollections = ref([]);
 
-// Маппинг жанров на красивые обложки (из открытых источников)
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
+// Маппинг жанров на красивые обложки (fallback, если image_url не задан)
 const genreCoverMap = {
   'hip-hop': 'https://images.unsplash.com/photo-1614680376408-81e91ffe3db7?w=300&h=300&fit=crop',
   'trap': 'https://images.unsplash.com/photo-1598387993281-cecf8b71a8f8?w=300&h=300&fit=crop',
@@ -105,22 +112,33 @@ const genreCoverMap = {
   'blues': 'https://images.unsplash.com/photo-1509123777025-4be1efd6cce1?w=300&h=300&fit=crop'
 };
 
-// Дефолтная обложка, если жанр не найден в маппинге
 const DEFAULT_GENRE_COVER = 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=300&h=300&fit=crop';
 
-// Функция получения обложки по названию жанра (регистронезависимая)
-const getGenreCover = (genreName) => {
-  if (!genreName) return DEFAULT_GENRE_COVER;
-  const key = genreName.toLowerCase();
+/**
+ * Формирует полный URL обложки жанра:
+ * - если есть image_url – используем его (поддерживаем абсолютные и относительные пути)
+ * - иначе fallback по названию из genreCoverMap
+ * - иначе дефолтная картинка
+ */
+const getGenreImageUrl = (genre) => {
+  // Приоритет: image_url с бэкенда
+  if (genre.image_url) {
+    if (genre.image_url.startsWith('http')) {
+      return genre.image_url;
+    }
+    return `${BASE_URL}${genre.image_url}`;
+  }
+  // Fallback по названию
+  const key = genre.name?.toLowerCase() || '';
   return genreCoverMap[key] || DEFAULT_GENRE_COVER;
 };
 
-// Обработчик ошибки загрузки изображения жанра (ставим дефолт)
+// Обработчик ошибки загрузки изображения жанра
 const handleGenreImageError = (collection) => {
   collection.cover = DEFAULT_GENRE_COVER;
 };
 
-// Обработчик ошибок для треков (можно оставить пустым или добавить логику)
+// Обработчик ошибок для треков
 const handleImageError = (event) => {
   event.target.src = 'https://via.placeholder.com/300x300?text=No+Image';
 };
@@ -146,22 +164,28 @@ const fetchNew = async () => {
 const fetchGenres = async () => {
   try {
     const { data } = await api.get('/genres');
-    // Преобразуем в формат коллекций, добавляя обложку через маппинг
+    // Берём первые 4 жанра и преобразуем в формат коллекций
     genreCollections.value = data.slice(0, 4).map(g => ({
       id: g.id,
       genre: g.name,
-      cover: getGenreCover(g.name),
-      tracks: g.tracks_count || Math.floor(Math.random() * 200) + 20 // временно, пока нет реального счётчика
+      cover: getGenreImageUrl(g),   // ← теперь используется image_url (если есть)
+      tracks: g.tracks_count || 0
     }));
   } catch (error) {
     console.error('Ошибка загрузки жанров:', error);
-    // Fallback: показываем хотя бы дефолтные жанры для демо
-    genreCollections.value = [
-      { id: 1, genre: 'Hip-Hop', cover: getGenreCover('hip-hop'), tracks: 156 },
-      { id: 2, genre: 'Electronic', cover: getGenreCover('electronic'), tracks: 98 },
-      { id: 3, genre: 'Lo-Fi', cover: getGenreCover('lo-fi'), tracks: 67 },
-      { id: 4, genre: 'Trap', cover: getGenreCover('trap'), tracks: 203 }
+    // Fallback: демо-данные (на случай, если API не отвечает)
+    const fallbackGenres = [
+      { id: 1, name: 'Hip-Hop', image_url: null },
+      { id: 2, name: 'Electronic', image_url: null },
+      { id: 3, name: 'Lo-Fi', image_url: null },
+      { id: 4, name: 'Trap', image_url: null }
     ];
+    genreCollections.value = fallbackGenres.map(g => ({
+      id: g.id,
+      genre: g.name,
+      cover: getGenreImageUrl(g),
+      tracks: Math.floor(Math.random() * 200) + 20
+    }));
   }
 };
 
@@ -171,6 +195,7 @@ onMounted(() => {
   fetchGenres();
 });
 </script>
+
 
 <style scoped>
 /* Глобальные переменные (можно вынести в отдельный файл) */
@@ -198,9 +223,17 @@ onMounted(() => {
   padding: 6rem 2rem;
   border-radius: 40px;
   margin-bottom: 4rem;
-  background: radial-gradient(circle at 30% 40%, rgba(168, 85, 247, 0.3) 0%, transparent 60%),
-              radial-gradient(circle at 70% 60%, rgba(59, 130, 246, 0.3) 0%, transparent 60%),
-              #0a0a0f;
+  background: radial-gradient(
+      circle at 30% 40%,
+      rgba(168, 85, 247, 0.3) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      circle at 70% 60%,
+      rgba(59, 130, 246, 0.3) 0%,
+      transparent 60%
+    ),
+    #0a0a0f;
   overflow: hidden;
   isolation: isolate;
 }
@@ -251,9 +284,15 @@ onMounted(() => {
 }
 
 @keyframes pulse {
-  0% { box-shadow: 0 0 0 0 var(--accent-glow); }
-  70% { box-shadow: 0 0 0 15px rgba(168, 85, 247, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(168, 85, 247, 0); }
+  0% {
+    box-shadow: 0 0 0 0 var(--accent-glow);
+  }
+  70% {
+    box-shadow: 0 0 0 15px rgba(168, 85, 247, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(168, 85, 247, 0);
+  }
 }
 
 .hero-wave {
@@ -382,8 +421,16 @@ onMounted(() => {
 
 /* Адаптивность */
 @media (max-width: 768px) {
-  .hero h1 { font-size: 2.5rem; }
-  .track-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; }
-  .genre-collections { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; }
+  .hero h1 {
+    font-size: 2.5rem;
+  }
+  .track-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+  }
+  .genre-collections {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+  }
 }
 </style>

@@ -64,7 +64,10 @@ const genre = ref({ id: null, name: 'Загрузка...' });
 const tracks = ref([]);
 const genreCover = ref('');
 
-// Маппинг обложек (можно вынести в отдельный файл, пока тот же, что в Home)
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const DEFAULT_GENRE_COVER = 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=500&h=500&fit=crop';
+
+// fallback-маппинг по названию (если image_url не задан)
 const genreCoverMap = {
   'hip-hop': 'https://images.unsplash.com/photo-1614680376408-81e91ffe3db7?w=500&h=500&fit=crop',
   'trap': 'https://images.unsplash.com/photo-1598387993281-cecf8b71a8f8?w=500&h=500&fit=crop',
@@ -82,7 +85,25 @@ const genreCoverMap = {
   'country': 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=500&h=500&fit=crop',
   'blues': 'https://images.unsplash.com/photo-1509123777025-4be1efd6cce1?w=500&h=500&fit=crop'
 };
-const DEFAULT_GENRE_COVER = 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=500&h=500&fit=crop';
+
+/**
+ * Формирует полный URL обложки жанра с учётом:
+ * - прямого URL из image_url (абсолютного или относительного)
+ * - fallback по названию
+ * - дефолтной картинки
+ */
+const getGenreImageUrl = (genreData) => {
+  // 1) Если есть image_url – используем его
+  if (genreData.image_url) {
+    if (genreData.image_url.startsWith('http')) {
+      return genreData.image_url;
+    }
+    return `${BASE_URL}${genreData.image_url}`;
+  }
+  // 2) Иначе пробуем маппинг по названию
+  const key = genreData.name?.toLowerCase() || '';
+  return genreCoverMap[key] || DEFAULT_GENRE_COVER;
+};
 
 const description = computed(() => {
   return `Лучшие биты и треки в стиле ${genre.value.name}. Наслаждайтесь музыкой напрямую от авторов.`;
@@ -112,32 +133,26 @@ const playAll = () => {
   if (tracks.value.length) playTrack(tracks.value[0]);
 };
 
-const handleImageError = (e) => {
-  e.target.src = DEFAULT_GENRE_COVER;
-};
-
-// Получение обложки по названию жанра
-const getGenreCover = (name) => {
-  if (!name) return DEFAULT_GENRE_COVER;
-  const key = name.toLowerCase();
-  return genreCoverMap[key] || DEFAULT_GENRE_COVER;
+const handleImageError = (event) => {
+  event.target.src = DEFAULT_GENRE_COVER;
 };
 
 onMounted(async () => {
   const genreId = Number(route.params.id);
   try {
-    // Загружаем жанр (если бы был эндпоинт GET /genres/{id}, использовали бы его)
+    // Получаем все жанры и находим нужный (если нет отдельного эндпоинта /genres/{id})
     const { data: genres } = await api.get('/genres');
     const found = genres.find(g => g.id === genreId);
     if (found) {
       genre.value = found;
-      genreCover.value = getGenreCover(found.name);
+      // Устанавливаем обложку, используя приоритет image_url
+      genreCover.value = getGenreImageUrl(found);
     } else {
-      genre.value = { id: genreId, name: 'Неизвестный жанр' };
+      genre.value = { id: genreId, name: 'Неизвестный жанр', image_url: null };
       genreCover.value = DEFAULT_GENRE_COVER;
     }
 
-    // Загружаем треки жанра
+    // Загружаем треки для этого жанра
     const { data: searchResult } = await api.get('/tracks/search', {
       params: {
         genre_ids: [genreId],
@@ -145,7 +160,6 @@ onMounted(async () => {
         sort_by: 'popular'
       }
     });
-    // searchResult – массив треков (TrackResponse)
     tracks.value = searchResult.map(t => ({
       id: t.id,
       title: t.title,
@@ -153,7 +167,7 @@ onMounted(async () => {
       cover: t.cover_url || 'https://via.placeholder.com/200?text=No+Image',
       duration: t.duration_seconds,
       plays: t.plays,
-      likes: 0 // если нет поля лайков, заглушка
+      likes: 0
     }));
   } catch (error) {
     console.error('Ошибка загрузки данных жанра:', error);
