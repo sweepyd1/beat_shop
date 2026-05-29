@@ -36,6 +36,7 @@ class GenreService:
             result.append({
                 "id": genre.id,
                 "name": genre.name,
+                "photo_url": genre.photo_url,
                 "tracks_count": count
             })
         return result
