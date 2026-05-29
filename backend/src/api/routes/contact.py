@@ -1,11 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.ext.asyncio import AsyncSession
+from database.models import User
 from core.services.contact import ContactMessageService
 from core.repositories.contact import ContactMessageRepository
 from schemas.contact import ContactMessageCreate, ContactMessageResponse
 from api.dependencies import get_current_admin, get_db_session
 from core.services.auth import AuthService
-from api.dependencies import get_auth_service
+from api.dependencies import get_auth_service, get_current_user
 
 router = APIRouter(prefix="/contacts", tags=["contacts"])
 
@@ -42,12 +43,10 @@ async def get_all_messages(
     skip: int = 0,
     limit: int = 100,
     unread_only: bool = False,
-    auth_service: AuthService = Depends(get_auth_service),
+    current_user: User = Depends(get_current_user),  # ← получаем пользователя
     service: ContactMessageService = Depends(get_contact_service),
 ):
-    # Здесь должна быть проверка прав администратора
-    current_user = await get_current_admin(auth_service)  # реализуйте сами
-    if not current_user:
+    if current_user.role.value != "admin":
         raise HTTPException(status_code=403, detail="Admin only")
     messages = await service.get_messages(skip, limit, unread_only)
     return messages
@@ -55,12 +54,12 @@ async def get_all_messages(
 @router.patch("/admin/{message_id}/read", status_code=200)
 async def mark_message_read(
     message_id: int,
+    current_user: User = Depends(get_current_user),
     auth_service: AuthService = Depends(get_auth_service),
     service: ContactMessageService = Depends(get_contact_service),
 ):
-    # Проверка админа
-    current_user = await get_current_admin(auth_service)
-    if not current_user:
+  
+    if current_user.role.value != "admin":
         raise HTTPException(status_code=403, detail="Admin only")
     success = await service.mark_read(message_id)
     if not success:

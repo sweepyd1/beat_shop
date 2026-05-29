@@ -3,12 +3,14 @@ from pydantic import BaseModel, Field, ConfigDict
 
 class GenreBase(BaseModel):
     name: str = Field(..., min_length=1, max_length=50)
+    image_url: Optional[str] = None   # добавить
 
 class GenreCreate(GenreBase):
     pass
 
 class GenreUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=1, max_length=50)
+    image_url: Optional[str] = None   # добавить
 
 class GenreResponse(GenreBase):
     id: int

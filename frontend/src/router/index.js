@@ -15,6 +15,7 @@ import TrackDetail from '../views/TrackDetail.vue';
 import AdminStats from '@/views/AdminStats.vue';
 import AdminDashboard from '@/views/AdminDashboard.vue'
 import { useAuthStore } from '@/stores/auth'
+import AdminGenres from '../views/AdminGenres.vue';
 const routes = [
   { path: '/', component: Home },
   { path: '/search', component: Search },
@@ -67,6 +68,17 @@ const routes = [
   path: '/genre/:id',
   name: 'GenreDetail',
   component: () => import('../views/GenreDetail.vue')
+},
+{
+  path: '/admin/message',
+  name: 'message',
+  component: () => import('../views/AdminMessages.vue')
+},
+{
+  path: '/admin/genres',
+  name: 'AdminGenres',
+  component: AdminGenres,
+  meta: { requiresAdmin: true }
 }
 ]
 

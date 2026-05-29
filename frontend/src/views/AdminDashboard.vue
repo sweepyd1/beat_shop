@@ -54,6 +54,26 @@
           <p>Просмотр, создание, блокировка, редактирование профилей пользователей.</p>
           <span class="card-link">Перейти →</span>
         </router-link>
+
+        <!-- Новая карточка: Сообщения -->
+        <router-link to="/admin/message" class="dashboard-card">
+          <div class="card-icon messages">
+            <i class="fas fa-envelope"></i>
+          </div>
+          <h3>Управление сообщениями</h3>
+          <p>Просмотр обратной связи, отметка о прочтении, удаление сообщений.</p>
+          <span class="card-link">Перейти →</span>
+        </router-link>
+
+        <!-- Новая карточка: Жанры -->
+        <router-link to="/admin/genres" class="dashboard-card">
+          <div class="card-icon genres">
+            <i class="fas fa-tags"></i>
+          </div>
+          <h3>Управление жанрами</h3>
+          <p>Создание, редактирование, удаление музыкальных жанров.</p>
+          <span class="card-link">Перейти →</span>
+        </router-link>
       </div>
 
       <!-- Блок с дополнительной информацией (опционально) -->
@@ -76,6 +96,13 @@
 </script>
 
 <style scoped>
+/* ... остальные стили остаются без изменений ... */
+
+/* Добавляем стили для иконок новых карточек */
+.card-icon.messages { background: linear-gradient(135deg, #f43f5e, #e11d48); }
+.card-icon.genres { background: linear-gradient(135deg, #06b6d4, #3b82f6); }
+
+/* Остальные стили из вашего компонента (они уже есть, здесь для полноты) */
 .admin-dashboard {
   min-height: 100vh;
   background: linear-gradient(135deg, #0a0a0f 0%, #12121a 100%);
@@ -138,7 +165,6 @@
   font-size: 1.2rem;
 }
 
-/* Сетка карточек */
 .cards-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -205,6 +231,9 @@
 .card-icon.stats { background: linear-gradient(135deg, #10b981, #34d399); }
 .card-icon.user-stats { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
 .card-icon.users { background: linear-gradient(135deg, #ef4444, #f97316); }
+/* Новые стили для сообщений и жанров */
+.card-icon.messages { background: linear-gradient(135deg, #f43f5e, #e11d48); }
+.card-icon.genres { background: linear-gradient(135deg, #06b6d4, #3b82f6); }
 
 .dashboard-card h3 {
   font-size: 1.5rem;
@@ -233,7 +262,6 @@
   gap: 1rem;
 }
 
-/* Инфо блок */
 .info-section {
   margin-top: 2rem;
 }
@@ -265,7 +293,6 @@
   color: #9ca3af;
 }
 
-/* Адаптив */
 @media (max-width: 768px) {
   .title {
     font-size: 2rem;
