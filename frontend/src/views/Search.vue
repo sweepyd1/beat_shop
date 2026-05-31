@@ -610,4 +610,197 @@ const handleImageError = (e) => {
 .error {
   color: #ff4d4d;
 }
+
+/* ===== АДАПТИВНЫЕ СТИЛИ ===== */
+
+/* Планшеты и небольшие десктопы */
+@media (max-width: 1024px) {
+  .search {
+    padding: 1.5rem;
+  }
+  .track-grid.grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+/* Мобильные устройства (горизонтальная ориентация и узкие планшеты) */
+@media (max-width: 768px) {
+  .search {
+    padding: 1rem;
+  }
+
+  .search-header {
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .search-bar {
+    padding: 0.4rem 1rem;
+  }
+
+  .search-bar input {
+    font-size: 0.9rem;
+  }
+
+  .filter-toggle {
+    padding: 0 1rem;
+    font-size: 0.9rem;
+  }
+  .filter-toggle i {
+    font-size: 0.9rem;
+  }
+
+  /* Фильтры: при открытии занимают всю ширину, сетка становится блоком */
+  .search-content.filters-open {
+    display: block;
+  }
+
+  .filters {
+    margin-bottom: 1.5rem;
+    width: 100%;
+  }
+
+  .results-header {
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .view-options {
+    margin-left: auto;
+  }
+
+  .view-options button {
+    width: 36px;
+    height: 36px;
+  }
+
+  .view-options select {
+    padding: 0.4rem 1.8rem 0.4rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  .track-grid.grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+  }
+
+  /* Список: перестраиваем в две строки для экономии места */
+  .track-row {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.75rem;
+  }
+
+  .track-row .index {
+    width: 24px;
+    font-size: 0.9rem;
+  }
+
+  .track-cover {
+    width: 48px;
+    height: 48px;
+  }
+
+  .track-info {
+    flex: 1;
+    min-width: 120px;
+  }
+
+  .track-row .genre,
+  .track-row .bpm,
+  .track-row .price {
+    margin: 0;
+    min-width: auto;
+    font-size: 0.8rem;
+    padding: 0.2rem 0.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 20px;
+  }
+
+  /* Помещаем genre, bpm, price в строку после обложки */
+  .track-row .genre {
+    margin-left: 2rem;
+  }
+
+  .more {
+    opacity: 1; /* всегда видно на таче */
+    margin-left: auto;
+  }
+
+  .active-filters {
+    margin-bottom: 1rem;
+  }
+
+  .chip {
+    font-size: 0.8rem;
+    padding: 0.2rem 0.75rem;
+  }
+
+  .clear-all {
+    font-size: 0.8rem;
+    padding: 0.2rem 0.75rem;
+  }
+}
+
+/* Очень маленькие телефоны (<480px) */
+@media (max-width: 480px) {
+  .track-grid.grid {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .track-row .genre,
+  .track-row .bpm {
+    display: none; /* скрываем жанр и BPM на узких экранах */
+  }
+
+  .track-row .price {
+    order: 2;
+    margin-left: auto;
+  }
+
+  .more {
+    order: 3;
+  }
+
+  .view-options button:first-of-type {
+    display: none; /* скрываем кнопку сетки, если места мало — оставляем только список? Лучше оставить обе, но уменьшить */
+  }
+
+  /* Возвращаем обе кнопки, но уменьшаем */
+  .view-options button {
+    width: 32px;
+    height: 32px;
+    font-size: 0.8rem;
+  }
+
+  .view-options button:first-of-type {
+    display: inline-flex; /* отменяем скрытие */
+  }
+
+  .result-count {
+    font-size: 0.9rem;
+  }
+
+  .filter-toggle {
+    padding: 0 0.8rem;
+    font-size: 0.8rem;
+  }
+
+  .search-bar {
+    padding: 0.3rem 0.8rem;
+  }
+}
+
+/* Для устройств, где hover не поддерживается (touch) */
+@media (hover: none) {
+  .more {
+    opacity: 1;
+  }
+  .track-row:hover .more {
+    opacity: 1;
+  }
+}
 </style>

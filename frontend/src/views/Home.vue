@@ -19,7 +19,7 @@
     <section class="section">
       <div class="section-header">
         <h2>Популярные биты</h2>
-        <router-link to="/genres" class="view-all">Все жанры →</router-link>
+        <router-link to="/search" class="view-all">Все песни →</router-link>
       </div>
       <div class="track-grid">
         <TrackCard

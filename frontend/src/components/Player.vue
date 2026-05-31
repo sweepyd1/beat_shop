@@ -283,6 +283,7 @@ const prev = () => {
   justify-content: space-between;
   z-index: 200;
 }
+
 /* Стили кнопки закрытия */
 .close-btn {
   position: absolute;
@@ -300,7 +301,7 @@ const prev = () => {
   color: #ffffff;
 }
 
-/* Остальные стили без изменений */
+/* Остальные стили */
 .track-info {
   display: flex;
   align-items: center;
@@ -407,5 +408,158 @@ const prev = () => {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 5px;
   height: 5px;
+}
+
+/* ===== АДАПТИВНЫЕ СТИЛИ ===== */
+
+/* Планшеты и небольшие десктопы */
+@media (max-width: 768px) {
+  .player {
+    padding: 0.75rem 1rem;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .close-btn {
+    top: 8px;
+    right: 12px;
+    font-size: 1rem;
+  }
+
+  .track-info {
+    width: 100%;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  .details {
+    flex: 1;
+    min-width: 0; /* позволяет обрезать текст */
+  }
+
+  .details .title,
+  .details .artist {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .player-controls {
+    order: 2;
+    margin: 0 auto;
+  }
+
+  .progress-area {
+    order: 3;
+    width: 100%;
+    max-width: none;
+    gap: 0.75rem;
+  }
+
+  .volume-control {
+    order: 4;
+    margin-left: auto;
+  }
+
+  .volume-control input {
+    width: 70px;
+  }
+
+  .play-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 0.9rem;
+  }
+
+  .control-btn {
+    font-size: 1rem;
+  }
+}
+
+/* Мобильные телефоны (до 480px) */
+@media (max-width: 480px) {
+  .player {
+    padding: 0.5rem 0.75rem;
+    gap: 0.5rem;
+  }
+
+  .close-btn {
+    top: 6px;
+    right: 8px;
+    font-size: 0.9rem;
+  }
+
+  .track-info {
+    gap: 0.5rem;
+  }
+
+  .cover {
+    width: 40px;
+    height: 40px;
+  }
+
+  .details .title {
+    font-size: 0.9rem;
+  }
+
+  .details .artist {
+    font-size: 0.75rem;
+  }
+
+  .favorite-btn {
+    font-size: 1rem;
+    margin-left: 0;
+  }
+
+  .player-controls {
+    gap: 0.75rem;
+  }
+
+  .play-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 0.8rem;
+  }
+
+  .control-btn {
+    font-size: 0.9rem;
+  }
+
+  .progress-area {
+    gap: 0.5rem;
+  }
+
+  .time {
+    font-size: 0.75rem;
+    min-width: 32px;
+  }
+
+  .volume-control {
+    gap: 0.3rem;
+  }
+
+  .volume-control input {
+    display: none; /* скрываем ползунок, оставляем только иконку */
+  }
+
+  .volume-control i {
+    font-size: 0.9rem;
+  }
+}
+
+/* Для устройств без hover (touch) — делаем кнопки всегда видимыми/активными */
+@media (hover: none) {
+  .close-btn:active {
+    color: white;
+  }
+  .control-btn:active {
+    color: white;
+  }
+  .play-btn:active {
+    transform: scale(0.98);
+  }
+  .favorite-btn:active {
+    color: #ff4d4d;
+  }
 }
 </style>
