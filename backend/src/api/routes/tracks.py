@@ -4,12 +4,13 @@ import tempfile
 from typing import List, Optional
 from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, Request, UploadFile
 from fastapi.responses import FileResponse
+from core.services.purchase_service import PurchaseService
 from core.repositories.track import TrackRepository
 from core.services.auth import AuthService
 from database.models import User
 from schemas.track import TrackResponse, TrackCreate, TrackUpdate
 from core.services.track import TrackService
-from api.dependencies import get_auth_service, get_track_service
+from api.dependencies import get_auth_service, get_purchase_service, get_track_service
 from api.dependencies import analyze_mp3
 router = APIRouter(prefix="/tracks", tags=["tracks"])
 
@@ -154,7 +155,8 @@ async def download_track(
     request: Request,
     track_id: int,
     auth_service: AuthService = Depends(get_auth_service),
-    track_service: TrackService = Depends(get_track_service)
+    track_service: TrackService = Depends(get_track_service),
+    purchase_service: PurchaseService = Depends(get_purchase_service)
 ):
     access_token = request.cookies.get("access_token")
     if not access_token:
@@ -164,7 +166,10 @@ async def download_track(
     track = await track_service.get_track(track_id=track_id)
     if not track:
         raise HTTPException(status_code=404, detail="Трек не найден")
-    
+   
+    purchases = await purchase_service.get_user_purchases(user.id)
+    if not any(p.track_id == track_id for p in purchases):
+        raise HTTPException(status_code=403, detail="Вы не приобрели этот трек")
     if not track.mp3_file_url:
         raise HTTPException(status_code=404, detail="Файл трека не найден")
 

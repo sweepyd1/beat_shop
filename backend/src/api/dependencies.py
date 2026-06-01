@@ -13,7 +13,7 @@ from core.repositories.listen import ListenRepository
 from core.services.listen import ListenService
 from core.repositories.purchase import PurchaseRepository
 from core.services.contract_service import ContractService
-from core.services.purchase import PurchaseService
+from core.services.purchase_service import PurchaseService
 from core.repositories.author import AuthorRepository
 from core.services.author import AuthorService
 from core.repositories.genre import GenreRepository

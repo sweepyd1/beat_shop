@@ -4,7 +4,7 @@ from typing import Optional
 from api.dependencies import get_db_session, get_auth_service
 from core.services.auth import AuthService
 from core.services.user import UserService
-from core.services.purchase import PurchaseService
+from core.services.purchase_service import PurchaseService
 from core.services.favorite import FavoriteService
 from core.services.subscription import SubscriptionService
 from core.repositories.user import UserRepository
@@ -17,7 +17,7 @@ from schemas.purchase import PurchaseResponse
 from schemas.favorite import FavoriteResponse
 from schemas.subscription import SubscriptionResponse
 from database.models import User
-from api.dependencies import get_favorite_service
+from api.dependencies import get_favorite_service, get_purchase_service
 router = APIRouter(prefix="/users", tags=["users"])
 
 # Зависимости для получения сервисов
@@ -26,9 +26,10 @@ async def get_user_service(session: AsyncSession = Depends(get_db_session)) -> U
     file_service = FileService()
     return UserService(repo, file_service)
 
-async def get_purchase_service(session: AsyncSession = Depends(get_db_session)) -> PurchaseService:
-    repo = PurchaseRepository(session)
-    return PurchaseService(repo)
+# async def get_purchase_service(session: AsyncSession = Depends(get_db_session)) -> PurchaseService:
+#     repo = PurchaseRepository(session)
+#     contract = contract
+#     return PurchaseService(repo)
 
 
 

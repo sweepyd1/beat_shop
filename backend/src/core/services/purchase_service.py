@@ -138,3 +138,7 @@ class PurchaseService:
             "contract_url": document_url,
             "license_type": license_type.value
         }
+    async def get_user_purchases(self, user_id: int):
+        """Возвращает список покупок пользователя с деталями треков"""
+        purchases = await self.purchase_repo.get_user_purchases(user_id)
+        return purchases
