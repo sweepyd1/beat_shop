@@ -55,4 +55,3 @@ class AuthorService:
     
     async def get_author_by_user_id(self, user_id: int) -> Optional[Author]:
         return await self.repo.get_by_user_id(user_id)
-    

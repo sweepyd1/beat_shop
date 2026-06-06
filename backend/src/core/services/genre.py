@@ -18,14 +18,20 @@ class GenreService:
                 return None
             return await self.repo.update(genre_id, genre_data.name, genre_data.image_url)
 
-    async def delete_genre(self, genre_id: int):
-        genre = await self.repo.get(genre_id)
+    async def delete_genre(self, genre_id: int) -> bool:
+        # Загружаем жанр вместе со связанными треками
+        genre = await self.repo.get_with_tracks(genre_id)
         if not genre:
             return False
+        # Если у жанра есть треки – запрещаем удаление
         if genre.tracks:
-            raise HTTPException(status_code=400, detail="Нельзя удалить жанр, к которому привязаны треки")
+            raise HTTPException(
+                status_code=400,
+                detail="Невозможно удалить жанр, так как к нему привязаны треки. Сначала переназначьте или удалите треки."
+            )
+        # Если треков нет – удаляем
         return await self.repo.delete(genre_id)
-    
+        
     async def get_all_genres(self):
         genres_with_counts = await self.repo.get_all_with_counts()
         result = []

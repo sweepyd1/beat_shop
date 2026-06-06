@@ -52,6 +52,7 @@ class AuthorRepository(BaseRepository[Author]):
                     setattr(author, key, value)
             
             await self.session.flush()
+            await self.session.commit()
             await self.session.refresh(author)
             return author
 

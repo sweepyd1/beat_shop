@@ -309,7 +309,8 @@ const filteredTracks = computed(() => {
     );
   }
   if (genreFilter.value) {
-    result = result.filter(t => t.genre_id === genreFilter.value);
+    const genreIdNum = Number(genreFilter.value);
+    result = result.filter(t => t.genre?.id === genreIdNum);
   }
   return result;
 });

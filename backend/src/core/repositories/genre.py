@@ -1,7 +1,7 @@
 from sqlalchemy import func, select
 from database.models import Genre, Track
 from .base import BaseRepository
-
+from sqlalchemy.orm import selectinload
 class GenreRepository(BaseRepository[Genre]):
     def __init__(self, session):
         super().__init__(Genre, session)
@@ -31,3 +31,12 @@ class GenreRepository(BaseRepository[Genre]):
             )
             
             return result.all()
+    async def get_with_tracks(self, genre_id: int) -> Genre | None:
+        """Получает жанр вместе с его треками (для проверки перед удалением)."""
+        stmt = (
+            select(Genre)
+            .where(Genre.id == genre_id)
+            .options(selectinload(Genre.tracks))
+        )
+        result = await self.session.execute(stmt)
+        return result.scalar_one_or_none()

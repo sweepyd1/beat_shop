@@ -5,7 +5,7 @@ from core.services.author import AuthorService
 from core.services.stats import StatsService
 from core.services.track import TrackService
 from database.models import User, UserRole
-from schemas.author import AuthorResponse, AuthorDetailResponse
+from schemas.author import AuthorResponse, AuthorDetailResponse, AuthorUpdate
 from core.repositories.author import AuthorRepository
 from api.dependencies import get_author_service, get_current_user, get_db_session, get_stats_service, get_track_service
 from schemas.track import AuthorTrackResponse, TrackResponse
@@ -136,3 +136,23 @@ async def get_my_full_stats(
     if not author:
         raise HTTPException(404, "Профиль автора не найден")
     return await stats_service.get_author_full_stats(author.id)
+
+@router.patch("/me", response_model=AuthorDetailResponse)
+async def update_my_profile(
+    update_data: AuthorUpdate,
+    current_user: User = Depends(get_current_user),
+    author_service: AuthorService = Depends(get_author_service),
+):
+    if current_user.role != UserRole.author:
+        raise HTTPException(403, "Только автор может редактировать профиль")
+    
+    author = await author_service.get_author_by_user_id(current_user.id)
+    if not author:
+        raise HTTPException(404, "Профиль автора не найден")
+    
+    updated = await author_service.update_author(author.id, update_data, photo_file=None)
+    if not updated:
+        raise HTTPException(500, "Не удалось обновить профиль")
+    
+    # подгрузим свежие данные (или обновишь респонс)
+    return updated

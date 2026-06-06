@@ -150,10 +150,12 @@ const markAsRead = async (id) => {
 const deleteMessage = async (id) => {
   if (!confirm('Вы уверены, что хотите удалить это сообщение?')) return;
   try {
-    // Пока просто удаляем из списка, бэкенд эндпоинт можно добавить при необходимости
+    await api.delete(`/contacts/admin/${id}`);
     messages.value = messages.value.filter(m => m.id !== id);
+    if (selectedMessage.value?.id === id) selectedMessage.value = null;
     showSuccess('Сообщение удалено');
   } catch (error) {
+    console.error(error);
     showError('Ошибка при удалении');
   }
 };

@@ -255,3 +255,11 @@ class PurchaseRepository(BaseRepository[Purchase]):
         )
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none()
+    async def get_user_purchases_for_track(self, user_id: int, track_id: int) -> List[Purchase]:
+        stmt = select(Purchase).where(
+            Purchase.user_id == user_id,
+            Purchase.track_id == track_id,
+            Purchase.status == "completed"
+        ).order_by(Purchase.license_type)
+        result = await self.session.execute(stmt)
+        return result.scalars().all()

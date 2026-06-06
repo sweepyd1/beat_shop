@@ -319,7 +319,7 @@ import { ref, computed, onMounted } from 'vue';
 import api from '@/api';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
-
+import { showError, showSuccess } from '@/utils/alert';
 const router = useRouter();
 const authStore = useAuthStore();
 
@@ -490,10 +490,12 @@ const submitUser = async () => {
       await api.put(`/admin/users/${editingUserId.value}`, fd, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
+      showSuccess('Пользователь обновлён');
     } else {
       await api.post('/admin/users', fd, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
+      showSuccess('Пользователь создан');
     }
     showModal.value = false;
     fetchUsers();

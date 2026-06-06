@@ -5,6 +5,7 @@ from uuid import uuid4
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from config import STORAGE_PATH  
 from database.models import User
 from schemas.genre import GenreCreate, GenreUpdate, GenreResponse
 from core.repositories.genre import GenreRepository
@@ -62,28 +63,36 @@ async def get_all_genres_admin(
 @router.post("/upload-image", response_model=dict)
 async def upload_genre_image(
     file: UploadFile = File(...),
-    admin: User = Depends(get_current_admin)
+    admin: User = Depends(get_current_admin),   # проверяем, что администратор
 ):
+    # 1. Проверяем тип файла
     if not file.content_type.startswith("image/"):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Можно загружать только изображения"
         )
     
+    # 2. Проверяем расширение
     ext = Path(file.filename).suffix.lower()
-    if ext not in ['.jpg', '.jpeg', '.png', '.gif', '.webp']:
-        raise HTTPException(400, "Неподдерживаемый формат изображения")
+    allowed_extensions = {'.jpg', '.jpeg', '.png', '.gif', '.webp'}
+    if ext not in allowed_extensions:
+        raise HTTPException(
+            status_code=400,
+            detail="Неподдерживаемый формат изображения. Разрешены: jpg, jpeg, png, gif, webp"
+        )
     
+    # 3. Генерируем уникальное имя
     filename = f"genre_{uuid4().hex}{ext}"
-
-    BASE_DIR = Path(__file__).resolve().parent.parent.parent  
-    upload_dir = BASE_DIR / "storage" / "genre_photos"
-
+    
+    # 4. Определяем папку для сохранения (в корневой storage)
+    upload_dir = STORAGE_PATH / "genre_photos"
     upload_dir.mkdir(parents=True, exist_ok=True)
     file_path = upload_dir / filename
     
+    # 5. Сохраняем файл
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
-
+    
+    # 6. Возвращаем относительный URL (статическая папка смонтирована как /storage)
     image_url = f"/storage/genre_photos/{filename}"
     return {"image_url": image_url}

@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, update
+from sqlalchemy import delete, select, update
 from database.models import ContactMessage
 
 class ContactMessageRepository:
@@ -26,3 +26,8 @@ class ContactMessageRepository:
         res = await self.session.execute(stmt)
         await self.session.commit()
         return res.rowcount > 0
+    async def delete(self, message_id: int) -> bool:
+        stmt = delete(ContactMessage).where(ContactMessage.id == message_id)
+        result = await self.session.execute(stmt)
+        await self.session.commit()
+        return result.rowcount > 0

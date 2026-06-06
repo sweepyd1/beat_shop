@@ -65,3 +65,16 @@ async def mark_message_read(
     if not success:
         raise HTTPException(status_code=404, detail="Message not found")
     return {"status": "marked as read"}
+
+@router.delete("/admin/{message_id}", status_code=204)
+async def delete_contact_message(
+    message_id: int,
+    current_user: User = Depends(get_current_user),
+    service: ContactMessageService = Depends(get_contact_service),
+):
+    if current_user.role.value != "admin":
+        raise HTTPException(status_code=403, detail="Admin only")
+    success = await service.delete_message(message_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Message not found")
+    return None

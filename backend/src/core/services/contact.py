@@ -17,3 +17,5 @@ class ContactMessageService:
 
     async def mark_read(self, message_id: int):
         return await self.repo.mark_as_read(message_id)
+    async def delete_message(self, message_id: int) -> bool:
+        return await self.repo.delete(message_id)

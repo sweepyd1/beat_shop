@@ -10,7 +10,11 @@ from database.models import User, LicenseType, UserRole
 from passlib.context import CryptContext
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
+LICENSE_PRIORITY = {
+    LicenseType.standard: 1,
+    LicenseType.extended: 2,
+    LicenseType.exclusive: 3,
+}
 class PurchaseService:
     def __init__(self, session: AsyncSession, contract_service: ContractService):
         self.session = session
@@ -18,6 +22,11 @@ class PurchaseService:
         self.track_repo = TrackRepository(session)
         self.user_repo = UserRepository(session)
         self.contract_service = contract_service
+        self.LICENSE_PRIORITY = {
+            LicenseType.standard: 1,
+            LicenseType.extended: 2,
+            LicenseType.exclusive: 3,
+        }
 
     def _get_price_for_license(self, track, license_type: LicenseType) -> float:
         """Определить цену в зависимости от типа лицензии.
@@ -88,15 +97,15 @@ class PurchaseService:
         else:
             user = await self._get_or_create_guest_user(buyer_name, buyer_email)
 
-        # 4. Проверка, не покупал ли пользователь уже этот трек (если это не эксклюзив, можно купить повторно? Обычно нет)
-        user_purchase = await self.purchase_repo.get_user_purchase_for_track(user.id, track_id)
-        if user_purchase:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Вы уже приобрели этот трек."
-            )
+        prev_purchases = await self.purchase_repo.get_user_purchases_for_track(user.id, track_id)
+        if prev_purchases:
+            max_prev = max(prev_purchases, key=lambda p: self.LICENSE_PRIORITY[p.license_type])
+            if self.LICENSE_PRIORITY[license_type] <= self.LICENSE_PRIORITY[max_prev.license_type]:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Вы уже приобрели эту или более высокую лицензию на трек."
+                )
 
-        # 5. Вычисляем цену в зависимости от типа лицензии
         amount = self._get_price_for_license(track, license_type)
 
         # 6. Создаём запись покупки

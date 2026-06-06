@@ -144,9 +144,9 @@ class Purchase(Base):
     contract = relationship("Contract", uselist=False, back_populates="purchase", cascade="all, delete-orphan")
 
 
-    __table_args__ = (
-        UniqueConstraint('user_id', 'track_id', name='unique_user_track_purchase'),
-    )
+    # __table_args__ = (
+    #     UniqueConstraint('user_id', 'track_id', name='unique_user_track_purchase'),
+    # )
 
 class Contract(Base):
     __tablename__ = 'contracts'

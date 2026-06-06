@@ -9,8 +9,9 @@ class AuthorCreate(AuthorBase):
     pass
 
 class AuthorUpdate(BaseModel):
-    full_name: Optional[str] = Field(None, min_length=1, max_length=150)
-    bio: Optional[str] = None
+    full_name: str | None = None
+    bio: str | None = None
+    photo_url: str | None = None
 
 class AuthorResponse(BaseModel):
     id: int
@@ -26,3 +27,8 @@ class AuthorDetailResponse(AuthorResponse):
     tracks_count: int = 0
     # при желании добавим средний рейтинг
     average_rating: float = 0.0
+
+class AuthorUpdateRequest(BaseModel):
+    full_name: str | None = Field(None, max_length=150)
+    bio: str | None = Field(None)
+    photo_url: str | None = Field(None, max_length=200)
