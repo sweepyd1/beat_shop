@@ -173,9 +173,22 @@ async def download_track(
     if not track.mp3_file_url:
         raise HTTPException(status_code=404, detail="Файл трека не найден")
 
-    file_path = track.mp3_file_url.lstrip("/")  # убираем ведущий слеш
-    if not os.path.exists(file_path):
+    raw_path = track.mp3_file_url.lstrip("/")
+    safe_path = os.path.normpath(raw_path)
+
+    # 2. Превращаем в абсолютный путь относительно корня приложения (или текущей директории)
+    storage_root = os.path.abspath("storage")  # папка, где лежат mp3-файлы
+    full_path = os.path.abspath(safe_path)
+
+    # 3. Проверка, что файл действительно внутри storage_root
+    if not full_path.startswith(storage_root):
+        raise HTTPException(status_code=403, detail="Invalid file path")
+
+    # 4. Теперь проверяем существование
+    if not os.path.exists(full_path):
         raise HTTPException(status_code=404, detail="Файл трека отсутствует на сервере")
+
+    file_path = full_path   # используем проверенный путь
 
     filename = f"{track.id}_{track.title.replace(' ', '_')}.mp3"
     return FileResponse(file_path, media_type="audio/mpeg", filename=filename)
@@ -198,23 +211,86 @@ async def stream_track(
 
 @router.put("/{track_id}", response_model=TrackResponse)
 async def update_track(
+    request: Request,
     track_id: int,
-    track_data: TrackUpdate,
-    service: TrackService = Depends(get_track_service)
+    auth_service: AuthService = Depends(get_auth_service),
+    service: TrackService = Depends(get_track_service),
+    # Данные из формы (Pydantic модель принимаем как Form-поля, либо используем JSON)
+    title: Optional[str] = Form(None),
+    genre_id: Optional[int] = Form(None),
+    price: Optional[float] = Form(None),
+    bpm: Optional[int] = Form(None),
+    duration: Optional[int] = Form(None),
+    # Файлы (опционально)
+    cover: Optional[UploadFile] = File(None),
+    mp3: Optional[UploadFile] = File(None),
 ):
-    track = await service.update_track(track_id, track_data)
+    # 1. Аутентификация
+    access_token = request.cookies.get("access_token")
+    if not access_token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    user = await auth_service.get_user_from_token(access_token)
+    
+    # 2. Получаем существующий трек (без изменений)
+    track = await service.get_track(track_id)
     if not track:
         raise HTTPException(status_code=404, detail="Track not found")
-    return track
+    
+    # 3. Проверка прав
+    if track.author.user_id != user.id and not user.is_admin:
+        raise HTTPException(403, "Нет прав на редактирование этого трека")
+    
+    # 4. Собираем данные для обновления (только переданные)
+    update_data = {}
+    if title is not None:
+        update_data["title"] = title
+    if genre_id is not None:
+        update_data["genre_id"] = genre_id
+    if price is not None:
+        update_data["price"] = price
+    if bpm is not None:
+        update_data["bpm"] = bpm
+    if duration is not None:
+        update_data["duration_seconds"] = duration
+    
+    # 5. Вызываем сервис обновления (передаём файлы отдельно)
+    updated_track = await service.update_track(
+        track_id=track_id,
+        update_data=update_data,
+        cover_file=cover,
+        mp3_file=mp3
+    )
+    return updated_track
+
 
 @router.delete("/{track_id}", status_code=204)
 async def delete_track(
+    request: Request,
     track_id: int,
+    auth_service: AuthService = Depends(get_auth_service),
     service: TrackService = Depends(get_track_service)
 ):
+    # 1. Аутентификация
+    access_token = request.cookies.get("access_token")
+    if not access_token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    user = await auth_service.get_user_from_token(access_token)
+    
+    # 2. Получаем трек ДО удаления (чтобы проверить права)
+    track = await service.get_track(track_id)
+    if not track:
+        raise HTTPException(status_code=404, detail="Track not found")
+    
+    # 3. Проверка прав
+    if track.author.user_id != user.id and not user.is_admin:
+        raise HTTPException(403, "Нет прав на редактирование этого трека")
+    
+    # 4. Удаляем
     deleted = await service.delete_track(track_id)
     if not deleted:
         raise HTTPException(status_code=404, detail="Track not found")
+    
+    return None  # status_code=204, тело пустое
 
 @router.get("/{track_id}", response_model=TrackResponse)
 async def get_track(

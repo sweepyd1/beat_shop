@@ -204,7 +204,7 @@ def analyze_mp3(file_path: Path) -> tuple[float, int]:
     try:
         # Загружаем аудио (librosa сконвертирует в моно, sr=22050)
         # Можно ограничить по времени: duration=30 (если трек длинный)
-        y, sr = librosa.load(file_path, sr=22050, duration=30)
+        y, sr = librosa.load(file_path, sr=22050, duration=30, mono=True)
         if len(y) > 0:
             tempo, _ = librosa.beat.beat_track(y=y, sr=sr)
             bpm = float(tempo[0] if isinstance(tempo, (list, tuple, np.ndarray)) else tempo)

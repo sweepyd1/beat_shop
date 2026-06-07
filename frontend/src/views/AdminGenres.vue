@@ -48,9 +48,9 @@
               <button class="btn-edit" @click="openEditModal(genre)">
                 <i class="fas fa-edit"></i>
               </button>
-              <button class="btn-delete" @click="confirmDelete(genre)">
+              <!-- <button class="btn-delete" @click="confirmDelete(genre)">
                 <i class="fas fa-trash"></i>
-              </button>
+              </button> -->
             </td>
           </tr>
         </tbody>

@@ -386,7 +386,69 @@
         </div>
       </div>
     </transition>
+          <transition name="modal-fade">
+        <div v-if="showEditTrackModal" class="modal-overlay" @click.self="closeEditTrackModal">
+          <div class="modal glass-card" style="max-width: 600px;">
+            <button class="modal-close" @click="closeEditTrackModal">&times;</button>
+            <h2>Редактирование трека</h2>
+            <form @submit.prevent="saveTrackEdit" class="edit-form">
+              <div class="form-group">
+                <label>Название трека *</label>
+                <input type="text" v-model="editTrackForm.title" required />
+              </div>
+              <div class="form-group">
+                <label>Жанр *</label>
+                <select v-model="editTrackForm.genre_id" required>
+                  <option v-for="genre in genres" :key="genre.id" :value="genre.id">{{ genre.name }}</option>
+                </select>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Цена (₽) *</label>
+                  <input type="number" v-model="editTrackForm.price" min="0" step="100" required />
+                </div>
+                <div class="form-group">
+                  <label>BPM</label>
+                  <input type="number" v-model="editTrackForm.bpm" min="0" step="5" />
+                </div>
+              </div>
+              <div class="form-group file-group">
+                <label>Обложка</label>
+                <div class="file-input">
+                  <input type="file" id="edit-cover-input" accept="image/*" @change="handleEditCoverChange" />
+                  <label for="edit-cover-input" class="file-label">
+                    <i class="fas fa-cloud-upload-alt"></i> Заменить обложку
+                  </label>
+                  <span v-if="editTrackForm.cover_file" class="file-name">{{ editTrackForm.cover_file.name }}</span>
+                </div>
+                <div v-if="editCoverPreview" class="cover-preview">
+                  <img :src="editCoverPreview" alt="cover preview" />
+                </div>
+              </div>
+              <div class="form-group file-group">
+                <label>MP3 файл</label>
+                <div class="file-input">
+                  <input type="file" id="edit-mp3-input" accept="audio/mpeg" @change="handleEditMp3Change" />
+                  <label for="edit-mp3-input" class="file-label">
+                    <i class="fas fa-cloud-upload-alt"></i> Заменить трек
+                  </label>
+                  <span v-if="editTrackForm.mp3_file" class="file-name">{{ editTrackForm.mp3_file.name }}</span>
+                </div>
+              </div>
+              <div class="modal-buttons">
+                <button type="button" class="btn-secondary" @click="closeEditTrackModal">Отмена</button>
+                <button type="submit" class="btn-primary" :disabled="editUploading">
+                  <i v-if="editUploading" class="fas fa-spinner fa-spin"></i>
+                  <span v-else>Сохранить</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </transition>
   </div>
+  <!-- Modal for track edit -->
+
 </template>
 
 <script setup>
@@ -403,7 +465,18 @@ const user = computed(() => authStore.user);
 
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
 const ALLOWED_AUDIO_TYPES = ['audio/mpeg', 'audio/mp3'];  // audio/mpeg — это и есть MP3
-
+const showEditTrackModal = ref(false);
+const editingTrack = ref(null);
+const editTrackForm = ref({
+  title: '',
+  genre_id: null,
+  price: 0,
+  bpm: null,
+  cover_file: null,
+  mp3_file: null,
+});
+const editCoverPreview = ref(null);
+const editUploading = ref(false);
 const {
   purchases,
   favorites,
@@ -415,7 +488,81 @@ const {
   downloadTrack,
   unsubscribe,
 } = useProfile();
+// Открыть модалку с данными трека
 
+
+// Закрыть модалку
+const closeEditTrackModal = () => {
+  showEditTrackModal.value = false;
+  editingTrack.value = null;
+  editTrackForm.value = { title: '', genre_id: null, price: 0, bpm: null, cover_file: null, mp3_file: null };
+  editCoverPreview.value = null;
+  // очистить input файлы, чтобы можно было выбрать заново
+  const coverInput = document.getElementById('edit-cover-input');
+  const mp3Input = document.getElementById('edit-mp3-input');
+  if (coverInput) coverInput.value = '';
+  if (mp3Input) mp3Input.value = '';
+};
+
+// Обработчики выбора новых файлов
+const handleEditCoverChange = (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+  if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+    showError('Неподдерживаемый формат изображения');
+    event.target.value = '';
+    return;
+  }
+  editTrackForm.value.cover_file = file;
+  const reader = new FileReader();
+  reader.onload = (e) => { editCoverPreview.value = e.target.result; };
+  reader.readAsDataURL(file);
+};
+
+const handleEditMp3Change = (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+  if (!ALLOWED_AUDIO_TYPES.includes(file.type)) {
+    showError('Неподдерживаемый аудиоформат. Загрузите MP3.');
+    event.target.value = '';
+    return;
+  }
+  editTrackForm.value.mp3_file = file;
+};
+
+// Сохранить изменения трека
+const saveTrackEdit = async () => {
+  if (!editingTrack.value) return;
+  if (!editTrackForm.value.title || !editTrackForm.value.genre_id || editTrackForm.value.price === undefined) {
+    showError('Заполните название, жанр и цену');
+    return;
+  }
+
+  editUploading.value = true;
+  try {
+    const formData = new FormData();
+    formData.append('title', editTrackForm.value.title);
+    formData.append('genre_id', editTrackForm.value.genre_id);
+    formData.append('price', editTrackForm.value.price);
+    if (editTrackForm.value.bpm) formData.append('bpm', editTrackForm.value.bpm);
+    if (editTrackForm.value.cover_file) formData.append('cover', editTrackForm.value.cover_file);
+    if (editTrackForm.value.mp3_file) formData.append('mp3', editTrackForm.value.mp3_file);
+
+    await api.put(`/tracks/${editingTrack.value.id}`, formData, {
+      headers: { 'Content-Type': undefined },
+    });
+
+    showSuccess('Трек обновлён');
+    closeEditTrackModal();
+    await fetchAuthorTracks(); // обновить список треков
+  } catch (err) {
+    console.error('Update failed', err);
+    const message = err.response?.data?.detail || 'Ошибка обновления трека';
+    showError(message);
+  } finally {
+    editUploading.value = false;
+  }
+};
 // Дополнительные данные для автора
 const authorTracks = ref([]);
 const genres = ref([]);
@@ -634,7 +781,17 @@ const submitTrack = async () => {
 };
 
 const editTrack = (track) => {
-  alert("Редактирование пока не реализовано");
+  editingTrack.value = track;
+  editTrackForm.value = {
+    title: track.title,
+    genre_id: track.genre?.id || null,
+    price: track.price,
+    bpm: track.bpm || null,
+    cover_file: null,
+    mp3_file: null,
+  };
+  editCoverPreview.value = track.cover_url ? getImageUrl(track.cover_url) : null;
+  showEditTrackModal.value = true;
 };
 
 const deleteTrack = async (trackId) => {

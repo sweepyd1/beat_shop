@@ -97,6 +97,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 app.mount("/storage", StaticFiles(directory="storage"), name="storage")
 
 app.include_router(auth.router)
@@ -108,7 +109,7 @@ app.include_router(purchase.router)
 app.include_router(listen.router)
 app.include_router(author.router)
 app.include_router(recommendations.router)
-# Админские роуты
+
 app.include_router(admin_authors.router)
 app.include_router(admin_genres.router)
 app.include_router(admin_tracks.router)

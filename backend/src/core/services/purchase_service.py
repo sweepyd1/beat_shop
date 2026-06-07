@@ -6,9 +6,10 @@ from core.repositories.purchase import PurchaseRepository
 from core.repositories.track import TrackRepository
 from core.repositories.user import UserRepository
 from core.services.contract_service import ContractService
-from database.models import User, LicenseType, UserRole
+from database.models import Track, User, LicenseType, UserRole
 from passlib.context import CryptContext
-
+from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 LICENSE_PRIORITY = {
     LicenseType.standard: 1,
@@ -70,7 +71,18 @@ class PurchaseService:
     ) -> dict:
         """Универсальный метод покупки, работающий как для авторизованных, так и для гостей."""
         # 1. Проверяем существование трека
-        track = await self.track_repo.get(track_id)
+        # track = await self.track_repo.get(track_id)
+        stmt = (
+            select(Track)
+            .where(Track.id == track_id)  # Исправлена опечатка: было id, стало track_id
+            .options(
+                selectinload(Track.genre),   # Возвращаем загрузку связанных данных
+                selectinload(Track.author)   # Возвращаем загрузку связанных данных
+            )
+            .with_for_update()               # КЛЮЧЕВОЙ МОМЕНТ: Блокировка строки до конца транзакции
+        )
+        result = await self.session.execute(stmt)
+        track = result.scalar_one_or_none()
         if track.is_exclusive_sold:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -108,37 +120,32 @@ class PurchaseService:
 
         amount = self._get_price_for_license(track, license_type)
 
-        # 6. Создаём запись покупки
-        purchase = await self.purchase_repo.create(
+        try:
+            purchase = await self.purchase_repo.create(
             user_id=user.id,
             track_id=track.id,
             amount=amount,
             license_type=license_type,
             comment=comment
         )
-
-        # 7. Генерируем договор
-        try:
             document_url = await self.contract_service.generate_contract(purchase.id)
-        except Exception as e:
-            await self.session.rollback()
-            raise HTTPException(status_code=500, detail=f"Ошибка генерации договора: {str(e)}")
-
-        # 8. Сохраняем ссылку на договор
-        await self.contract_service.contract_repo.create(
+            await self.contract_service.contract_repo.create(
             purchase_id=purchase.id,
             contract_number=f"BEAT-{purchase.id}",
             document_url=document_url
         )
 
-        # 9. Если куплена эксклюзивная лицензия, помечаем трек как эксклюзивный (чтобы больше не продавался)
-        if license_type == LicenseType.exclusive:
-            track.is_exclusive_sold = True
-            self.session.add(track)
+            if license_type == LicenseType.exclusive:
+                track.is_exclusive_sold = True
+                self.session.add(track)
 
-        await self.session.commit()
+            await self.session.commit()
+        except Exception as e:
+            await self.session.rollback()
+            raise HTTPException(status_code=500, detail=f"Ошибка генерации договора: {str(e)}")
+
+
         track_data = TrackResponse.model_validate(track).model_dump()
-        # 10. Возвращаем результат
         return {
             "purchase_id": purchase.id,
             "track": track_data,
