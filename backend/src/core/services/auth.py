@@ -26,22 +26,18 @@ class AuthService:
         self.repo = repo
         self.author_repo = author_repo
 
-    # ---------- Хеширование паролей ----------
     def verify_password(self, plain_password: str, hashed_password: str) -> bool:
         """Проверка пароля с автоматическим усечением"""
-        # bcrypt имеет ограничение 72 байта, обрезаем если нужно
         if isinstance(plain_password, str):
             plain_password = plain_password.encode('utf-8')[:72].decode('utf-8', errors='ignore')
         return pwd_context.verify(plain_password, hashed_password)
 
     def get_password_hash(self, password: str) -> str:
         """Хеширование пароля с автоматическим усечением"""
-        # bcrypt имеет ограничение 72 байта, обрезаем если нужно
         if isinstance(password, str):
             password = password.encode('utf-8')[:72].decode('utf-8', errors='ignore')
         return pwd_context.hash(password)
 
-    # ---------- JWT токены ----------
     def create_access_token(self, user_id: int) -> str:
         """Создание access токена"""
         expires_delta = timedelta(days=cfg.security.access_token_expire_minutes)
@@ -132,12 +128,6 @@ class AuthService:
                 bio=None
             )
             
-            print("Профиль автора создан")
-        else:
-            print("Роль не author, пропускаем")
-        
-
-        
         return user
 
     async def login(self, login_data: UserLogin) -> dict:

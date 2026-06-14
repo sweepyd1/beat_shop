@@ -1,4 +1,5 @@
-from typing import AsyncIterator
+from datetime import datetime
+from typing import AsyncIterator, Optional, Tuple
 from fastapi import Depends, HTTPException, Request
 import librosa
 import numpy as np
@@ -29,7 +30,7 @@ from core.services.favorite import FavoriteService
 from database.db_manager import db_manager
 from fastapi import status
 from pathlib import Path
-
+from mutagen import File
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login", auto_error=False)
 async def get_db_session() -> AsyncIterator[AsyncSession]:
     async with db_manager.get_session() as session:
@@ -186,24 +187,52 @@ async def get_current_admin(
         )
     return current_user
 
-def analyze_mp3(file_path: Path) -> tuple[float, int]:
+def analyze_mp3(file_path: Path) -> Tuple[float, Optional[int], Optional[datetime]]:
     """
-    Возвращает (duration_seconds: float, bpm: int)
+    Возвращает (duration_seconds: float, bpm: Optional[int], created_date: Optional[datetime])
     """
-    # 1. Длительность через mutagen (мгновенно, без декодирования)
-    try:
-        audio_info = mutagen.File(file_path)
-        if audio_info and hasattr(audio_info.info, 'length'):
-            duration = audio_info.info.length
-        else:
-            duration = 0.0
-    except Exception:
-        duration = 0.0
+    duration = 0.0
+    bpm = None
+    created_date = None
 
-    # 2. BPM через librosa (загружаем только первые 30 секунд для скорости)
+    # 1. Длительность и метаданные через mutagen
     try:
-        # Загружаем аудио (librosa сконвертирует в моно, sr=22050)
-        # Можно ограничить по времени: duration=30 (если трек длинный)
+        audio = File(file_path)
+        if audio and hasattr(audio.info, 'length'):
+            duration = audio.info.length
+
+        # Пытаемся извлечь дату из ID3-тегов
+        if audio is not None and hasattr(audio, 'tags'):
+            tags = audio.tags
+            # TDRC – запись даты/времени (предпочтительно)
+            if 'TDRC' in tags:
+                date_str = tags['TDRC'].text[0]
+                # Пример: "2023-12-31" или "2023-12-31T12:00:00"
+                try:
+                    created_date = datetime.fromisoformat(date_str[:19])
+                except:
+                    try:
+                        created_date = datetime.strptime(date_str[:10], "%Y-%m-%d")
+                    except:
+                        pass
+            # Если нет TDRC, пробуем TYER (год) + TDAT (день-месяц)
+            elif 'TYER' in tags:
+                year = int(tags['TYER'].text[0])
+                month, day = 1, 1
+                if 'TDAT' in tags:
+                    # TDAT: формат DDMM (строкой)
+                    tdat = tags['TDAT'].text[0].zfill(4)
+                    day = int(tdat[0:2])
+                    month = int(tdat[2:4])
+                    # Корректировка возможных некорректных значений
+                    if not (1 <= month <= 12 and 1 <= day <= 31):
+                        month, day = 1, 1
+                created_date = datetime(year, month, day)
+    except Exception as e:
+        print(f"Mutagen analysis failed: {e}")
+
+    # 2. BPM через librosa (как у вас, без изменений)
+    try:
         y, sr = librosa.load(file_path, sr=22050, duration=30, mono=True)
         if len(y) > 0:
             tempo, _ = librosa.beat.beat_track(y=y, sr=sr)
@@ -212,15 +241,14 @@ def analyze_mp3(file_path: Path) -> tuple[float, int]:
         else:
             bpm = None
     except Exception as e:
-        
         print(f"BPM analysis failed: {e}")
         bpm = None
 
-    # Если длительность не получилась через mutagen – пробуем через librosa
+    # Если длительность не получилась – пробуем через librosa
     if duration == 0.0:
         try:
             duration = librosa.get_duration(filename=str(file_path))
         except:
             duration = 0.0
 
-    return duration, bpm
+    return duration, bpm, created_date

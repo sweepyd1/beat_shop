@@ -31,7 +31,8 @@ class TrackService:
         cover: UploadFile,
         mp3: UploadFile,
         bpm: Optional[int] = None,
-        duration: Optional[int] = None
+        duration: Optional[int] = None,
+        created_date: Optional[datetime] = None
     ) -> Track:
         # 1. Проверяем, что пользователь является автором
         author = await self.author_service.get_author_by_user_id(user.id)
@@ -60,7 +61,8 @@ class TrackService:
             cover_url=cover_url,
             mp3_file_url=mp3_url,
             plays=0,
-            duration_seconds=duration
+            duration_seconds=duration,
+            created_date=created_date
         )
         return track
 

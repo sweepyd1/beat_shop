@@ -131,12 +131,13 @@ async def create_track(
         tmp_file.write(mp3_content)
         tmp_path = Path(tmp_file.name)
     try:
-        duration, bpm = analyze_mp3(tmp_path)
+        duration, bpm,created_date = analyze_mp3(tmp_path)
     finally:
         # 🧹 Удаляем временный файл
         if tmp_path.exists():
             tmp_path.unlink()
-
+    print(created_date)
+    await mp3.seek(0)
     track = await track_service.create_track(
         user=user,
         title=title,
@@ -145,7 +146,8 @@ async def create_track(
         cover=cover,
         mp3=mp3,
         bpm=bpm,
-        duration=duration
+        duration=duration,
+        created_date=created_date
     )
     
 

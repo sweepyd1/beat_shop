@@ -75,15 +75,7 @@
             <span class="stat-card-label">лайков</span>
           </div>
         </div>
-        <div class="stat-card">
-          <i class="fas fa-users"></i>
-          <div>
-            <span class="stat-card-value">{{
-              formatNumber(fullStats.total_subscribers ?? 0)
-            }}</span>
-            <span class="stat-card-label">подписчиков</span>
-          </div>
-        </div>
+
         <div class="stat-card">
           <i class="fas fa-ruble-sign"></i>
           <div>
@@ -138,10 +130,7 @@
           :key="track.track_id"
           class="top-track-item"
         >
-          <img
-            :src="track.cover_url || '/default-cover.jpg'"
-            class="top-track-img"
-          />
+          <img :src="getCoverUrl(track.cover_url)" class="top-track-img" />
           <div class="top-track-info">
             <div class="top-track-title">{{ track.title }}</div>
             <div class="top-track-stats">
@@ -160,10 +149,7 @@
           :key="track.track_id"
           class="top-track-item"
         >
-          <img
-            :src="track.cover_url || '/default-cover.jpg'"
-            class="top-track-img"
-          />
+          <img :src="getCoverUrl(track.cover_url)" class="top-track-img" />
           <div class="top-track-info">
             <div class="top-track-title">{{ track.title }}</div>
             <div class="top-track-stats">
@@ -209,9 +195,9 @@
             <button class="play-btn" @click="playTrack(beat)">
               <i class="fas fa-play"></i>
             </button>
-            <button class="like-btn" @click="toggleFavorite(beat.id)">
+            <!-- <button class="like-btn" @click="toggleFavorite(beat.id)">
               <i class="far fa-heart"></i>
-            </button>
+            </button> -->
           </div>
           <div class="beat-info">
             <div>
@@ -440,7 +426,12 @@ const renderCharts = () => {
     });
   }
 };
-
+const getCoverUrl = (coverUrl) => {
+  if (!coverUrl) return '/default-cover.jpg';
+  if (coverUrl.startsWith('http')) return coverUrl;
+  const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+  return `${baseUrl}${coverUrl}`;
+};
 // Лайк (заглушка)
 const toggleFavorite = (trackId) => {
   console.log("toggle favorite", trackId);

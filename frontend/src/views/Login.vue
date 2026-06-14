@@ -37,7 +37,7 @@
           </div>
         </div>
 
-        <div class="form-options">
+        <!-- <div class="form-options">
           <label class="checkbox">
             <input type="checkbox" v-model="remember" />
             <span>Запомнить меня</span>
@@ -45,7 +45,7 @@
           <router-link to="/forgot-password" class="forgot-link">
             Забыли пароль?
           </router-link>
-        </div>
+        </div> -->
 
         <button type="submit" class="auth-button" :disabled="loading">
           {{ loading ? 'Вход...' : 'Войти' }}
