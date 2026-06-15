@@ -270,7 +270,7 @@
                     type="number"
                     v-model="newTrack.price"
                     min="0"
-                    step="100"
+                    step="1"
                     required
                   />
                 </div>
@@ -405,11 +405,11 @@
               <div class="form-row">
                 <div class="form-group">
                   <label>Цена (₽) *</label>
-                  <input type="number" v-model="editTrackForm.price" min="0" step="100" required />
+                  <input type="number" v-model="editTrackForm.price" min="0" step="1" required />
                 </div>
                 <div class="form-group">
                   <label>BPM</label>
-                  <input type="number" v-model="editTrackForm.bpm" min="0" step="5" />
+                  <input type="number" v-model="editTrackForm.bpm" min="0" step="1" />
                 </div>
               </div>
               <div class="form-group file-group">

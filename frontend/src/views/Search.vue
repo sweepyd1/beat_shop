@@ -67,14 +67,16 @@
               min="60"
               max="180"
               step="1"
-              v-model.number="bpmRange[0]"
+              :value="bpmRange[0]"
+              @input="updateBpmMin($event.target.valueAsNumber)"
             />
             <input
               type="range"
               min="60"
               max="180"
               step="1"
-              v-model.number="bpmRange[1]"
+              :value="bpmRange[1]"
+              @input="updateBpmMax($event.target.valueAsNumber)"
             />
           </div>
           <div class="range-values">
@@ -91,14 +93,16 @@
               min="0"
               max="600"
               step="30"
-              v-model.number="durationRange[0]"
+              :value="durationRange[0]"
+              @input="updateMin($event.target.valueAsNumber)"
             />
             <input
               type="range"
               min="0"
               max="600"
               step="30"
-              v-model.number="durationRange[1]"
+              :value="durationRange[1]"
+              @input="updateMax($event.target.valueAsNumber)"
             />
           </div>
           <div class="range-values">
@@ -120,12 +124,12 @@
             >
               <i class="fas fa-th"></i>
             </button>
-            <button
+            <!-- <button
               :class="{ active: viewMode === 'list' }"
               @click="viewMode = 'list'"
             >
               <i class="fas fa-list"></i>
-            </button>
+            </button> -->
             <select v-model="sortBy">
               <option value="popular">По популярности</option>
               <option value="newest">Сначала новые</option>
@@ -188,7 +192,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import TrackCard from "../components/TrackCard.vue";
 import { useSearch } from "../composables/useSearch";
 
@@ -214,7 +218,26 @@ onMounted(() => {
   fetchGenres();
   fetchTracks();
 });
+const updateMin = (val) => {
+  let newMin = Math.min(val, durationRange.value[1]);
+  durationRange.value = [newMin, durationRange.value[1]];
+};
 
+const updateMax = (val) => {
+  let newMax = Math.max(val, durationRange.value[0]);
+  durationRange.value = [durationRange.value[0], newMax];
+};
+
+// Защита для ползунков BPM (добавьте аналогично)
+const updateBpmMin = (val) => {
+  let newMin = Math.min(val, bpmRange.value[1]);
+  bpmRange.value = [newMin, bpmRange.value[1]];
+};
+
+const updateBpmMax = (val) => {
+  let newMax = Math.max(val, bpmRange.value[0]);
+  bpmRange.value = [bpmRange.value[0], newMax];
+};
 // Проверка, есть ли активные фильтры
 const hasActiveFilters = computed(() => {
   return (
