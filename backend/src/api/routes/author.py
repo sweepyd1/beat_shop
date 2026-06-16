@@ -124,7 +124,8 @@ async def get_author_public(
 
     # Получаем треки автора
     tracks = await track_service.get_author_tracks(author.id)
-    photo_url = author.photo_url or author.user.avatar_url
+    user = await session.get(User, author.user_id)
+    photo_url = user.avatar_url if user else None
     # Создаем ответ
     response = AuthorPublicResponse(
         id=author.id,
