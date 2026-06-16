@@ -16,7 +16,7 @@
       <div class="artist-header">
         <div class="avatar-wrapper">
           <img
-            :src="artist.photo_url || '/default-avatar.png'"
+            :src="avatarUrl || '/default-avatar.png'"
             :alt="artist.full_name"
             class="avatar"
             @error="handleImageError"
@@ -25,9 +25,8 @@
         </div>
         <div class="artist-info">
           <h1>{{ artist.full_name }}</h1>
-          <p class="bio">{{ artist.bio || 'Биография не указана' }}</p>
+          <p class="bio">{{ artist.bio || "Биография не указана" }}</p>
           <div class="stats">
-     
             <div class="stat-item">
               <span class="stat-value">{{ artist.tracks_count || 0 }}</span>
               <span class="stat-label">битов</span>
@@ -42,13 +41,15 @@
             <i :class="isFollowed ? 'fas fa-check' : 'fas fa-plus'"></i>
             {{ isFollowed ? "Отписаться" : "Подписаться" }}
           </button> -->
-          <router-link v-if="isOwnProfile" to="/profile?tab=studio" class="btn-primary">
+          <router-link
+            v-if="isOwnProfile"
+            to="/profile?tab=studio"
+            class="btn-primary"
+          >
             <i class="fas fa-cog"></i> Управление профилем
           </router-link>
         </div>
       </div>
-
-
 
       <!-- Биты артиста -->
       <div class="beats-section">
@@ -58,11 +59,7 @@
           <p>У этого автора ещё нет треков</p>
         </div>
         <div v-else class="beats-grid">
-          <TrackCard
-            v-for="track in tracks"
-            :key="track.id"
-            :track="track"
-          />
+          <TrackCard v-for="track in tracks" :key="track.id" :track="track" />
         </div>
       </div>
     </div>
@@ -78,7 +75,9 @@ import api from "../api";
 
 const route = useRoute();
 const authStore = useAuthStore();
-const { playTrack } = inject("player", { playTrack: (t) => console.log("play", t) });
+const { playTrack } = inject("player", {
+  playTrack: (t) => console.log("play", t),
+});
 
 const loading = ref(true);
 const error = ref(null);
@@ -92,13 +91,34 @@ const isOwnProfile = computed(() => {
   if (!artist.value || !currentUserId.value) return false;
   return artist.value.user_id === currentUserId.value;
 });
-
+const avatarUrl = computed(() => {
+  if (!artist.value?.photo_url) return "/default-avatar.png";
+  let url;
+  if (artist.value.photo_url.startsWith("http")) {
+    url = artist.value.photo_url;
+  } else {
+    const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
+    // нормализуем baseUrl (убираем завершающий слеш)
+    const normalizedBase = baseUrl.endsWith("/")
+      ? baseUrl.slice(0, -1)
+      : baseUrl;
+    // добавляем слеш к path, если его нет
+    const path = artist.value.photo_url.startsWith("/")
+      ? artist.value.photo_url
+      : "/" + artist.value.photo_url;
+    url = normalizedBase + path;
+  }
+  console.log("Final avatar URL:", url);
+  console.log(1);
+  return url;
+});
 const formatNumber = (num) => {
-  return new Intl.NumberFormat('ru-RU').format(num);
+  return new Intl.NumberFormat("ru-RU").format(num);
 };
 
 const handleImageError = (e) => {
-  const placeholderSVG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 24 24' fill='%23cccccc'%3E%3Cpath d='M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z'/%3E%3C/svg%3E";
+  const placeholderSVG =
+    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 24 24' fill='%23cccccc'%3E%3Cpath d='M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z'/%3E%3C/svg%3E";
   e.target.src = placeholderSVG;
 };
 
@@ -106,7 +126,7 @@ const salesChart = ref([40, 60, 30, 80, 50, 70, 90]);
 
 const toggleFollow = async () => {
   if (!isLoggedIn.value) {
-    alert('Пожалуйста, войдите чтобы подписаться');
+    alert("Пожалуйста, войдите чтобы подписаться");
     return;
   }
   try {
@@ -117,28 +137,33 @@ const toggleFollow = async () => {
     }
     isFollowed.value = !isFollowed.value;
   } catch (err) {
-    console.error('Ошибка подписки:', err);
-    showError('Ошибка при изменении подписки');
+    console.error("Ошибка подписки:", err);
+    showError("Ошибка при изменении подписки");
   }
 };
 
 const fetchArtistData = async () => {
   loading.value = true;
   error.value = null;
-  
+
   try {
     const authorId = route.params.id;
     const response = await api.get(`/authors/${authorId}`);
     artist.value = response.data;
     tracks.value = response.data.tracks || [];
     artistStats.value = response.data;
-    
+    console.log("Full response:", response.data);
+    console.log("photo_url:", response.data.photo_url);
+
     // Генерируем случайные данные для графика
-    salesChart.value = Array.from({ length: 7 }, () => Math.floor(Math.random() * 80) + 20);
-    
+    salesChart.value = Array.from(
+      { length: 7 },
+      () => Math.floor(Math.random() * 80) + 20
+    );
   } catch (err) {
-    console.error('Ошибка загрузки данных автора:', err);
-    error.value = err.response?.data?.detail || 'Ошибка загрузки профиля автора';
+    console.error("Ошибка загрузки данных автора:", err);
+    error.value =
+      err.response?.data?.detail || "Ошибка загрузки профиля автора";
   } finally {
     loading.value = false;
   }
@@ -161,10 +186,14 @@ onMounted(() => {
   gap: 3rem;
   margin-bottom: 3rem;
   align-items: center;
-  background: linear-gradient(145deg, rgba(168,85,247,0.1), rgba(59,130,246,0.05));
+  background: linear-gradient(
+    145deg,
+    rgba(168, 85, 247, 0.1),
+    rgba(59, 130, 246, 0.05)
+  );
   padding: 2rem;
   border-radius: 40px;
-  border: 1px solid rgba(168,85,247,0.2);
+  border: 1px solid rgba(168, 85, 247, 0.2);
   backdrop-filter: blur(10px);
 }
 
@@ -197,8 +226,12 @@ onMounted(() => {
 }
 
 @keyframes rotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .artist-info {
@@ -266,7 +299,7 @@ onMounted(() => {
 
 .follow-btn:hover {
   transform: scale(1.05);
-  box-shadow: 0 10px 20px rgba(168,85,247,0.3);
+  box-shadow: 0 10px 20px rgba(168, 85, 247, 0.3);
 }
 
 .sales-stats {
@@ -289,13 +322,13 @@ onMounted(() => {
 }
 
 .stat-card {
-  background: rgba(255,255,255,0.03);
+  background: rgba(255, 255, 255, 0.03);
   padding: 1.5rem;
   border-radius: 16px;
   display: flex;
   align-items: center;
   gap: 1rem;
-  border: 1px solid rgba(255,255,255,0.05);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   transition: transform 0.2s;
 }
 
@@ -325,7 +358,7 @@ onMounted(() => {
   align-items: flex-end;
   gap: 0.5rem;
   height: 100px;
-  background: rgba(0,0,0,0.2);
+  background: rgba(0, 0, 0, 0.2);
   border-radius: 20px;
   padding: 1rem;
 }
@@ -352,18 +385,18 @@ onMounted(() => {
 }
 
 .beat-card {
-  background: rgba(255,255,255,0.02);
+  background: rgba(255, 255, 255, 0.02);
   border-radius: 20px;
   overflow: hidden;
   transition: all 0.3s;
-  border: 1px solid rgba(255,255,255,0.05);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   position: relative;
 }
 
 .beat-card:hover {
   transform: translateY(-8px);
   border-color: #a855f7;
-  box-shadow: 0 20px 30px rgba(168,85,247,0.2);
+  box-shadow: 0 20px 30px rgba(168, 85, 247, 0.2);
 }
 
 .beat-cover {
@@ -378,7 +411,7 @@ onMounted(() => {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -391,7 +424,8 @@ onMounted(() => {
   opacity: 1;
 }
 
-.play-btn, .like-btn {
+.play-btn,
+.like-btn {
   width: 50px;
   height: 50px;
   border-radius: 50%;
@@ -404,11 +438,12 @@ onMounted(() => {
 }
 
 .like-btn {
-  background: rgba(255,255,255,0.2);
+  background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(5px);
 }
 
-.play-btn:hover, .like-btn:hover {
+.play-btn:hover,
+.like-btn:hover {
   transform: scale(1.1);
 }
 
@@ -437,18 +472,21 @@ onMounted(() => {
 }
 
 /* Loading and error states */
-.loading-state, .error-state {
+.loading-state,
+.error-state {
   text-align: center;
   padding: 4rem 2rem;
 }
 
-.loading-state i, .error-state i {
+.loading-state i,
+.error-state i {
   font-size: 3rem;
   color: #a855f7;
   margin-bottom: 1rem;
 }
 
-.loading-state p, .error-state p {
+.loading-state p,
+.error-state p {
   color: #a0a0b0;
   font-size: 1.1rem;
 }
@@ -470,7 +508,12 @@ onMounted(() => {
 }
 
 @media (max-width: 768px) {
-  .artist-header { flex-direction: column; text-align: center; }
-  .stats { justify-content: center; }
+  .artist-header {
+    flex-direction: column;
+    text-align: center;
+  }
+  .stats {
+    justify-content: center;
+  }
 }
 </style>

@@ -5,7 +5,7 @@
       <div class="hero-background"></div>
       <div class="hero-content">
         <div class="avatar-large">
-          <img :src="avatarUrl" alt="avatar" />
+          <img :src="avatarUrl" />
           <button class="edit-avatar-btn" @click="openEditModal">
             <i class="fas fa-camera"></i>
           </button>
@@ -80,7 +80,6 @@
             <button class="btn-primary edit-profile-btn" @click="openEditModal">
               <i class="fas fa-user-edit"></i> Редактировать профиль
             </button>
-            
           </div>
         </div>
 
@@ -100,7 +99,10 @@
               class="purchase-card glass-card"
             >
               <div class="purchase-image">
-               <img :src="getImageUrl(purchase.track.cover_url)" :alt="purchase.track.title" />
+                <img
+                  :src="getImageUrl(purchase.track.cover_url)"
+                  :alt="purchase.track.title"
+                />
               </div>
               <div class="purchase-details">
                 <h3>{{ purchase.track.title }}</h3>
@@ -387,69 +389,115 @@
         </div>
       </div>
     </transition>
-          <transition name="modal-fade">
-        <div v-if="showEditTrackModal" class="modal-overlay" @click.self="closeEditTrackModal">
-          <div class="modal glass-card" style="max-width: 600px;">
-            <button class="modal-close" @click="closeEditTrackModal">&times;</button>
-            <h2>Редактирование трека</h2>
-            <form @submit.prevent="saveTrackEdit" class="edit-form">
+    <transition name="modal-fade">
+      <div
+        v-if="showEditTrackModal"
+        class="modal-overlay"
+        @click.self="closeEditTrackModal"
+      >
+        <div class="modal glass-card" style="max-width: 600px">
+          <button class="modal-close" @click="closeEditTrackModal">
+            &times;
+          </button>
+          <h2>Редактирование трека</h2>
+          <form @submit.prevent="saveTrackEdit" class="edit-form">
+            <div class="form-group">
+              <label>Название трека *</label>
+              <input type="text" v-model="editTrackForm.title" required />
+            </div>
+            <div class="form-group">
+              <label>Жанр *</label>
+              <select v-model="editTrackForm.genre_id" required>
+                <option
+                  v-for="genre in genres"
+                  :key="genre.id"
+                  :value="genre.id"
+                >
+                  {{ genre.name }}
+                </option>
+              </select>
+            </div>
+            <div class="form-row">
               <div class="form-group">
-                <label>Название трека *</label>
-                <input type="text" v-model="editTrackForm.title" required />
+                <label>Цена (₽) *</label>
+                <input
+                  type="number"
+                  v-model="editTrackForm.price"
+                  min="0"
+                  step="1"
+                  required
+                />
               </div>
               <div class="form-group">
-                <label>Жанр *</label>
-                <select v-model="editTrackForm.genre_id" required>
-                  <option v-for="genre in genres" :key="genre.id" :value="genre.id">{{ genre.name }}</option>
-                </select>
+                <label>BPM</label>
+                <input
+                  type="number"
+                  v-model="editTrackForm.bpm"
+                  min="0"
+                  step="1"
+                />
               </div>
-              <div class="form-row">
-                <div class="form-group">
-                  <label>Цена (₽) *</label>
-                  <input type="number" v-model="editTrackForm.price" min="0" step="1" required />
-                </div>
-                <div class="form-group">
-                  <label>BPM</label>
-                  <input type="number" v-model="editTrackForm.bpm" min="0" step="1" />
-                </div>
+            </div>
+            <div class="form-group file-group">
+              <label>Обложка</label>
+              <div class="file-input">
+                <input
+                  type="file"
+                  id="edit-cover-input"
+                  accept="image/*"
+                  @change="handleEditCoverChange"
+                />
+                <label for="edit-cover-input" class="file-label">
+                  <i class="fas fa-cloud-upload-alt"></i> Заменить обложку
+                </label>
+                <span v-if="editTrackForm.cover_file" class="file-name">{{
+                  editTrackForm.cover_file.name
+                }}</span>
               </div>
-              <div class="form-group file-group">
-                <label>Обложка</label>
-                <div class="file-input">
-                  <input type="file" id="edit-cover-input" accept="image/*" @change="handleEditCoverChange" />
-                  <label for="edit-cover-input" class="file-label">
-                    <i class="fas fa-cloud-upload-alt"></i> Заменить обложку
-                  </label>
-                  <span v-if="editTrackForm.cover_file" class="file-name">{{ editTrackForm.cover_file.name }}</span>
-                </div>
-                <div v-if="editCoverPreview" class="cover-preview">
-                  <img :src="editCoverPreview" alt="cover preview" />
-                </div>
+              <div v-if="editCoverPreview" class="cover-preview">
+                <img :src="editCoverPreview" alt="cover preview" />
               </div>
-              <div class="form-group file-group">
-                <label>MP3 файл</label>
-                <div class="file-input">
-                  <input type="file" id="edit-mp3-input" accept="audio/mpeg" @change="handleEditMp3Change" />
-                  <label for="edit-mp3-input" class="file-label">
-                    <i class="fas fa-cloud-upload-alt"></i> Заменить трек
-                  </label>
-                  <span v-if="editTrackForm.mp3_file" class="file-name">{{ editTrackForm.mp3_file.name }}</span>
-                </div>
+            </div>
+            <div class="form-group file-group">
+              <label>MP3 файл</label>
+              <div class="file-input">
+                <input
+                  type="file"
+                  id="edit-mp3-input"
+                  accept="audio/mpeg"
+                  @change="handleEditMp3Change"
+                />
+                <label for="edit-mp3-input" class="file-label">
+                  <i class="fas fa-cloud-upload-alt"></i> Заменить трек
+                </label>
+                <span v-if="editTrackForm.mp3_file" class="file-name">{{
+                  editTrackForm.mp3_file.name
+                }}</span>
               </div>
-              <div class="modal-buttons">
-                <button type="button" class="btn-secondary" @click="closeEditTrackModal">Отмена</button>
-                <button type="submit" class="btn-primary" :disabled="editUploading">
-                  <i v-if="editUploading" class="fas fa-spinner fa-spin"></i>
-                  <span v-else>Сохранить</span>
-                </button>
-              </div>
-            </form>
-          </div>
+            </div>
+            <div class="modal-buttons">
+              <button
+                type="button"
+                class="btn-secondary"
+                @click="closeEditTrackModal"
+              >
+                Отмена
+              </button>
+              <button
+                type="submit"
+                class="btn-primary"
+                :disabled="editUploading"
+              >
+                <i v-if="editUploading" class="fas fa-spinner fa-spin"></i>
+                <span v-else>Сохранить</span>
+              </button>
+            </div>
+          </form>
         </div>
-      </transition>
+      </div>
+    </transition>
   </div>
   <!-- Modal for track edit -->
-
 </template>
 
 <script setup>
@@ -460,16 +508,22 @@ import ArtistDashboard from "../components/ArtistDashboard.vue";
 import { useProfile } from "../composables/useProfile";
 import api from "../api";
 import router from "@/router";
-import { showError, showSuccess } from '@/utils/alert';  // <-- импорт
+import { showError, showSuccess } from "@/utils/alert"; // <-- импорт
 const authStore = useAuthStore();
 const user = computed(() => authStore.user);
 
-const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
-const ALLOWED_AUDIO_TYPES = ['audio/mpeg', 'audio/mp3'];  // audio/mpeg — это и есть MP3
+const ALLOWED_IMAGE_TYPES = [
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/gif",
+  "image/webp",
+];
+const ALLOWED_AUDIO_TYPES = ["audio/mpeg", "audio/mp3"]; // audio/mpeg — это и есть MP3
 const showEditTrackModal = ref(false);
 const editingTrack = ref(null);
 const editTrackForm = ref({
-  title: '',
+  title: "",
   genre_id: null,
   price: 0,
   bpm: null,
@@ -491,18 +545,24 @@ const {
 } = useProfile();
 // Открыть модалку с данными трека
 
-
 // Закрыть модалку
 const closeEditTrackModal = () => {
   showEditTrackModal.value = false;
   editingTrack.value = null;
-  editTrackForm.value = { title: '', genre_id: null, price: 0, bpm: null, cover_file: null, mp3_file: null };
+  editTrackForm.value = {
+    title: "",
+    genre_id: null,
+    price: 0,
+    bpm: null,
+    cover_file: null,
+    mp3_file: null,
+  };
   editCoverPreview.value = null;
   // очистить input файлы, чтобы можно было выбрать заново
-  const coverInput = document.getElementById('edit-cover-input');
-  const mp3Input = document.getElementById('edit-mp3-input');
-  if (coverInput) coverInput.value = '';
-  if (mp3Input) mp3Input.value = '';
+  const coverInput = document.getElementById("edit-cover-input");
+  const mp3Input = document.getElementById("edit-mp3-input");
+  if (coverInput) coverInput.value = "";
+  if (mp3Input) mp3Input.value = "";
 };
 
 // Обработчики выбора новых файлов
@@ -510,13 +570,15 @@ const handleEditCoverChange = (event) => {
   const file = event.target.files[0];
   if (!file) return;
   if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
-    showError('Неподдерживаемый формат изображения');
-    event.target.value = '';
+    showError("Неподдерживаемый формат изображения");
+    event.target.value = "";
     return;
   }
   editTrackForm.value.cover_file = file;
   const reader = new FileReader();
-  reader.onload = (e) => { editCoverPreview.value = e.target.result; };
+  reader.onload = (e) => {
+    editCoverPreview.value = e.target.result;
+  };
   reader.readAsDataURL(file);
 };
 
@@ -524,8 +586,8 @@ const handleEditMp3Change = (event) => {
   const file = event.target.files[0];
   if (!file) return;
   if (!ALLOWED_AUDIO_TYPES.includes(file.type)) {
-    showError('Неподдерживаемый аудиоформат. Загрузите MP3.');
-    event.target.value = '';
+    showError("Неподдерживаемый аудиоформат. Загрузите MP3.");
+    event.target.value = "";
     return;
   }
   editTrackForm.value.mp3_file = file;
@@ -534,31 +596,38 @@ const handleEditMp3Change = (event) => {
 // Сохранить изменения трека
 const saveTrackEdit = async () => {
   if (!editingTrack.value) return;
-  if (!editTrackForm.value.title || !editTrackForm.value.genre_id || editTrackForm.value.price === undefined) {
-    showError('Заполните название, жанр и цену');
+  if (
+    !editTrackForm.value.title ||
+    !editTrackForm.value.genre_id ||
+    editTrackForm.value.price === undefined
+  ) {
+    showError("Заполните название, жанр и цену");
     return;
   }
 
   editUploading.value = true;
   try {
     const formData = new FormData();
-    formData.append('title', editTrackForm.value.title);
-    formData.append('genre_id', editTrackForm.value.genre_id);
-    formData.append('price', editTrackForm.value.price);
-    if (editTrackForm.value.bpm) formData.append('bpm', editTrackForm.value.bpm);
-    if (editTrackForm.value.cover_file) formData.append('cover', editTrackForm.value.cover_file);
-    if (editTrackForm.value.mp3_file) formData.append('mp3', editTrackForm.value.mp3_file);
+    formData.append("title", editTrackForm.value.title);
+    formData.append("genre_id", editTrackForm.value.genre_id);
+    formData.append("price", editTrackForm.value.price);
+    if (editTrackForm.value.bpm)
+      formData.append("bpm", editTrackForm.value.bpm);
+    if (editTrackForm.value.cover_file)
+      formData.append("cover", editTrackForm.value.cover_file);
+    if (editTrackForm.value.mp3_file)
+      formData.append("mp3", editTrackForm.value.mp3_file);
 
     await api.put(`/tracks/${editingTrack.value.id}`, formData, {
-      headers: { 'Content-Type': undefined },
+      headers: { "Content-Type": undefined },
     });
 
-    showSuccess('Трек обновлён');
+    showSuccess("Трек обновлён");
     closeEditTrackModal();
     await fetchAuthorTracks(); // обновить список треков
   } catch (err) {
-    console.error('Update failed', err);
-    const message = err.response?.data?.detail || 'Ошибка обновления трека';
+    console.error("Update failed", err);
+    const message = err.response?.data?.detail || "Ошибка обновления трека";
     showError(message);
   } finally {
     editUploading.value = false;
@@ -624,7 +693,7 @@ const getTabIcon = (tabKey) => {
   return icons[tabKey] || '<i class="fas fa-circle"></i>';
 };
 const tracksCount = computed(() => {
-  if (user.value?.role === 'author') {
+  if (user.value?.role === "author") {
     return authorTracks.value.length;
   }
   return 0;
@@ -666,7 +735,7 @@ const saveProfile = async () => {
       formData.append("avatar", editForm.value.avatar_file);
     }
     await updateProfile(formData);
-    await authStore.fetchUser(); 
+    await authStore.fetchUser();
     closeEditModal();
   } catch (err) {
     console.error("Save failed", err);
@@ -699,9 +768,11 @@ const handleCoverChange = (event) => {
   const file = event.target.files[0];
   if (!file) return;
   if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
-    showError('Неподдерживаемый формат изображения. Используйте JPG, PNG, GIF или WebP.');
+    showError(
+      "Неподдерживаемый формат изображения. Используйте JPG, PNG, GIF или WebP."
+    );
     // Очищаем input, чтобы можно было выбрать заново
-    event.target.value = '';
+    event.target.value = "";
     return;
   }
   newTrack.value.cover_file = file;
@@ -715,9 +786,9 @@ const handleCoverChange = (event) => {
 const handleMp3Change = (event) => {
   const file = event.target.files[0];
   if (!file) return;
-   if (!ALLOWED_AUDIO_TYPES.includes(file.type)) {
-    showError('Неподдерживаемый аудиоформат. Пожалуйста, загрузите MP3 файл.');
-    event.target.value = '';
+  if (!ALLOWED_AUDIO_TYPES.includes(file.type)) {
+    showError("Неподдерживаемый аудиоформат. Пожалуйста, загрузите MP3 файл.");
+    event.target.value = "";
     return;
   }
   newTrack.value.mp3_file = file;
@@ -791,7 +862,9 @@ const editTrack = (track) => {
     cover_file: null,
     mp3_file: null,
   };
-  editCoverPreview.value = track.cover_url ? getImageUrl(track.cover_url) : null;
+  editCoverPreview.value = track.cover_url
+    ? getImageUrl(track.cover_url)
+    : null;
   showEditTrackModal.value = true;
 };
 
@@ -824,9 +897,9 @@ const downloadContract = async (purchaseId) => {
   }
 };
 const getImageUrl = (url) => {
-  if (!url) return '/default-cover.jpg';
-  if (url.startsWith('http')) return url;
-  const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+  if (!url) return "/default-cover.jpg";
+  if (url.startsWith("http")) return url;
+  const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
   return `${baseUrl}${url}`;
 };
 const formatDate = (dateString) => {
@@ -841,18 +914,18 @@ const formatDate = (dateString) => {
 
 onMounted(async () => {
   if (!user.value) {
-    router.push('/');
+    router.push("/");
     return;
   }
   await fetchAll();
-  
+
   if (user.value?.role === "author") {
     await fetchAuthorTracks();
     await fetchGenres();
   }
-  
-  window.addEventListener('favorites-updated', fetchAll);
-  console.log(purchases.value)
+
+  window.addEventListener("favorites-updated", fetchAll);
+  console.log(purchases.value);
 });
 </script>
 

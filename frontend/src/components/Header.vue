@@ -110,7 +110,7 @@ const router = useRouter();
 
 // --- Аватарка ---
 const avatarUrl = computed(() => {
-  if (!user.value?.avatar_url) return null; // показываем инициал
+  if (!user.value?.avatar_url) return "default-avatar.png"; // показываем инициал
   if (user.value.avatar_url.startsWith("http")) return user.value.avatar_url;
   const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
   return `${baseUrl}${user.value.avatar_url}`;
