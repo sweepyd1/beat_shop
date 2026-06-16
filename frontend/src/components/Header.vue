@@ -1,72 +1,85 @@
-<!-- eslint-disable-next-line vue/no-multiple-template-root -->
 <template>
   <div>
+    <header class="app-header">
+      <div class="container">
+        <div class="logo" @click="$router.push('/')">
+          <span class="logo-icon">🎵</span>
+          <span class="logo-text">BeatMarket</span>
+        </div>
 
-  
-  <header class="app-header">
-    <div class="container">
-      <div class="logo" @click="$router.push('/')">
-        <span class="logo-icon">🎵</span>
-        <span class="logo-text">BeatMarket</span>
-      </div>
-
-      <nav :class="['nav-menu', { active: menuOpen }]">
-        <router-link to="/" exact-active-class="active">Главная</router-link>
-        <router-link to="/search" active-class="active">Поиск</router-link>
-        <router-link to="/trends" active-class="active">Тренды</router-link>
-        <router-link to="/about" active-class="active">О нас</router-link>
-        <router-link to="/contacts" active-class="active">Контакты</router-link>
-        <router-link to="/profile" active-class="active">Профиль</router-link>
-
-        <!-- Административные ссылки (только для роли admin) -->
-        <template v-if="isAdmin">
-  <router-link to="/admin" class="admin-link">
-    <i class="fas fa-crown"></i> Админ панель
-  </router-link>
-</template>
-      </nav>
-
-      <div class="user-actions">
-        <!-- Если пользователь авторизован -->
-        <template v-if="user">
-          <button
-            class="ai-recommend-btn"
-            @click="openRecommendationModal"
-            title="AI рекомендации"
+        <nav :class="['nav-menu', { active: menuOpen }]">
+          <router-link to="/" exact-active-class="active">Главная</router-link>
+          <router-link to="/search" active-class="active">Поиск</router-link>
+          <router-link to="/trends" active-class="active">Тренды</router-link>
+          <router-link to="/about" active-class="active">О нас</router-link>
+          <router-link to="/contacts" active-class="active"
+            >Контакты</router-link
           >
-            🤖
-          </button>
-          <!-- <router-link to="/cart" class="cart-icon">...</router-link>
-          <router-link to="/cart" class="cart-icon">
-            <i class="fas fa-shopping-cart"></i>
-            <span v-if="cartCount > 0" class="badge">{{ cartCount }}</span>
-          </router-link> -->
-          <router-link to="/profile" class="profile-link">
-            <div class="avatar-circle">
-              {{ userInitial }}
+          <router-link to="/profile" active-class="active">Профиль</router-link>
+
+          <template v-if="isAdmin">
+            <router-link to="/admin" class="admin-link">
+              <i class="fas fa-crown"></i> Админ панель
+            </router-link>
+          </template>
+        </nav>
+
+        <div class="user-actions">
+          <template v-if="user">
+            <button
+              class="ai-recommend-btn"
+              @click="openRecommendationModal"
+              title="AI рекомендации"
+            >
+              🤖
+            </button>
+            <div class="profile-link" @click.stop="toggleDropdown">
+              <div class="avatar-wrapper">
+                <div class="avatar-circle">
+                  <img
+                    v-if="avatarUrl"
+                    :src="avatarUrl"
+                    :alt="user.name || 'Avatar'"
+                    @error="onAvatarError"
+                  />
+                  <span v-else>{{ userInitial }}</span>
+                </div>
+                <div class="dropdown-menu" :class="{ active: isDropdownOpen }">
+                  <router-link to="/profile" class="dropdown-item">
+                    <i class="fas fa-user"></i> Профиль
+                  </router-link>
+                  <button
+                    @click="handleLogout"
+                    class="dropdown-item logout-btn"
+                  >
+                    <i class="fas fa-sign-out-alt"></i> Выйти
+                  </button>
+                </div>
+              </div>
             </div>
-          </router-link>
-        </template>
+          </template>
 
-        <!-- Если не авторизован -->
-        <template v-else>
-          <router-link to="/login" class="btn-login">Войти</router-link>
-          <router-link to="/register" class="btn-register"
-            >Регистрация</router-link
+          <template v-else>
+            <router-link to="/login" class="btn-login">Войти</router-link>
+            <router-link to="/register" class="btn-register"
+              >Регистрация</router-link
+            >
+          </template>
+
+          <button
+            class="menu-toggle"
+            @click="menuOpen = !menuOpen"
+            v-if="isMobile"
           >
-        </template>
-
-        <button
-          class="menu-toggle"
-          @click="menuOpen = !menuOpen"
-          v-if="isMobile"
-        >
-          <i :class="menuOpen ? 'fas fa-times' : 'fas fa-bars'"></i>
-        </button>
+            <i :class="menuOpen ? 'fas fa-times' : 'fas fa-bars'"></i>
+          </button>
+        </div>
       </div>
-    </div>
-  </header>
-  <RecommendationModal :visible="showRecommendationModal" @close="showRecommendationModal = false" />
+    </header>
+    <RecommendationModal
+      :visible="showRecommendationModal"
+      @close="showRecommendationModal = false"
+    />
   </div>
 </template>
 
@@ -74,43 +87,92 @@
 import { ref, onMounted, onUnmounted, computed } from "vue";
 import { useAuthStore } from "@/stores/auth";
 import { storeToRefs } from "pinia";
+import { useRouter } from "vue-router";
 import RecommendationModal from "@/components/RecommendationModal.vue";
 
+// --- Модалка AI ---
 const showRecommendationModal = ref(false);
-
 const openRecommendationModal = () => {
   showRecommendationModal.value = true;
 };
 
+// --- Мобильное меню бургера ---
 const menuOpen = ref(false);
 const isMobile = ref(window.innerWidth <= 768);
-const cartCount = ref(2); // пример, позже из стора
 
+// --- Выпадающее меню аватарки (для мобилок) ---
+const isDropdownOpen = ref(false);
+
+// --- Auth store ---
 const authStore = useAuthStore();
 const { user } = storeToRefs(authStore);
+const router = useRouter();
 
-// Вычисляемое свойство для проверки прав администратора
-const isAdmin = computed(() => {
-  return user.value && user.value.role === "admin";
+// --- Аватарка ---
+const avatarUrl = computed(() => {
+  if (!user.value?.avatar_url) return null; // показываем инициал
+  if (user.value.avatar_url.startsWith("http")) return user.value.avatar_url;
+  const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
+  return `${baseUrl}${user.value.avatar_url}`;
 });
 
-// Инициал пользователя для аватарки
+const onAvatarError = (event) => {
+  // При ошибке загрузки скрываем img и показываем span с инициалом
+  event.target.style.display = "none";
+};
+
 const userInitial = computed(() => {
   if (!user.value) return "?";
   return user.value.name ? user.value.name.charAt(0).toUpperCase() : "U";
 });
 
-const checkMobile = () => {
-  isMobile.value = window.innerWidth <= 768;
-  if (!isMobile.value) menuOpen.value = false;
+// --- Права администратора ---
+const isAdmin = computed(() => user.value && user.value.role === "admin");
+
+// --- Выход из системы ---
+const handleLogout = async () => {
+  await authStore.logout();
+  router.push("/login");
 };
 
+// --- Логика открытия/закрытия выпадающего меню на мобилках ---
+const toggleDropdown = (event) => {
+  if (isMobile.value) {
+    isDropdownOpen.value = !isDropdownOpen.value;
+  }
+};
+
+const closeDropdown = () => {
+  if (isMobile.value) {
+    isDropdownOpen.value = false;
+  }
+};
+
+const handleClickOutside = (event) => {
+  const profileLink = document.querySelector(".profile-link");
+  if (profileLink && !profileLink.contains(event.target)) {
+    closeDropdown();
+  }
+};
+
+// --- Адаптив (смена десктоп/мобила) ---
+const checkMobile = () => {
+  isMobile.value = window.innerWidth <= 768;
+  if (!isMobile.value) {
+    menuOpen.value = false;
+    closeDropdown(); // закрываем выпадайку при переходе на десктоп
+  }
+};
+
+// --- Жизненный цикл ---
 onMounted(() => {
   window.addEventListener("resize", checkMobile);
+  document.addEventListener("click", handleClickOutside);
 });
 
 onUnmounted(() => {
   window.removeEventListener("resize", checkMobile);
+  document.removeEventListener("click", handleClickOutside);
 });
 </script>
 
@@ -196,7 +258,7 @@ onUnmounted(() => {
   gap: 1.2rem;
 }
 
-/* Стили для кнопок входа и регистрации */
+/* Кнопки входа/регистрации */
 .btn-login,
 .btn-register {
   text-decoration: none;
@@ -230,18 +292,7 @@ onUnmounted(() => {
   box-shadow: 0 6px 18px rgba(168, 85, 247, 0.5);
 }
 
-.cart-icon {
-  color: #a0a0b0;
-  font-size: 1.3rem;
-  position: relative;
-  transition: color 0.2s;
-  text-decoration: none;
-}
-
-.cart-icon:hover {
-  color: #a855f7;
-}
-
+/* Аватарка и выпадающее меню */
 .avatar-circle {
   width: 36px;
   height: 36px;
@@ -254,24 +305,104 @@ onUnmounted(() => {
   font-weight: 600;
   font-size: 1rem;
   transition: transform 0.2s;
+  overflow: hidden;
 }
 
 .avatar-circle:hover {
   transform: scale(1.05);
 }
 
-.badge {
+.avatar-circle img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.avatar-wrapper {
+  position: relative;
+  cursor: pointer;
+}
+
+.dropdown-menu {
   position: absolute;
-  top: -8px;
-  right: -8px;
-  background: #a855f7;
+  top: calc(100% + 8px);
+  right: 0;
+  background: rgba(20, 20, 30, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  border-radius: 12px;
+  padding: 0.5rem 0;
+  min-width: 160px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* На десктопе открываем по hover */
+@media (min-width: 769px) {
+  .avatar-wrapper:hover .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 1rem;
+  color: #e0e0e0;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.dropdown-item i {
+  width: 18px;
+  font-size: 0.9rem;
+}
+
+.dropdown-item:hover {
+  background: rgba(168, 85, 247, 0.2);
   color: white;
-  font-size: 0.7rem;
-  font-weight: 600;
-  padding: 2px 6px;
-  border-radius: 10px;
-  min-width: 18px;
-  text-align: center;
+}
+
+.logout-btn {
+  color: #ff6b6b;
+}
+
+.logout-btn:hover {
+  background: rgba(255, 107, 107, 0.2);
+  color: #ff8e8e;
+}
+
+/* AI кнопка */
+.ai-recommend-btn {
+  background: linear-gradient(45deg, #a855f7, #3b82f6);
+  border: none;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.ai-recommend-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 12px rgba(168, 85, 247, 0.6);
 }
 
 .menu-toggle {
@@ -283,10 +414,12 @@ onUnmounted(() => {
   cursor: pointer;
 }
 
+/* Адаптив под мобильные устройства */
 @media (max-width: 768px) {
   .app-header {
     padding: 0.8rem 1rem;
   }
+
   .menu-toggle {
     display: block;
   }
@@ -322,33 +455,34 @@ onUnmounted(() => {
     font-size: 0.85rem;
   }
 
-  .cart-icon {
-    font-size: 1.2rem;
-  }
-
   .avatar-circle {
     width: 32px;
     height: 32px;
     font-size: 0.9rem;
   }
-}
-.ai-recommend-btn {
-  background: linear-gradient(45deg, #a855f7, #3b82f6);
-  border: none;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  font-size: 1.3rem;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-}
 
-.ai-recommend-btn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 12px rgba(168, 85, 247, 0.6);
+  /* Убираем hover-открытие на мобилках */
+  .avatar-wrapper:hover .dropdown-menu {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  /* Открываем через класс active (ставится при клике) */
+  .dropdown-menu.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Корректируем позицию и размер для тача */
+  .dropdown-menu {
+    min-width: 170px;
+    right: 0;
+    left: auto;
+  }
+
+  .dropdown-item {
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+  }
 }
 </style>

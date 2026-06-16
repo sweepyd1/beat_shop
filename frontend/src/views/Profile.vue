@@ -80,6 +80,7 @@
             <button class="btn-primary edit-profile-btn" @click="openEditModal">
               <i class="fas fa-user-edit"></i> Редактировать профиль
             </button>
+            
           </div>
         </div>
 
