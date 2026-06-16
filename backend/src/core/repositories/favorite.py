@@ -1,5 +1,5 @@
 from typing import List, Optional
-from sqlalchemy import delete, select
+from sqlalchemy import delete, func, select
 from sqlalchemy.orm import selectinload
 from database.models import Favorite, Track
 from .base import BaseRepository
@@ -51,3 +51,11 @@ class FavoriteRepository(BaseRepository[Favorite]):
         result = await self.session.execute(stmt)
         await self.session.commit()
         return result.scalar_one_or_none() is not None
+    async def count_favorites_by_author(self, author_id: int) -> int:
+        stmt = (
+            select(func.count(Favorite.id))
+            .join(Track, Favorite.track_id == Track.id)
+            .where(Track.author_id == author_id)
+        )
+        result = await self.session.execute(stmt)
+        return result.scalar() or 0

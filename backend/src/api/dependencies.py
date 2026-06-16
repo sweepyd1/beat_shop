@@ -111,9 +111,10 @@ def get_stats_service(
     purchase_repo: PurchaseRepository = Depends(get_purchase_repository),
     subscription_repo: SubscriptionRepository = Depends(get_subscription_repository),
     track_repo: TrackRepository = Depends(get_track_repository),              # добавить
-    interaction_repo: InteractionRepository = Depends(get_interaction_repository)  # добавить
+    interaction_repo: InteractionRepository = Depends(get_interaction_repository),
+    favorite_repo: FavoriteRepository = Depends(get_favorite_repository)
 ) -> StatsService:
-    return StatsService(purchase_repo, subscription_repo, track_repo, interaction_repo)
+    return StatsService(purchase_repo, subscription_repo, track_repo, interaction_repo, favorite_repo)
 async def get_admin_stats_service(
     user_repo: UserRepository = Depends(get_user_repository),
     purchase_repo: PurchaseRepository = Depends(get_purchase_repository),

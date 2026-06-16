@@ -6,13 +6,15 @@ from schemas.admin_stats import DailyUsersResponse
 from schemas.stats import StatsResponse
 from core.repositories.purchase import PurchaseRepository
 from core.repositories.subscription import SubscriptionRepository
-
+from core.repositories.purchase import PurchaseRepository
+from core.repositories.favorite import FavoriteRepository
 class StatsService:
-    def __init__(self, purchase_repo: PurchaseRepository, subscription_repo: SubscriptionRepository, track_repo:TrackRepository, interaction_repo: InteractionRepository):
+    def __init__(self, purchase_repo: PurchaseRepository, subscription_repo: SubscriptionRepository, track_repo:TrackRepository, interaction_repo: InteractionRepository,favorite_repo:FavoriteRepository ):
         self.purchase_repo = purchase_repo
         self.subscription_repo = subscription_repo
         self.track_repo = track_repo
         self.interaction_repo = interaction_repo
+        self.favorite_repo=favorite_repo
         
 
     async def get_author_stats(self, author_id: int):
@@ -49,7 +51,7 @@ class StatsService:
         # Параллельный вызов всех методов
         total_tracks = await self.track_repo.count_by_author(author_id)
         total_plays = await self.interaction_repo.count_plays_by_author(author_id)
-        total_favorites = await self.interaction_repo.count_favorites_by_author(author_id)
+        total_favorites = await self.favorite_repo.count_favorites_by_author(author_id)
         # total_subscribers = await self.subscription_repo.count_subscribers(author_id)
         total_earnings = await self.purchase_repo.get_author_total_earnings(author_id)
         sales_this_month, monthly_earnings = await self.purchase_repo.get_author_monthly_stats(author_id)
