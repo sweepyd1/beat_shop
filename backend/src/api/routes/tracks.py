@@ -4,31 +4,55 @@ import tempfile
 from typing import List, Optional
 from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, Request, UploadFile
 from fastapi.responses import FileResponse
+from core.services.author import AuthorService
 from core.services.purchase_service import PurchaseService
 from core.repositories.track import TrackRepository
 from core.services.auth import AuthService
 from database.models import User
-from schemas.track import TrackResponse, TrackCreate, TrackUpdate
+from schemas.track import AuthorTrackResponse, TrackResponse, TrackCreate, TrackUpdate
 from core.services.track import TrackService
-from api.dependencies import get_auth_service, get_purchase_service, get_track_service
+from api.dependencies import get_auth_service, get_author_service, get_purchase_service, get_track_service
 from api.dependencies import analyze_mp3
 router = APIRouter(prefix="/tracks", tags=["tracks"])
 
-@router.get("/me", response_model=List[TrackResponse])
+# @router.get("/me", response_model=List[TrackResponse])
+# async def get_my_tracks(
+#     request:Request,
+#     track_service: TrackService = Depends(get_track_service),
+#     auth_service: AuthService = Depends(get_auth_service),
+
+# ):
+#     access_token = request.cookies.get("access_token")
+#     if not access_token:
+#         raise HTTPException(status_code=401, detail="Not authenticated")
+#     user = await auth_service.get_user_from_token(access_token)
+#     print(user.role.name)
+#     if user.role.name != "author":
+#         raise HTTPException(status_code=403, detail="Только авторы могут просматривать свои треки")
+#     tracks = await track_service.get_tracks_by_user(user.id)
+#     return tracks
+@router.get("/me", response_model=List[AuthorTrackResponse]) # <-- Меняем response_model
 async def get_my_tracks(
-    request:Request,
+    request: Request,
     track_service: TrackService = Depends(get_track_service),
     auth_service: AuthService = Depends(get_auth_service),
-
+    author_service: AuthorService = Depends(get_author_service), # <-- Добавляем зависимость
 ):
     access_token = request.cookies.get("access_token")
     if not access_token:
         raise HTTPException(status_code=401, detail="Not authenticated")
+    
     user = await auth_service.get_user_from_token(access_token)
-    print(user.role.name)
     if user.role.name != "author":
         raise HTTPException(status_code=403, detail="Только авторы могут просматривать свои треки")
-    tracks = await track_service.get_tracks_by_user(user.id)
+    
+    # Получаем автора, чтобы передать его ID в правильный метод
+    author = await author_service.get_author_by_user_id(user.id)
+    if not author:
+        raise HTTPException(status_code=404, detail="Профиль автора не найден")
+
+    # ВЫЗЫВАЕМ МЕТОД, КОТОРЫЙ УЖЕ УМЕЕТ СЧИТАТЬ ПРОДАЖИ (sales)
+    tracks = await track_service.get_author_tracks(author.id)
     return tracks
 @router.get("/search", response_model=list[TrackResponse])
 async def search_tracks(
@@ -195,21 +219,21 @@ async def download_track(
     filename = f"{track.id}_{track.title.replace(' ', '_')}.mp3"
     return FileResponse(file_path, media_type="audio/mpeg", filename=filename)
 
-@router.get("/{track_id}/stream")
-async def stream_track(
-    track_id: int,
-    service: TrackService = Depends(get_track_service)
-):
-    track = await service.get_track(track_id)
-    if not track:
-        raise HTTPException(status_code=404, detail="Track not found")
+# @router.get("/{track_id}/stream")
+# async def stream_track(
+#     track_id: int,
+#     service: TrackService = Depends(get_track_service)
+# ):
+#     track = await service.get_track(track_id)
+#     if not track:
+#         raise HTTPException(status_code=404, detail="Track not found")
     
     
-    file_path = track.mp3_file_url  
-    if not os.path.exists(file_path):
-        raise HTTPException(status_code=404, detail="Audio file not found")
+#     file_path = track.mp3_file_url  
+#     if not os.path.exists(file_path):
+#         raise HTTPException(status_code=404, detail="Audio file not found")
     
-    return FileResponse(file_path, media_type="audio/mpeg", filename=f"{track.title}.mp3")
+#     return FileResponse(file_path, media_type="audio/mpeg", filename=f"{track.title}.mp3")
 
 @router.put("/{track_id}", response_model=TrackResponse)
 async def update_track(
@@ -265,6 +289,8 @@ async def update_track(
     return updated_track
 
 
+# В файле tracks.py
+
 @router.delete("/{track_id}", status_code=204)
 async def delete_track(
     request: Request,
@@ -276,22 +302,39 @@ async def delete_track(
     access_token = request.cookies.get("access_token")
     if not access_token:
         raise HTTPException(status_code=401, detail="Not authenticated")
+    
     user = await auth_service.get_user_from_token(access_token)
     
-    # 2. Получаем трек ДО удаления (чтобы проверить права)
+    # 2. Получаем трек ДО удаления
     track = await service.get_track(track_id)
     if not track:
         raise HTTPException(status_code=404, detail="Track not found")
-    
+
     # 3. Проверка прав
     if track.author.user_id != user.id and not user.is_admin:
-        raise HTTPException(403, "Нет прав на редактирование этого трека")
+        raise HTTPException(403, "Нет прав на удаление этого трека")
+
+
+    sales_count = await service.repo.get_sales_count(track_id)
     
-    # 4. Удаляем
+    if sales_count > 0:
+        raise HTTPException(
+            status_code=400, 
+            detail="Нельзя удалить трек, который уже был продан"
+        )
+    
+    # Дополнительная проверка на эксклюзивную продажу (если такое поле есть в модели)
+    if getattr(track, 'is_exclusive_sold', False):
+        raise HTTPException(
+            status_code=400, 
+            detail="Нельзя удалить трек с эксклюзивной продажей"
+        )
+
+    # 5. Если все проверки пройдены, удаляем
     deleted = await service.delete_track(track_id)
     if not deleted:
         raise HTTPException(status_code=404, detail="Track not found")
-    
+
     return None  # status_code=204, тело пустое
 
 @router.get("/{track_id}", response_model=TrackResponse)

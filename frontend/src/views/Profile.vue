@@ -519,6 +519,9 @@ const ALLOWED_IMAGE_TYPES = [
   "image/gif",
   "image/webp",
 ];
+const MAX_MP3_SIZE = 50 * 1024 * 1024;   // 50 МБ для MP3
+const MAX_COVER_SIZE = 5 * 1024 * 1024;  // 5 МБ для обложки
+const MAX_AVATAR_SIZE = 2 * 1024 * 1024; // 2 МБ для аватара
 const ALLOWED_AUDIO_TYPES = ["audio/mpeg", "audio/mp3"]; // audio/mpeg — это и есть MP3
 const showEditTrackModal = ref(false);
 const editingTrack = ref(null);
@@ -771,6 +774,11 @@ const handleCoverChange = (event) => {
     showError(
       "Неподдерживаемый формат изображения. Используйте JPG, PNG, GIF или WebP."
     );
+     if (file.size > MAX_COVER_SIZE) {
+        showError(`❌ Обложка слишком большая (${formatSize(file.size)}). Максимум: ${formatSize(MAX_COVER_SIZE)}`);
+        event.target.value = "";
+        return;
+    }
     // Очищаем input, чтобы можно было выбрать заново
     event.target.value = "";
     return;
@@ -782,7 +790,10 @@ const handleCoverChange = (event) => {
   };
   reader.readAsDataURL(file);
 };
-
+const formatSize = (bytes) => {
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} КБ`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} МБ`;
+};
 const handleMp3Change = (event) => {
   const file = event.target.files[0];
   if (!file) return;
@@ -791,6 +802,11 @@ const handleMp3Change = (event) => {
     event.target.value = "";
     return;
   }
+   if (file.size > MAX_MP3_SIZE) {
+        showError(`❌ Файл слишком большой (${formatSize(file.size)}). Максимум: ${formatSize(MAX_MP3_SIZE)}`);
+        event.target.value = "";
+        return;
+    }
   newTrack.value.mp3_file = file;
 };
 
@@ -853,6 +869,10 @@ const submitTrack = async () => {
 };
 
 const editTrack = (track) => {
+  if (track?.sales > 0 || track?.is_exclusive_sold) {
+    showError("❌ Этот трек уже был продан. Редактирование невозможно.");
+    return;
+  }
   editingTrack.value = track;
   editTrackForm.value = {
     title: track.title,
@@ -869,6 +889,14 @@ const editTrack = (track) => {
 };
 
 const deleteTrack = async (trackId) => {
+  const track = authorTracks.value.find((t) => t.id === trackId);
+  console.log(track)
+  console.log(track.sales)
+  // Проверяем продажи на фронтенде для быстрого UX
+  if (track?.sales > 0 || track?.is_exclusive_sold) {
+    showError("❌ Этот трек уже был продан. Удаление невозможно.");
+    return;
+  }
   if (!confirm("Удалить трек? Это действие нельзя отменить.")) return;
   try {
     await api.delete(`/tracks/${trackId}`);
