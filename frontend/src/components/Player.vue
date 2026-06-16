@@ -158,9 +158,11 @@ const initAudio = () => {
 
   const streamUrl = track.value.mp3_file_url;
   if (!streamUrl) {
+    console.log(streamUrl)
     console.error("Player: no mp3_file_url for track", track.value);
     return;
   }
+
   audio = new Audio(streamUrl);
   audio.volume = volume.value;
   audio.addEventListener("loadedmetadata", () => {

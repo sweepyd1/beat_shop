@@ -286,6 +286,7 @@ onMounted(() => {
   border-collapse: collapse;
 }
 
+
 .genres-table th,
 .genres-table td {
   padding: 1rem;
@@ -308,7 +309,27 @@ onMounted(() => {
 .no-image {
   color: #6b7280;
 }
+.genres-table td {
+  padding: 1rem;
+  text-align: left;
+  vertical-align: middle;          /* ✅ добавлено */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
 
+.actions-cell {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;             /* ✅ добавлено */
+}
+
+/* Опционально – чтобы граница была у всей строки, а не у ячейки,
+   можно убрать border-bottom у td и добавить к tr: */
+.genres-table tr {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.genres-table td {
+  border-bottom: none;            /* если используете вариант с tr */
+}
 .actions-cell {
   display: flex;
   gap: 0.5rem;

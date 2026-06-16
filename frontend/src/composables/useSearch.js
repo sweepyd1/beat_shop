@@ -15,7 +15,7 @@ export function useSearch() {
   const durationRange = ref([120, 360]); // в секундах (2-6 мин)
   const sortBy = ref('popular');
   const currentPage = ref(0);
-  const limit = 20;
+  const limit = 100;
 
   // Загрузка жанров для фильтра (если нужно)
   const genres = ref([]);

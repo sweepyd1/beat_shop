@@ -119,6 +119,7 @@ class PurchaseService:
                 )
 
         amount = self._get_price_for_license(track, license_type)
+        amount = round(amount, 2)  # добавляем эту строку
 
         try:
             purchase = await self.purchase_repo.create(

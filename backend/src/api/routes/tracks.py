@@ -64,7 +64,7 @@ async def search_tracks(
     duration_max: Optional[int] = Query(None, ge=0, description="Максимальная длительность в секундах"),
     sort_by: str = Query("popular", pattern="^(popular|newest|price_asc|price_desc)$"),
     skip: int = Query(0, ge=0),
-    limit: int = Query(20, ge=1, le=100),
+    limit: int = Query(60, ge=1, le=100),
     service: TrackService = Depends(get_track_service)
 ):
     """Поиск треков с фильтрацией и сортировкой"""

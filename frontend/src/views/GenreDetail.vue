@@ -7,7 +7,7 @@
         <h1>{{ genre.name }}</h1>
         <p class="description">{{ description }}</p>
         <div class="meta">
-          <span><i class="fas fa-user"></i> BeatHub</span>
+          <span><i class="fas fa-user"></i> BeatMarket</span>
           <span><i class="fas fa-clock"></i> {{ totalDuration }}</span>
           <span><i class="fas fa-music"></i> {{ tracks.length }} треков</span>
         </div>

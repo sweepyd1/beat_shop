@@ -257,13 +257,13 @@
                     <span class="stat-value">{{ statsUser.favorites_count }}</span>
                   </div>
                 </div>
-                <div class="stat-card">
+                <!-- <div class="stat-card">
                   <div class="stat-icon"><i class="fas fa-bell"></i></div>
                   <div class="stat-info">
                     <span class="stat-label">Подписок</span>
                     <span class="stat-value">{{ statsUser.subscriptions_count }}</span>
                   </div>
-                </div>
+                </div> -->
                 <div class="stat-card">
                   <div class="stat-icon"><i class="fas fa-ruble-sign"></i></div>
                   <div class="stat-info">

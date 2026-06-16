@@ -109,7 +109,7 @@ async def create_track(
         raise HTTPException(500, f"Ошибка сохранения: {str(e)}")
 
     # 🎯 Автоматически определяем длительность и BPM
-    duration_seconds, bpm = analyze_mp3(mp3_path)
+    duration_seconds, bpm, created_date = analyze_mp3(mp3_path)
 
     # Если длительность не удалось определить – можно вернуть ошибку
     if duration_seconds == 0:

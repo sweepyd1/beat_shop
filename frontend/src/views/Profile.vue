@@ -13,8 +13,8 @@
         <div class="hero-info">
           <h1>{{ user.full_name }}</h1>
           <p class="role-badge">
-            {{ user.role === "author" ? "Автор" : "Покупатель" }}
-          </p>
+  {{ user.role === 'admin' ? 'Администратор' : user.role === 'author' ? 'Автор' : 'Покупатель' }}
+</p>
           <div class="stats">
             <div class="stat">
               <span class="stat-value">{{ tracksCount }}</span>
@@ -73,7 +73,7 @@
                 <i class="fas fa-id-card"></i>
                 <div>
                   <label>Роль</label>
-                  <p>{{ user.role === "author" ? "Автор" : "Покупатель" }}</p>
+                  <p>{{ user.role === 'admin' ? 'Администратор' : user.role === 'author' ? 'Автор' : 'Покупатель' }}</p>
                 </div>
               </div>
             </div>
@@ -273,6 +273,8 @@
                     type="number"
                     v-model="newTrack.price"
                     min="0"
+                    max="10000000"
+                    
                     step="1"
                     required
                   />

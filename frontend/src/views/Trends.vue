@@ -204,7 +204,16 @@ const getTrendIcon = (trend) => {
 };
 
 const playTrack = (track) => {
-  player.playTrack(track);   // track – это исходный объект из trends
+  // Создаем копию трека, чтобы не мутировать исходные данные из trends
+  const trackForPlayer = {
+    ...track,
+    // 🎯 Подменяем путь к файлу на путь к API-эндпоинту стриминга.
+    // Player.vue сам добавит baseUrl (http://localhost:8000) 
+    // и запросит: http://localhost:8000/tracks/{id}/stream
+    mp3_file_url: `http://localhost:8000${track.mp3_file_url}`
+  };
+  
+  player.playTrack(trackForPlayer);
 };
 
 const addToFavorites = async (track) => {
@@ -232,6 +241,7 @@ const goToAuthor = (authorId) => {
     router.push(`/artist/${authorId}`);
   }
 };
+
 </script>
 
 <style scoped>

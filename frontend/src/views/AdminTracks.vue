@@ -391,6 +391,10 @@ const submitTrack = async () => {
 
 // Редактирование
 const openEditModal = async (track) => {
+    if (track.sales > 0 || track.is_exclusive_sold) {
+    showError('❌ Этот трек уже был продан. Редактирование невозможно.');
+    return;
+  }
   try {
     const { data } = await api.get(`/admin/tracks/${track.id}`);
     editingTrackId.value = data.id;
@@ -494,6 +498,10 @@ const fetchTracks = async () => {
 };
 
 const deleteTrack = async (id) => {
+  if (track && (track.sales > 0 || track.is_exclusive_sold)) {
+    showError('❌ Этот трек уже был продан. Удаление невозможно.');
+    return;
+  }
   if (!confirm('Удалить трек? Это действие необратимо.')) return;
   try {
     await api.delete(`/admin/tracks/${id}`);
