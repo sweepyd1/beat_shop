@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.ext.asyncio import AsyncSession
+from core.services.auth import AuthService
 from schemas.author_stats import AuthorFullStatsResponse
 from core.services.author import AuthorService
 from core.services.stats import StatsService
@@ -8,6 +9,7 @@ from database.models import User, UserRole
 from schemas.author import AuthorResponse, AuthorDetailResponse, AuthorUpdate
 from core.repositories.author import AuthorRepository
 from api.dependencies import (
+    get_auth_service,
     get_author_service,
     get_current_user,
     get_db_session,
@@ -62,7 +64,65 @@ async def get_my_author_profile(
         tracks_count=tracks_count,
         average_rating=stats.average_rating,
     )
+from sqlalchemy import select
+from sqlalchemy.orm import selectinload
+from database.models import Purchase, Track, Author, UserRole
 
+@router.get("/me/track-purchases")
+async def get_my_track_purchases(
+    request: Request,
+    session: AsyncSession = Depends(get_db_session),
+    auth_service: AuthService = Depends(get_auth_service),
+    author_service: AuthorService = Depends(get_author_service),
+):
+    """Получение списка покупок треков текущего автора, сгруппированных по трекам"""
+    access_token = request.cookies.get("access_token")
+    if not access_token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    user = await auth_service.get_user_from_token(access_token)
+    if user.role != UserRole.author:
+        raise HTTPException(status_code=403, detail="Только авторы могут просматривать продажи")
+    
+    author = await author_service.get_author_by_user_id(user.id)
+    if not author:
+        raise HTTPException(status_code=404, detail="Профиль автора не найден")
+    
+    # Получаем все покупки треков этого автора
+    result = await session.execute(
+        select(Purchase)
+        .join(Track, Track.id == Purchase.track_id)
+        .where(Track.author_id == author.id)
+        .options(
+            selectinload(Purchase.track),
+            selectinload(Purchase.user),
+            selectinload(Purchase.contract)
+        )
+        .order_by(Purchase.purchase_date.desc())
+    )
+    purchases = result.scalars().all()
+    
+    # Группируем по трекам
+    grouped = {}
+    for p in purchases:
+        if p.track_id not in grouped:
+            grouped[p.track_id] = {
+                "track_id": p.track_id,
+                "track_title": p.track.title,
+                "cover_url": p.track.cover_url,
+                "purchases": []
+            }
+        grouped[p.track_id]["purchases"].append({
+            "id": p.id,
+            "buyer_name": p.user.full_name,
+            "purchase_date": p.purchase_date.isoformat() if p.purchase_date else None,
+            "amount": p.amount,
+            "license_type": p.license_type.value if p.license_type else None,
+            "has_contract": p.contract is not None and p.contract.document_url is not None,
+            "contract_number": p.contract.contract_number if p.contract else None
+        })
+    
+    return list(grouped.values())
 
 @router.get("/me/tracks", response_model=list[AuthorTrackResponse])
 async def get_my_tracks(

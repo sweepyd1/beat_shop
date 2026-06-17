@@ -1,6 +1,5 @@
 <template>
   <div class="profile">
-    
     <div class="hero-section">
       <div class="hero-background"></div>
       <div class="hero-content">
@@ -13,8 +12,14 @@
         <div class="hero-info">
           <h1>{{ user.full_name }}</h1>
           <p class="role-badge">
-  {{ user.role === 'admin' ? 'Администратор' : user.role === 'author' ? 'Автор' : 'Покупатель' }}
-</p>
+            {{
+              user.role === "admin"
+                ? "Администратор"
+                : user.role === "author"
+                ? "Автор"
+                : "Покупатель"
+            }}
+          </p>
           <div class="stats">
             <div class="stat">
               <span class="stat-value">{{ tracksCount }}</span>
@@ -33,7 +38,6 @@
       </div>
     </div>
 
-    
     <div class="tabs-container">
       <div class="tabs">
         <button
@@ -48,10 +52,8 @@
       </div>
     </div>
 
-    
     <div class="content-container">
       <transition-group name="fade" mode="out-in" tag="div">
-        
         <div v-if="activeTab === 'info'" class="tab-pane info-pane" key="info">
           <div class="info-card glass-card">
             <div class="info-grid">
@@ -73,7 +75,15 @@
                 <i class="fas fa-id-card"></i>
                 <div>
                   <label>Роль</label>
-                  <p>{{ user.role === 'admin' ? 'Администратор' : user.role === 'author' ? 'Автор' : 'Покупатель' }}</p>
+                  <p>
+                    {{
+                      user.role === "admin"
+                        ? "Администратор"
+                        : user.role === "author"
+                        ? "Автор"
+                        : "Покупатель"
+                    }}
+                  </p>
                 </div>
               </div>
             </div>
@@ -83,7 +93,6 @@
           </div>
         </div>
 
-        
         <div v-if="activeTab === 'purchases'" class="tab-pane" key="purchases">
           <div v-if="purchases.length === 0" class="empty-state">
             <i class="fas fa-shopping-cart empty-icon"></i>
@@ -130,7 +139,6 @@
           </div>
         </div>
 
-        
         <div v-if="activeTab === 'favorites'" class="tab-pane" key="favorites">
           <div v-if="favorites.length === 0" class="empty-state">
             <i class="fas fa-heart empty-icon"></i>
@@ -145,7 +153,6 @@
           </div>
         </div>
 
-        
         <!-- <div
           v-if="activeTab === 'subscriptions'"
           class="tab-pane"
@@ -175,7 +182,6 @@
           </div>
         </div> -->
 
-        
         <div
           v-if="activeTab === 'studio' && user.role === 'author'"
           class="tab-pane studio-pane"
@@ -184,7 +190,6 @@
           <ArtistDashboard />
         </div>
 
-        
         <div
           v-if="activeTab === 'my-tracks' && user.role === 'author'"
           class="tab-pane"
@@ -218,6 +223,14 @@
               <TrackCard :track="track" />
               <div class="track-actions">
                 <button
+                  v-if="track.sales > 0"
+                  @click="openPurchasesModal(track)"
+                  class="btn-action contracts"
+                  title="Договоры продаж"
+                >
+                  <i class="fas fa-file-contract"></i>
+                </button>
+                <button
                   @click="editTrack(track)"
                   class="btn-action edit"
                   title="Редактировать"
@@ -236,7 +249,6 @@
           </div>
         </div>
 
-        
         <div
           v-if="activeTab === 'upload' && user.role === 'author'"
           class="tab-pane"
@@ -274,7 +286,6 @@
                     v-model="newTrack.price"
                     min="0"
                     max="10000000"
-                    
                     step="1"
                     required
                   />
@@ -340,7 +351,6 @@
       </transition-group>
     </div>
 
-    
     <transition name="modal-fade">
       <div
         v-if="showEditModal"
@@ -498,8 +508,66 @@
         </div>
       </div>
     </transition>
+    <transition name="modal-fade">
+  <div
+    v-if="showPurchasesModal"
+    class="modal-overlay"
+    @click.self="showPurchasesModal = false"
+  >
+    <div class="modal glass-card" style="max-width: 700px;">
+      <button class="modal-close" @click="showPurchasesModal = false">&times;</button>
+      <h2>Договоры продаж</h2>
+      
+      <div v-if="selectedTrackPurchases" class="purchases-list">
+        <div class="track-info-header">
+          <img 
+            :src="getImageUrl(selectedTrackPurchases.cover_url)" 
+            class="track-thumb"
+            @error="e => e.target.src='/default-cover.jpg'"
+          />
+          <div>
+            <h3>{{ selectedTrackPurchases.track_title }}</h3>
+            <p class="purchases-count">
+              {{ selectedTrackPurchases.purchases.length }} продаж
+            </p>
+          </div>
+        </div>
+        
+        <div class="purchases-table">
+          <div 
+            v-for="purchase in selectedTrackPurchases.purchases" 
+            :key="purchase.id"
+            class="purchase-row"
+          >
+            <div class="purchase-info">
+              <div class="buyer-name">{{ purchase.buyer_name }}</div>
+              <div class="purchase-meta">
+                <span class="license-badge">{{ purchase.license_type }}</span>
+                <span class="purchase-date">
+                  {{ formatDate(purchase.purchase_date) }}
+                </span>
+              </div>
+              <div class="purchase-amount">{{ purchase.amount }} ₽</div>
+            </div>
+            <button
+              v-if="purchase.has_contract"
+              @click="downloadContract(purchase.id)"
+              class="btn-icon download-contract-btn"
+            >
+              <i class="fas fa-file-pdf"></i> Договор
+            </button>
+            <span v-else class="no-contract">Нет договора</span>
+          </div>
+        </div>
+      </div>
+      
+      <div v-else class="empty-state">
+        <p>Нет данных о покупках</p>
+      </div>
+    </div>
   </div>
-  
+</transition>
+  </div>
 </template>
 
 <script setup>
@@ -510,10 +578,12 @@ import ArtistDashboard from "../components/ArtistDashboard.vue";
 import { useProfile } from "../composables/useProfile";
 import api from "../api";
 import router from "@/router";
-import { showError, showSuccess } from "@/utils/alert"; 
+import { showError, showSuccess } from "@/utils/alert";
 const authStore = useAuthStore();
 const user = computed(() => authStore.user);
-
+const trackPurchases = ref([]);
+const showPurchasesModal = ref(false);
+const selectedTrackPurchases = ref(null);
 const ALLOWED_IMAGE_TYPES = [
   "image/jpeg",
   "image/jpg",
@@ -521,10 +591,10 @@ const ALLOWED_IMAGE_TYPES = [
   "image/gif",
   "image/webp",
 ];
-const MAX_MP3_SIZE = 50 * 1024 * 1024;   
-const MAX_COVER_SIZE = 5 * 1024 * 1024;  
-const MAX_AVATAR_SIZE = 2 * 1024 * 1024; 
-const ALLOWED_AUDIO_TYPES = ["audio/mpeg", "audio/mp3"]; 
+const MAX_MP3_SIZE = 50 * 1024 * 1024;
+const MAX_COVER_SIZE = 5 * 1024 * 1024;
+const MAX_AVATAR_SIZE = 2 * 1024 * 1024;
+const ALLOWED_AUDIO_TYPES = ["audio/mpeg", "audio/mp3"];
 const showEditTrackModal = ref(false);
 const editingTrack = ref(null);
 const editTrackForm = ref({
@@ -549,8 +619,6 @@ const {
   unsubscribe,
 } = useProfile();
 
-
-
 const closeEditTrackModal = () => {
   showEditTrackModal.value = false;
   editingTrack.value = null;
@@ -563,14 +631,28 @@ const closeEditTrackModal = () => {
     mp3_file: null,
   };
   editCoverPreview.value = null;
-  
+
   const coverInput = document.getElementById("edit-cover-input");
   const mp3Input = document.getElementById("edit-mp3-input");
   if (coverInput) coverInput.value = "";
   if (mp3Input) mp3Input.value = "";
 };
 
+const fetchTrackPurchases = async () => {
+  try {
+    const { data } = await api.get("/authors/me/track-purchases");
+    trackPurchases.value = data;
+  } catch (err) {
+    console.error("Ошибка загрузки покупок треков:", err);
+  }
+};
 
+const openPurchasesModal = (track) => {
+  // Находим покупки для этого трека
+  const trackData = trackPurchases.value.find((tp) => tp.track_id === track.id);
+  selectedTrackPurchases.value = trackData;
+  showPurchasesModal.value = true;
+};
 const handleEditCoverChange = (event) => {
   const file = event.target.files[0];
   if (!file) return;
@@ -597,7 +679,6 @@ const handleEditMp3Change = (event) => {
   }
   editTrackForm.value.mp3_file = file;
 };
-
 
 const saveTrackEdit = async () => {
   if (!editingTrack.value) return;
@@ -629,7 +710,7 @@ const saveTrackEdit = async () => {
 
     showSuccess("Трек обновлён");
     closeEditTrackModal();
-    await fetchAuthorTracks(); 
+    await fetchAuthorTracks();
   } catch (err) {
     console.error("Update failed", err);
     const message = err.response?.data?.detail || "Ошибка обновления трека";
@@ -652,13 +733,11 @@ const newTrack = ref({
 const coverPreview = ref(null);
 const uploading = ref(false);
 
-
 const tabs = computed(() => {
   const baseTabs = [
     { key: "info", label: "Мои данные" },
     { key: "purchases", label: "Мои покупки" },
     { key: "favorites", label: "Избранное" },
-    
   ];
   if (user.value?.role === "author") {
     baseTabs.push(
@@ -671,7 +750,6 @@ const tabs = computed(() => {
 });
 
 const activeTab = ref("info");
-
 
 const showEditModal = ref(false);
 const editForm = ref({ full_name: "", email: "", avatar_file: null });
@@ -750,7 +828,6 @@ const saveProfile = async () => {
   }
 };
 
-
 const fetchAuthorTracks = async () => {
   try {
     const response = await api.get("/tracks/me");
@@ -776,12 +853,16 @@ const handleCoverChange = (event) => {
     showError(
       "Неподдерживаемый формат изображения. Используйте JPG, PNG, GIF или WebP."
     );
-     if (file.size > MAX_COVER_SIZE) {
-        showError(`❌ Обложка слишком большая (${formatSize(file.size)}). Максимум: ${formatSize(MAX_COVER_SIZE)}`);
-        event.target.value = "";
-        return;
+    if (file.size > MAX_COVER_SIZE) {
+      showError(
+        `❌ Обложка слишком большая (${formatSize(
+          file.size
+        )}). Максимум: ${formatSize(MAX_COVER_SIZE)}`
+      );
+      event.target.value = "";
+      return;
     }
-    
+
     event.target.value = "";
     return;
   }
@@ -793,8 +874,8 @@ const handleCoverChange = (event) => {
   reader.readAsDataURL(file);
 };
 const formatSize = (bytes) => {
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} КБ`;
-    return `${(bytes / (1024 * 1024)).toFixed(1)} МБ`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} КБ`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} МБ`;
 };
 const handleMp3Change = (event) => {
   const file = event.target.files[0];
@@ -804,11 +885,15 @@ const handleMp3Change = (event) => {
     event.target.value = "";
     return;
   }
-   if (file.size > MAX_MP3_SIZE) {
-        showError(`❌ Файл слишком большой (${formatSize(file.size)}). Максимум: ${formatSize(MAX_MP3_SIZE)}`);
-        event.target.value = "";
-        return;
-    }
+  if (file.size > MAX_MP3_SIZE) {
+    showError(
+      `❌ Файл слишком большой (${formatSize(
+        file.size
+      )}). Максимум: ${formatSize(MAX_MP3_SIZE)}`
+    );
+    event.target.value = "";
+    return;
+  }
   newTrack.value.mp3_file = file;
 };
 
@@ -892,9 +977,9 @@ const editTrack = (track) => {
 
 const deleteTrack = async (trackId) => {
   const track = authorTracks.value.find((t) => t.id === trackId);
-  console.log(track)
-  console.log(track.sales)
-  
+  console.log(track);
+  console.log(track.sales);
+
   if (track?.sales > 0 || track?.is_exclusive_sold) {
     showError("❌ Этот трек уже был продан. Удаление невозможно.");
     return;
@@ -952,6 +1037,7 @@ onMounted(async () => {
   if (user.value?.role === "author") {
     await fetchAuthorTracks();
     await fetchGenres();
+    await fetchTrackPurchases();
   }
 
   window.addEventListener("favorites-updated", fetchAll);
@@ -960,7 +1046,6 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-
 .profile {
   max-width: 1280px;
   margin: 0 auto;
@@ -1040,7 +1125,6 @@ onMounted(async () => {
   background: #a855f7;
   color: white;
 }
-
 
 .hero-section {
   position: relative;
@@ -1152,7 +1236,6 @@ onMounted(async () => {
   color: #a0a0b0;
 }
 
-
 .tabs-container {
   margin-bottom: 2rem;
   overflow-x: auto;
@@ -1201,7 +1284,6 @@ onMounted(async () => {
   background: rgba(255, 255, 255, 0.05);
 }
 
-
 .content-container {
   min-height: 500px;
 }
@@ -1220,7 +1302,126 @@ onMounted(async () => {
     transform: translateY(0);
   }
 }
+.btn-action.contracts {
+  background: rgba(168, 85, 247, 0.8);
+}
 
+.btn-action.contracts:hover {
+  background: #a855f7;
+  transform: scale(1.05);
+}
+
+.purchases-list {
+  margin-top: 1rem;
+}
+
+.track-info-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(168, 85, 247, 0.1);
+  border-radius: 16px;
+  margin-bottom: 1.5rem;
+}
+
+.track-thumb {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.track-info-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: white;
+}
+
+.purchases-count {
+  margin: 0.2rem 0 0;
+  color: #a0a0b0;
+  font-size: 0.9rem;
+}
+
+.purchases-table {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.purchase-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.2s;
+}
+
+.purchase-row:hover {
+  background: rgba(168, 85, 247, 0.05);
+  border-color: rgba(168, 85, 247, 0.3);
+}
+
+.purchase-info {
+  flex: 1;
+}
+
+.buyer-name {
+  font-weight: 600;
+  color: white;
+  margin-bottom: 0.3rem;
+}
+
+.purchase-meta {
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+  margin-bottom: 0.3rem;
+}
+
+.license-badge {
+  background: rgba(168, 85, 247, 0.2);
+  color: #c084fc;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.purchase-date {
+  color: #a0a0b0;
+  font-size: 0.8rem;
+}
+
+.purchase-amount {
+  color: #a855f7;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.download-contract-btn {
+  background: linear-gradient(135deg, #a855f7, #3b82f6);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 40px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.download-contract-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(168, 85, 247, 0.4);
+}
+
+.no-contract {
+  color: #6b6b80;
+  font-size: 0.85rem;
+  font-style: italic;
+}
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.2s ease, transform 0.2s ease;
@@ -1231,7 +1432,6 @@ onMounted(async () => {
   opacity: 0;
   transform: translateY(8px);
 }
-
 
 .info-pane .info-card {
   padding: 2rem;
@@ -1273,7 +1473,6 @@ onMounted(async () => {
   width: 100%;
   justify-content: center;
 }
-
 
 .purchases-grid {
   display: flex;
@@ -1358,7 +1557,6 @@ onMounted(async () => {
   flex-shrink: 0;
 }
 
-
 .track-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -1413,7 +1611,6 @@ onMounted(async () => {
   transform: scale(1.05);
 }
 
-
 .authors-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -1464,7 +1661,6 @@ onMounted(async () => {
   border-color: #ff4444;
 }
 
-
 .empty-state {
   text-align: center;
   padding: 3rem 1rem;
@@ -1483,7 +1679,6 @@ onMounted(async () => {
   margin-bottom: 1.5rem;
   color: #a0a0b0;
 }
-
 
 .upload-form-container {
   max-width: 600px;
@@ -1595,7 +1790,6 @@ onMounted(async () => {
   justify-content: center;
 }
 
-
 .section-header {
   display: flex;
   justify-content: space-between;
@@ -1619,7 +1813,6 @@ onMounted(async () => {
   color: #a855f7;
   font-size: 2rem;
 }
-
 
 .modal-overlay {
   position: fixed;
@@ -1729,7 +1922,6 @@ onMounted(async () => {
   gap: 1rem;
   margin-top: 1.5rem;
 }
-
 
 @media (max-width: 768px) {
   .profile {

@@ -72,9 +72,31 @@ async def get_contract_file(
         raise HTTPException(status_code=404, detail="Договор не найден")
 
     from core.repositories.purchase import PurchaseRepository
+    from database.models import Track, Author, UserRole
+    
     purchase_repo = PurchaseRepository(session)
     purchase = await purchase_repo.get_by_id(purchase_id)
-    if not purchase or purchase.user_id != current_user.id:
+    if not purchase:
+        raise HTTPException(status_code=404, detail="Покупка не найдена")
+    
+    # Проверяем права доступа
+    has_access = False
+    
+    # 1. Покупатель может скачать свой договор
+    if purchase.user_id == current_user.id:
+        has_access = True
+    # 2. Администратор может скачать любой договор
+    elif current_user.role == UserRole.admin:
+        has_access = True
+    # 3. Автор трека может скачать договор о продаже своего трека
+    else:
+        track = await session.get(Track, purchase.track_id)
+        if track:
+            author = await session.get(Author, track.author_id)
+            if author and author.user_id == current_user.id:
+                has_access = True
+    
+    if not has_access:
         raise HTTPException(status_code=403, detail="У вас нет доступа к этому договору")
 
     if not contract.document_url:

@@ -101,7 +101,16 @@ class ContractService:
                 f"Шрифт не найден: {self.font_path}. "
                 "Поместите DejaVuSans.ttf в папку fonts/ в корне проекта."
             )
-
+    @staticmethod
+    def ruble_ending(n: int) -> str:
+        n = abs(int(n))
+        if 10 <= n % 100 <= 20:
+            return "рублей"
+        if n % 10 == 1:
+            return "рубль"
+        if 2 <= n % 10 <= 4:
+            return "рубля"
+        return "рублей"
     async def generate_contract(self, purchase_id: int) -> str:
         purchase = await self.purchase_repo.get_by_id(purchase_id)
         if not purchase:
@@ -122,12 +131,12 @@ class ContractService:
         pdf.set_font('DejaVu', 'B', 16)
         pdf.cell(0, 12, "ДОГОВОР КУПЛИ-ПРОДАЖИ ИСКЛЮЧИТЕЛЬНЫХ ПРАВ", 0, 1, 'C')
         pdf.set_font('DejaVu', '', 10)
-        pdf.cell(0, 6, f"г. Москва                                    {current_date.strftime('%d.%m.%Y')}", 0, 1, 'C')
+        pdf.cell(0, 6, f"г. Нижний Новгород                                    {current_date.strftime('%d.%m.%Y')}", 0, 1, 'C')
         pdf.ln(6)
 
         
         pdf.paragraph(
-            "Общество с ограниченной ответственностью «БитМаркет», действующее через платформу beatmarket.ru, в интересах Продавца, "
+            "Общество с ограниченной ответственностью «БитМаркет», действующее через платформу beatmarket в интересах Продавца, "
             "и Покупатель, именуемые в дальнейшем «Стороны», заключили настоящий договор о нижеследующем:"
         )
 
@@ -158,7 +167,7 @@ class ContractService:
         amount_text = self._amount_to_text(purchase.amount)
         pdf.paragraph(
             f"Цена передаваемого исключительного права составляет {purchase.amount} "
-            f"({amount_text}) рублей 00 копеек, включая все налоги и сборы."
+            f"{self.ruble_ending(purchase.amount)}"
         )
         pdf.paragraph(
             "Расчет произведен Покупателем полностью в момент оформления заказа на платформе BeatMarket. "
