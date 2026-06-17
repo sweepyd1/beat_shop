@@ -1,6 +1,6 @@
 import { ref, watch } from 'vue';
 import apiClient from '../api';
-import { debounce } from 'lodash'; // или написать свой debounce
+import { debounce } from 'lodash'; 
 
 export function useSearch() {
   const tracks = ref([]);
@@ -8,29 +8,29 @@ export function useSearch() {
   const error = ref(null);
   const total = ref(0);
 
-  // Параметры поиска
+  
   const searchQuery = ref('');
   const selectedGenres = ref([]);
   const bpmRange = ref([80, 140]);
-  const durationRange = ref([120, 360]); // в секундах (2-6 мин)
+  const durationRange = ref([120, 360]); 
   const sortBy = ref('popular');
   const currentPage = ref(0);
   const limit = 100;
 
-  // Загрузка жанров для фильтра (если нужно)
+  
   const genres = ref([]);
 
-  // Загрузка списка жанров с бэкенда
+  
   const fetchGenres = async () => {
     try {
       const response = await apiClient.get('/genres');
-      genres.value = response.data; // ожидаем [{id, name}, ...]
+      genres.value = response.data; 
     } catch (err) {
       console.error('Failed to load genres', err);
     }
   };
 
-  // Основная функция поиска
+  
   const fetchTracks = async () => {
     loading.value = true;
     error.value = null;
@@ -50,7 +50,7 @@ export function useSearch() {
 
       const response = await apiClient.get('/tracks/search', { params });
       tracks.value = response.data;
-      // Если бэкенд возвращает общее количество, обновить total
+      
     } catch (err) {
       error.value = err.response?.data?.detail || 'Ошибка загрузки';
     } finally {
@@ -58,10 +58,10 @@ export function useSearch() {
     }
   };
 
-  // Debounced версия для поиска при вводе
+  
   const debouncedFetch = debounce(fetchTracks, 300);
 
-  // Следим за изменениями фильтров и перезагружаем
+  
   watch([searchQuery, selectedGenres, bpmRange, durationRange, sortBy, currentPage], () => {
     debouncedFetch();
   }, { deep: true });

@@ -1,4 +1,4 @@
-// stores/auth.js (обновлённый)
+
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import api from '@/api/index';
@@ -6,7 +6,7 @@ import api from '@/api/index';
 export const useAuthStore = defineStore('auth', () => {
   const user = ref(null);
   const isLoading = ref(false);
-  const initialized = ref(false);             // ← новое поле
+  const initialized = ref(false);             
 
   const isAuthenticated = computed(() => !!user.value);
 
@@ -26,9 +26,9 @@ export const useAuthStore = defineStore('auth', () => {
     }
   };
 
-  // Восстановление сессии – вызывается только один раз
+  
   const restoreSession = async () => {
-    if (initialized.value) return;             // уже проверяли
+    if (initialized.value) return;             
     initialized.value = true;
     await fetchUser();
   };
@@ -42,7 +42,7 @@ export const useAuthStore = defineStore('auth', () => {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       await fetchUser();
-      initialized.value = true;               // после входа сессия активна
+      initialized.value = true;               
       return response;
     } catch (error) {
       console.error('Login error:', error);
@@ -54,7 +54,7 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       const response = await api.post('/auth/register', userData);
       await fetchUser();
-      initialized.value = true;               // после регистрации сразу вошли
+      initialized.value = true;               
       return response;
     } catch (error) {
       console.error('Register error:', error);
@@ -69,7 +69,7 @@ export const useAuthStore = defineStore('auth', () => {
       console.error('Logout error:', error);
     } finally {
       user.value = null;
-      initialized.value = false;              // можно заново восстановить при следующем заходе
+      initialized.value = false;              
     }
   };
 
@@ -79,7 +79,7 @@ export const useAuthStore = defineStore('auth', () => {
     isAuthenticated,
     initialized,
     fetchUser,
-    restoreSession,        // ← экспортируем
+    restoreSession,        
     login, 
     register, 
     logout 

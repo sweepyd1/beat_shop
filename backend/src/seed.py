@@ -14,7 +14,7 @@ async def seed_mass():
     async with db_manager.get_session() as session:
         print("🚀 Начинаем массовое заполнение данными...")
 
-        # --- 1. Создание/получение пользователя для автора ---
+        
         user = await session.execute(
             select(User).where(User.login == "default_author")
         )
@@ -35,10 +35,10 @@ async def seed_mass():
         else:
             print(f"✅ Пользователь default_author уже существует с ID={user.id}")
 
-        # --- 2. Создание/получение автора (связь с пользователем) ---
-        author = await session.get(Author, 1)  # ищем по id=1
+        
+        author = await session.get(Author, 1)  
         if not author:
-            # Проверим, есть ли автор с таким user_id
+            
             author_by_user = await session.execute(
                 select(Author).where(Author.user_id == user.id)
             )
@@ -57,8 +57,8 @@ async def seed_mass():
                 await session.flush()
                 print(f"✅ Создан автор с ID={author.id} (Default Author)")
         else:
-            # Если автор с id=1 уже существует, но его user_id не совпадает с текущим пользователем,
-            # обновим связь (на случай, если предыдущие сидеры создали автора без user_id)
+            
+            
             if author.user_id is None:
                 author.user_id = user.id
                 session.add(author)
@@ -66,7 +66,7 @@ async def seed_mass():
                 print(f"✅ Обновлён user_id автора с ID=1 на {user.id}")
             print("✅ Автор с ID=1 уже существует")
 
-        # --- 3. Создание 10 жанров, если их нет ---
+        
         genre_names = [
             "Рок", "Поп", "Хип-хоп", "Электронная", "Джаз",
             "Классика", "R&B", "Кантри", "Блюз", "Метал"
@@ -89,12 +89,12 @@ async def seed_mass():
         else:
             print("✅ Все 10 жанров уже присутствуют")
 
-        # Получаем список всех жанров (для случайного выбора)
+        
         all_genres = await session.execute(select(Genre))
         all_genres = all_genres.scalars().all()
         genre_ids = [g.id for g in all_genres]
 
-        # --- 4. Создание 100 треков ---
+        
         tracks_created = 0
         track_titles = [
             "Лунная соната", "В лесу", "Дорога домой", "Осенний дождь",
@@ -123,7 +123,7 @@ async def seed_mass():
                 mp3_file_url="/storage/tracks/default.mp3",
                 price=price,
                 genre_id=genre_id,
-                author_id=author.id  # используем реальный id автора
+                author_id=author.id  
             )
             session.add(track)
             tracks_created += 1

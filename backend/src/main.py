@@ -19,37 +19,37 @@ from api.routes.admin import authors as admin_authors, genre as admin_genres, tr
 from api.routes.contact import router as contact_router
 
 # @asynccontextmanager
-# async def lifespan(app: FastAPI):
-#     # Действия при старте
-#     async with db_manager.get_session() as session:
-#         repo = UserRepository(session)
-#         author_repo = AuthorRepository(session)
-#         author_service = AuthorService(repo=author_repo)
-#         auth_service = AuthService(repo, author_repo)
+
+
+
+
+
+
+
         
-#         # Проверяем, есть ли администратор
-#         result = await session.execute(select(User).where(User.is_admin == True))
-#         admin = result.scalar_one_or_none()
+
+
+
         
-#         if not admin:
-#             # Создаём администратора
-#             hashed = auth_service.get_password_hash(cfg.admin.password)
-#             admin = User(
-#                 full_name="Administrator",
-#                 login=cfg.admin.login,
-#                 email=cfg.admin.email,
-#                 password_hash=hashed,
-#                 is_admin=True
-#             )
-#             session.add(admin)
-#             await session.commit()
-#             print(f"Admin user created: {cfg.admin.login}")
-#         else:
-#             print("Admin user already exists")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
-#     yield
-#     # Действия при выключении (опционально)
-#     pass
+
+
+
 setup_environment()
 storage_path = Path("storage")
 covers_path = storage_path / "covers"
@@ -60,7 +60,7 @@ app = FastAPI(
     title=cfg.app.name,
     version=cfg.app.version,
     debug=cfg.app.debug,
-    # lifespan=lifespan
+    
 )
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
@@ -71,7 +71,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         msg = error.get("msg", "")
         ctx = error.get("ctx", {})
 
-        # Переводим стандартные типы ошибок
+        
         if err_type == "missing":
             new_error["msg"] = "Обязательное поле"
         elif err_type == "string_too_short":
@@ -85,7 +85,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
                 new_error["msg"] = "Некорректный формат email"
             else:
                 new_error["msg"] = "Некорректное значение"
-        # При необходимости добавьте другие типы
+        
 
         errors.append(new_error)
 

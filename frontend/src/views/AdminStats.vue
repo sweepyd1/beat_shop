@@ -11,7 +11,7 @@
       </p>
     </div>
 
-    <!-- Карточки с ключевыми метриками -->
+    
     <div class="stats-grid" v-if="!loading.metrics">
       <div class="stat-card">
         <div class="stat-icon"><i class="fas fa-users"></i></div>
@@ -50,7 +50,7 @@
     </div>
     <div v-else class="loading-placeholder">Загрузка метрик...</div>
 
-    <!-- Графики -->
+    
     <div class="charts-row">
       <div class="chart-card">
         <h3>Продажи по дням (последние 7 дней)</h3>
@@ -73,7 +73,7 @@
       </div>
     </div>
 
-    <!-- Таблица топ треков -->
+    
     <div class="card">
       <h3>🏆 Топ-10 самых продаваемых треков</h3>
       <div class="table-wrapper">
@@ -107,11 +107,11 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { Chart, registerables } from "chart.js";
-import api from "../api"; // путь к вашему API-клиенту
+import api from "../api"; 
 
 Chart.register(...registerables);
 
-// Состояния
+
 const metrics = ref({
   total_users: 0,
   new_users_last_week: 0,
@@ -122,9 +122,9 @@ const metrics = ref({
   total_listens: 0,
 });
 const topTracks = ref([]);
-const dailySales = ref([]);      // массив объектов { date, revenue }
-const dailyUsers = ref([]);      // массив объектов { date, count }
-const genreSales = ref([]);      // массив объектов { genre_name, revenue }
+const dailySales = ref([]);      
+const dailyUsers = ref([]);      
+const genreSales = ref([]);      
 
 const loading = ref({
   metrics: true,
@@ -134,7 +134,7 @@ const loading = ref({
   genres: true,
 });
 
-// Рефы для графиков
+
 const salesChartRef = ref(null);
 const usersChartRef = ref(null);
 const topTracksChartRef = ref(null);
@@ -145,7 +145,7 @@ let usersChartInstance = null;
 let topTracksChartInstance = null;
 let genresChartInstance = null;
 
-// Форматирование чисел
+
 const formatNumber = (num) => {
   if (num === undefined || num === null) return '0';
   return new Intl.NumberFormat('ru-RU').format(num);
@@ -155,7 +155,7 @@ const handleImageError = (e) => {
   e.target.src = '/default-cover.jpg';
 };
 
-// Загрузка метрик
+
 const fetchMetrics = async () => {
   try {
     const { data } = await api.get('/admin/stats/metrics');
@@ -167,7 +167,7 @@ const fetchMetrics = async () => {
   }
 };
 
-// Загрузка топ треков
+
 const fetchTopTracks = async () => {
   try {
     const { data } = await api.get('/admin/stats/top-tracks?limit=10');
@@ -179,7 +179,7 @@ const fetchTopTracks = async () => {
   }
 };
 
-// Загрузка продаж по дням
+
 const fetchDailySales = async () => {
   try {
     const { data } = await api.get('/admin/stats/sales-daily?days=7');
@@ -191,7 +191,7 @@ const fetchDailySales = async () => {
   }
 };
 
-// Загрузка новых пользователей по дням
+
 const fetchDailyUsers = async () => {
   try {
     const { data } = await api.get('/admin/stats/users-daily?days=7');
@@ -203,7 +203,7 @@ const fetchDailyUsers = async () => {
   }
 };
 
-// Загрузка продаж по жанрам
+
 const fetchGenreSales = async () => {
   try {
     const { data } = await api.get('/admin/stats/genres');
@@ -215,11 +215,11 @@ const fetchGenreSales = async () => {
   }
 };
 
-// Инициализация графиков после получения данных
+
 const initCharts = () => {
   if (!dailySales.value.length || !dailyUsers.value.length || !topTracks.value.length || !genreSales.value.length) return;
 
-  // 1. График продаж (линия)
+  
   const salesLabels = dailySales.value.map(item => {
     const d = new Date(item.date);
     return d.toLocaleDateString('ru-RU', { weekday: 'short' });
@@ -245,7 +245,7 @@ const initCharts = () => {
     });
   }
 
-  // 2. График новых пользователей (столбцы)
+  
   const userLabels = dailyUsers.value.map(item => {
     const d = new Date(item.date);
     return d.toLocaleDateString('ru-RU', { weekday: 'short' });
@@ -269,7 +269,7 @@ const initCharts = () => {
     });
   }
 
-  // 3. Топ-5 треков по выручке (горизонтальная бар)
+  
   const top5 = topTracks.value.slice(0, 5);
   const trackLabels = top5.map(t => t.title);
   const trackValues = top5.map(t => t.revenue);
@@ -290,7 +290,7 @@ const initCharts = () => {
     });
   }
 
-  // 4. Продажи по жанрам (пончик)
+  
   const genreLabels = genreSales.value.map(g => g.genre_name);
   const genreValues = genreSales.value.map(g => g.revenue);
   const backgroundColors = ['#a855f7', '#3b82f6', '#ec4899', '#f97316', '#10b981', '#8b5cf6', '#06b6d4', '#ef4444'];
@@ -311,7 +311,7 @@ const initCharts = () => {
   }
 };
 
-// Загрузка всех данных и инициализация графиков
+
 const loadAllData = async () => {
   await Promise.all([
     fetchMetrics(),
@@ -329,7 +329,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* Ваши стили остаются без изменений (из исходного компонента) */
+
 .stats-container {
   max-width: 1400px;
   margin: 2rem auto;

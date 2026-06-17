@@ -20,16 +20,16 @@ from database.models import User
 from api.dependencies import get_favorite_service, get_purchase_service
 router = APIRouter(prefix="/users", tags=["users"])
 
-# Зависимости для получения сервисов
+
 async def get_user_service(session: AsyncSession = Depends(get_db_session)) -> UserService:
     repo = UserRepository(session)
     file_service = FileService()
     return UserService(repo, file_service)
 
-# async def get_purchase_service(session: AsyncSession = Depends(get_db_session)) -> PurchaseService:
-#     repo = PurchaseRepository(session)
-#     contract = contract
-#     return PurchaseService(repo)
+
+
+
+
 
 
 
@@ -37,7 +37,7 @@ async def get_subscription_service(session: AsyncSession = Depends(get_db_sessio
     repo = SubscriptionRepository(session)
     return SubscriptionService(repo)
 
-# Получение текущего пользователя из куки через AuthService
+
 async def get_current_user_from_cookie(
     request: Request,
     auth_service: AuthService = Depends(get_auth_service)
@@ -55,7 +55,7 @@ async def get_my_profile(
     current_user: User = Depends(get_current_user_from_cookie),
     service: UserService = Depends(get_user_service)
 ):
-    # Получаем профиль со связанными данными (подписки и т.д.)
+    
     user = await service.get_profile(current_user.id)
     return user
 

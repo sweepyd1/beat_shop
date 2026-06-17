@@ -90,11 +90,11 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore();
   
-  // Ждём, пока стор восстановит пользователя из куки
+  
   await authStore.restoreSession();
 
   if (to.meta.requiresAuth && !authStore.user) {
-    // Сохраняем целевой путь для возврата после логина
+    
     next({ path: '/login', query: { redirect: to.fullPath } });
   } else {
     next();

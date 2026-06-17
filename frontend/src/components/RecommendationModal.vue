@@ -1,4 +1,4 @@
-<!-- eslint-disable vue/no-multiple-template-root -->
+
 <template>
   <Teleport to="body">
     <div v-if="visible" class="modal-overlay" @click.self="closeModal">
@@ -119,7 +119,7 @@ const emit = defineEmits(["close"]);
 
 const closeModal = () => {
   emit("close");
-  // Сбрасываем состояние при закрытии
+  
   setTimeout(() => {
     if (!props.visible) {
       recommendation.value = null;
@@ -155,7 +155,7 @@ const playTrack = (track) => {
 
 const buyTrack = (track) => {
   showSuccess(`Добавлено в корзину: ${track.title}`);
-  // Здесь можно вызвать store корзины
+  
 };
 
 const fetchRecommendation = async () => {
@@ -206,7 +206,7 @@ const fetchRecommendation = async () => {
 </script>
 
 <style scoped>
-/* Стили остаются такими же, как были в вашем компоненте – копируйте их из вашей версии */
+
 .modal-overlay {
   position: fixed;
   top: 0;

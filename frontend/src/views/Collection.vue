@@ -1,4 +1,4 @@
-<!-- Файл: Collection.vue (обновлённый) -->
+
 <template>
   <div class="collection" :style="{ '--cover-url': `url(${collection.cover})` }">
     <div class="collection-header parallax">
@@ -108,7 +108,7 @@ const handleImageError = (e) => {
   isolation: isolate;
 }
 
-/* Параллакс-фон из обложки */
+
 .collection::before {
   content: '';
   position: fixed;
@@ -240,7 +240,7 @@ const handleImageError = (e) => {
   border-color: #a855f7;
 }
 
-/* Таблица треков */
+
 .track-list {
   background: rgba(10, 10, 15, 0.6);
   backdrop-filter: blur(10px);

@@ -1,4 +1,4 @@
-# src/core/repositories/user.py
+
 from datetime import date, datetime, timedelta
 from typing import List, Optional
 from sqlalchemy.orm import selectinload
@@ -49,26 +49,26 @@ class UserRepository(BaseRepository[User]):
             select(User)
             .where(User.id == user_id)
             .options(
-                # Загрузка подписок с авторами
+                
                 selectinload(User.subscriptions).selectinload(Subscription.author),
-                # Загрузка покупок с треками, у которых загружены авторы и жанры
+                
                 selectinload(User.purchases)
                     .selectinload(Purchase.track)
-                    .selectinload(Track.author),   # автор трека
+                    .selectinload(Track.author),   
                 selectinload(User.purchases)
                     .selectinload(Purchase.track)
-                    .selectinload(Track.genre),    # 👈 жанр трека (исправляет ошибку)
-                # Загрузка избранного с треками, у которых загружены авторы и жанры
+                    .selectinload(Track.genre),    
+                
                 selectinload(User.favorites)
                     .selectinload(Favorite.track)
                     .selectinload(Track.author),
                 selectinload(User.favorites)
                     .selectinload(Favorite.track)
-                    .selectinload(Track.genre),    # 👈 и здесь тоже
-                # Загрузка интеракций (прослушивания для топ жанров)
+                    .selectinload(Track.genre),    
+                
                 selectinload(User.interactions)
                     .selectinload(Interaction.track)
-                    .selectinload(Track.genre),    # 👈 и для интеракций
+                    .selectinload(Track.genre),    
             )
         )
         return result.scalar_one_or_none()
@@ -134,10 +134,10 @@ class UserRepository(BaseRepository[User]):
             .limit(limit)
         )
         result = await self.session.execute(stmt)
-        return result.all()  # каждая строка: (id, full_name, login, total_spent, purchases_count)
+        return result.all()  
 
     async def get_role_distribution(self):
         """Распределение пользователей по ролям"""
         stmt = select(User.role, func.count(User.id)).group_by(User.role)
         result = await self.session.execute(stmt)
-        return [(role.value, count) for role, count in result]  # role.value т.к. role - Enum
+        return [(role.value, count) for role, count in result]  

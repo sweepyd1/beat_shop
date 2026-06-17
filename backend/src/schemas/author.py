@@ -25,7 +25,7 @@ class AuthorDetailResponse(AuthorResponse):
     followers_count: int = 0
     total_earnings: float = 0.0
     tracks_count: int = 0
-    # при желании добавим средний рейтинг
+    
     average_rating: float = 0.0
 
 class AuthorUpdateRequest(BaseModel):

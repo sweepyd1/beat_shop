@@ -1,4 +1,4 @@
-# migrations/env.py
+
 
 import asyncio
 from logging.config import fileConfig
@@ -8,25 +8,25 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
 
-# Добавляем путь к проекту, чтобы импортировать модули
+
 import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
 
-# Импортируем конфиг и базовый класс моделей
+
 from src.config import cfg
 from src.database.models import Base
 
-# this is the Alembic Config object, which provides
-# access to the values within the .ini file in use.
+
+
 config = context.config
 
-# Interpret the config file for Python logging.
-# This line sets up loggers basically.
+
+
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# Переопределяем sqlalchemy.url из нашего конфига
+
 config.set_main_option("sqlalchemy.url", cfg.database.async_url)
 
 target_metadata = Base.metadata

@@ -9,7 +9,7 @@ class GenreService:
         self.repo = repo
 
     async def create_genre(self, genre_data: GenreCreate):
-        # Проверка на дубликат (опционально)
+        
         return await self.repo.create(genre_data.name, genre_data.image_url)
 
     async def update_genre(self, genre_id: int, genre_data: GenreUpdate):
@@ -19,17 +19,17 @@ class GenreService:
             return await self.repo.update(genre_id, genre_data.name, genre_data.image_url)
 
     async def delete_genre(self, genre_id: int) -> bool:
-        # Загружаем жанр вместе со связанными треками
+        
         genre = await self.repo.get_with_tracks(genre_id)
         if not genre:
             return False
-        # Если у жанра есть треки – запрещаем удаление
+        
         if genre.tracks:
             raise HTTPException(
                 status_code=400,
                 detail="Невозможно удалить жанр, так как к нему привязаны треки. Сначала переназначьте или удалите треки."
             )
-        # Если треков нет – удаляем
+        
         return await self.repo.delete(genre_id)
         
     async def get_all_genres(self):
@@ -39,7 +39,7 @@ class GenreService:
             result.append({
                 "id": genre.id,
                 "name": genre.name,
-                "image_url": genre.image_url,      # добавить
+                "image_url": genre.image_url,      
                 "tracks_count": count
             })
         return result
@@ -47,6 +47,6 @@ class GenreService:
     async def get_genre(self, genre_id: int) -> Optional[Genre]:
         return await self.repo.get(genre_id)
 
-    # Новый метод для админки (возвращает все жанры без counts, но с image_url)
+    
     async def get_all_genres_admin(self):
-        return await self.repo.get_all()   # если в BaseRepository есть get_all
+        return await self.repo.get_all()   

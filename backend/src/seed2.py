@@ -18,24 +18,24 @@ from database.models import (
     User, Author, Genre, Track, Favorite, Purchase, Contract,
     Interaction, Subscription, UserRole, InteractionType, LicenseType
 )
-from api.dependencies import get_auth_service  # для хеширования паролей
+from api.dependencies import get_auth_service  
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Константы путей
+
 BASE_DIR = Path(__file__).resolve().parent
 DATA_MUSIC_DIR = BASE_DIR / "data" / "music"
 DATA_COVERS_DIR = BASE_DIR / "data" / "covers"
 STORAGE_TRACKS_DIR = BASE_DIR / "storage" / "tracks"
 STORAGE_COVERS_DIR = BASE_DIR / "storage" / "covers"
 
-# Убедимся, что папки для хранения существуют
+
 STORAGE_TRACKS_DIR.mkdir(parents=True, exist_ok=True)
 STORAGE_COVERS_DIR.mkdir(parents=True, exist_ok=True)
 
 
-# ------------------- Утилиты -------------------
+
 
 def scan_directory(directory: Path, extensions: tuple) -> List[Path]:
     """Рекурсивно сканирует директорию и возвращает список файлов с заданными расширениями."""
@@ -65,7 +65,7 @@ def get_audio_bpm(file_path: Path) -> Optional[int]:
     try:
         y, sr = librosa.load(file_path, sr=None)
         tempo, _ = librosa.beat.beat_track(y=y, sr=sr)
-        # tempo может быть numpy-массивом, берём первый элемент
+        
         if hasattr(tempo, 'item'):
             return int(tempo.item())
         return int(tempo)
@@ -78,7 +78,7 @@ async def download_random_image(save_path, width=500, height=500, keyword="music
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
     }
-    # Можно добавить ключевые слова для тематического поиска
+    
     url = f"https://placekitten.com/{width}/{height}"
     
     try:
@@ -97,7 +97,7 @@ async def download_random_image(save_path, width=500, height=500, keyword="music
 def generate_track_title(base_name: str) -> str:
     """Генерирует читаемое название трека из имени файла или создаёт случайное."""
     name = base_name.stem
-    # Убираем цифры и подчёркивания в начале
+    
     name = name.lstrip('0123456789-_ ')
     if len(name) < 3:
         adjectives = ['Тихий', 'Быстрый', 'Летний', 'Зимний', 'Утренний', 'Вечерний', 'Космический', 'Глубокий', 'Яркий', 'Холодный']
@@ -112,7 +112,7 @@ def get_relative_storage_path(absolute_path: Path, storage_root: Path) -> str:
     return f"/{rel_path.as_posix()}"
 
 
-# ------------------- Основные сидеры -------------------
+
 
 async def create_or_get_genres(session: AsyncSession) -> List[Genre]:
     """Создаёт стандартные жанры и возвращает их список."""
@@ -145,7 +145,7 @@ async def create_fake_authors(session: AsyncSession, auth_service) -> List[Autho
     ]
     authors = []
     for data in authors_data:
-        # Проверим, существует ли пользователь
+        
         result = await session.execute(select(User).where(User.login == data["login"]))
         user = result.scalar_one_or_none()
         if not user:
@@ -162,11 +162,11 @@ async def create_fake_authors(session: AsyncSession, auth_service) -> List[Autho
             await session.flush()
             logger.info(f"👤 Создан пользователь-автор: {user.login}")
 
-        # Проверим, существует ли профиль автора
+        
         result = await session.execute(select(Author).where(Author.user_id == user.id))
         author = result.scalar_one_or_none()
         if not author:
-            # Загрузим или скачаем фото автора (упрощённо – используем дефолтную обложку)
+            
             photo_url = "/storage/covers/default_author.jpg"
             author = Author(
                 user_id=user.id,
@@ -209,20 +209,20 @@ async def process_music_files(session: AsyncSession, music_files: List[Path], au
     """Обрабатывает MP3-файлы, копирует в storage и создаёт записи Track."""
     tracks = []
     for idx, mp3_path in enumerate(music_files):
-        # Копируем файл в storage/tracks/ с уникальным именем
+        
         dest_filename = f"{datetime.now().timestamp()}_{idx}_{mp3_path.name}"
         dest_path = STORAGE_TRACKS_DIR / dest_filename
         if not dest_path.exists():
             import shutil
             shutil.copy2(mp3_path, dest_path)
 
-        # Получаем метаданные
+        
         duration = get_audio_duration(mp3_path) or random.randint(120, 360)
         bpm = get_audio_bpm(mp3_path) or random.randint(60, 180)
 
-        # Определяем обложку
-        cover_url = "/storage/covers/default_cover.jpg"  # дефолт, позже можно заменить на скачанную
-        # Попробуем найти локальную обложку в data/covers с похожим именем
+        
+        cover_url = "/storage/covers/default_cover.jpg"  
+        
         cover_candidates = list(DATA_COVERS_DIR.glob(f"{mp3_path.stem}.*"))
         if cover_candidates:
             cover_path = cover_candidates[0]
@@ -232,22 +232,22 @@ async def process_music_files(session: AsyncSession, music_files: List[Path], au
             shutil.copy2(cover_path, dest_cover_path)
             cover_url = get_relative_storage_path(dest_cover_path, BASE_DIR)
         else:
-            # Если обложки нет – скачаем случайную
+            
             dest_cover_name = f"cover_{idx}.jpg"
             dest_cover_path = STORAGE_COVERS_DIR / dest_cover_name
             if await download_random_image(dest_cover_path):
                 cover_url = get_relative_storage_path(dest_cover_path, BASE_DIR)
 
-        # Генерируем название
+        
         title = generate_track_title(mp3_path)
 
-        # Случайно выбираем автора и жанр
+        
         author = random.choice(authors)
         genre = random.choice(genres)
 
-        # Цена от 50 до 500
+        
         price = round(random.uniform(50.0, 500.0), 2)
-        # Дата создания в прошлом (до 2 лет назад)
+        
         created_date = datetime.now() - timedelta(days=random.randint(30, 730))
 
         track = Track(
@@ -257,7 +257,7 @@ async def process_music_files(session: AsyncSession, music_files: List[Path], au
             created_date=created_date,
             mp3_file_url=get_relative_storage_path(dest_path, BASE_DIR),
             price=price,
-            plays=random.randint(0, 1000),  # начальное количество прослушиваний
+            plays=random.randint(0, 1000),  
             bpm=bpm,
             genre_id=genre.id,
             author_id=author.id
@@ -278,10 +278,10 @@ async def generate_user_activity(session: AsyncSession, users: List[User], track
     """Генерирует прослушивания, избранное и покупки для каждого пользователя."""
     logger.info("🔄 Генерация активности пользователей...")
     for user in users:
-        # Случайное количество треков, с которыми взаимодействовал пользователь
+        
         interacted_tracks = random.sample(tracks, k=min(len(tracks), random.randint(5, 25)))
         for track in interacted_tracks:
-            # Прослушивание (1-5 раз)
+            
             for _ in range(random.randint(1, 5)):
                 interaction = Interaction(
                     user_id=user.id,
@@ -291,9 +291,9 @@ async def generate_user_activity(session: AsyncSession, users: List[User], track
                 )
                 session.add(interaction)
 
-            # Избранное (с вероятностью 30%)
+            
             if random.random() < 0.3:
-                # Проверим, нет ли уже в избранном
+                
                 result = await session.execute(
                     select(Favorite).where(Favorite.user_id == user.id, Favorite.track_id == track.id)
                 )
@@ -301,9 +301,9 @@ async def generate_user_activity(session: AsyncSession, users: List[User], track
                     favorite = Favorite(user_id=user.id, track_id=track.id)
                     session.add(favorite)
 
-            # Покупка (с вероятностью 15%)
+            
             if random.random() < 0.15:
-                # Проверим, не куплен ли уже
+                
                 result = await session.execute(
                     select(Purchase).where(Purchase.user_id == user.id, Purchase.track_id == track.id)
                 )
@@ -324,7 +324,7 @@ async def generate_user_activity(session: AsyncSession, users: List[User], track
                     )
                     session.add(purchase)
                     await session.flush()
-                    # Создаём контракт
+                    
                     contract_number = f"CONTRACT-{user.id}-{track.id}-{int(datetime.now().timestamp())}"
                     contract = Contract(
                         purchase_id=purchase.id,
@@ -333,7 +333,7 @@ async def generate_user_activity(session: AsyncSession, users: List[User], track
                     )
                     session.add(contract)
 
-        # Подписки на авторов (с вероятностью 20% для каждого автора треков, которые слушал)
+        
         authors_of_interest = {track.author_id for track in interacted_tracks}
         for author_id in authors_of_interest:
             if random.random() < 0.2:
@@ -348,13 +348,13 @@ async def generate_user_activity(session: AsyncSession, users: List[User], track
     logger.info("✅ Активность пользователей сгенерирована")
 
 
-# ------------------- Главная функция -------------------
+
 
 async def seed_all():
     """Основная функция для наполнения базы данных."""
     logger.info("🚀 Запуск массового наполнения БД...")
 
-    # Сканируем локальные файлы
+    
     music_files = scan_directory(DATA_MUSIC_DIR, ('.mp3',))
     if not music_files:
         logger.error("❌ Не найдено MP3-файлов в data/music. Добавьте файлы и повторите.")
@@ -373,23 +373,23 @@ async def seed_all():
         return
     auth_service = get_auth_service()
 
-    # 1. Жанры
+    
     genres = await create_or_get_genres(session)
     await session.commit()
 
-    # 2. Авторы (с пользователями)
+    
     authors = await create_fake_authors(session, auth_service)
     await session.commit()
 
-    # 3. Обычные пользователи
+    
     users = await create_fake_users(session, auth_service, count=15)
     await session.commit()
 
-    # 4. Треки из MP3-файлов
+    
     tracks = await process_music_files(session, music_files, authors, genres)
     await session.commit()
 
-    # 5. Активность
+    
     all_users = users + [await session.get(User, author.user_id) for author in authors]
     await generate_user_activity(session, all_users, tracks)
     await session.commit()

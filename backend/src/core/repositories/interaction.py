@@ -32,7 +32,7 @@ class InteractionRepository:
     async def get_active_users_count_since(self, days: int = 30) -> int:
         """Количество уникальных пользователей, совершивших покупку или прослушивание за последние N дней"""
         since_date = datetime.utcnow() - timedelta(days=days)
-        # Используем UNION через подзапрос
+        
         from sqlalchemy import union
         from database.models import Purchase
 

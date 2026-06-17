@@ -4,14 +4,14 @@ import requests
 import time
 from pathlib import Path
 
-# Конфигурация
+
 JSON_PATH = "jamendo_tracks_1000.json"
 STORAGE_DIR = Path("storage")
 COVERS_DIR = STORAGE_DIR / "covers"
 TRACKS_DIR = STORAGE_DIR / "tracks"
 OUTPUT_JSON = "tracks_metadata_for_db.json"
 
-# Создаём папки
+
 COVERS_DIR.mkdir(parents=True, exist_ok=True)
 TRACKS_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -38,7 +38,7 @@ def sanitize_filename(name):
     return "".join(c for c in name if c.isalnum() or c in ' ._-').strip()
 
 def main():
-    # Читаем JSON
+    
     with open(JSON_PATH, 'r', encoding='utf-8') as f:
         tracks = json.load(f)
     
@@ -54,7 +54,7 @@ def main():
         artist = track.get('artist_name', 'Unknown')
         title = track.get('name', 'Unknown')
         
-        # Имена файлов
+        
         safe_artist = sanitize_filename(artist)
         safe_title = sanitize_filename(title)
         mp3_filename = f"{track_id}_{safe_artist}_{safe_title}.mp3"
@@ -63,7 +63,7 @@ def main():
         mp3_path = TRACKS_DIR / mp3_filename
         cover_path = COVERS_DIR / cover_filename
         
-        # Скачиваем обложку, если нет
+        
         cover_url = track.get('album_image') or track.get('image')
         if cover_url and not cover_path.exists():
             print(f"[{idx}/{len(tracks)}] Скачиваю обложку {cover_filename}...")
@@ -71,12 +71,12 @@ def main():
                 print(f"  Обложка сохранена: {cover_path}")
             else:
                 print(f"  Не удалось скачать обложку для трека {track_id}")
-                # используем дефолтную обложку
+                
                 cover_path = COVERS_DIR / "default_cover.jpg"
         else:
             print(f"[{idx}/{len(tracks)}] Обложка уже есть: {cover_path}")
         
-        # Скачиваем MP3, если нет
+        
         audio_url = track.get('audiodownload') or track.get('audio')
         if audio_url and not mp3_path.exists():
             print(f"  Скачиваю MP3 {mp3_filename}...")
@@ -84,11 +84,11 @@ def main():
                 print(f"  MP3 сохранён: {mp3_path}")
             else:
                 print(f"  Не удалось скачать MP3 для трека {track_id}")
-                continue  # пропускаем трек без аудио
+                continue  
         else:
             print(f"[{idx}/{len(tracks)}] MP3 уже есть: {mp3_path}")
         
-        # Формируем запись для БД
+        
         db_record = {
             "source_id": int(track_id),
             "title": title,
@@ -96,11 +96,11 @@ def main():
             "duration_seconds": track.get('duration', 0),
             "created_date": track.get('releasedate'),
             "mp3_file_url": f"/storage/tracks/{mp3_filename}",
-            "price": None,                     # установите позже
+            "price": None,                     
             "plays": track.get('listens', 0),
             "bpm": None,
-            "genre_id": None,                  # нужно будет сопоставить
-            "author_id": None,                 # нужно будет сопоставить
+            "genre_id": None,                  
+            "author_id": None,                 
             "artist_name": artist,
             "artist_id": track.get('artist_id'),
             "album_name": track.get('album_name'),
@@ -108,9 +108,9 @@ def main():
         }
         tracks_for_db.append(db_record)
         
-        time.sleep(0.3)   # пауза между треками
+        time.sleep(0.3)   
     
-    # Сохраняем метаданные для БД
+    
     with open(OUTPUT_JSON, 'w', encoding='utf-8') as f:
         json.dump(tracks_for_db, f, indent=2, ensure_ascii=False)
     

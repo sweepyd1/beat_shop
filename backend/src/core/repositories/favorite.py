@@ -30,10 +30,10 @@ class FavoriteRepository(BaseRepository[Favorite]):
             )
         )
         return result.scalar_one_or_none()
-    # async def get_user_favorites(self, user_id: int, skip: int = 0, limit: int = 100):
-    #     stmt = select(Favorite).where(Favorite.user_id == user_id).offset(skip).limit(limit)
-    #     result = await self.session.execute(stmt)
-    #     return result.scalars().all()
+    
+    
+    
+    
 
     async def exists(self, user_id: int, track_id: int) -> bool:
         stmt = select(Favorite).where(

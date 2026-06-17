@@ -15,7 +15,7 @@ class ListenService:
         Если count_today_only=True — засчитывается только одно прослушивание в день от пользователя.
         Если False — каждое воспроизведение считается отдельно (вариант А).
         """
-        # Проверка существования трека
+        
         track = await self.track_repo.get(track_id)
         if not track:
             raise HTTPException(status_code=404, detail="Track not found")
@@ -23,10 +23,10 @@ class ListenService:
         counted = True
         
         if count_today_only:
-            # Проверяем, не слушал ли уже сегодня
+            
             existing = await self.repo.get_today_listen(user_id, track_id)
             if existing:
-                # Уже считали сегодня — не увеличиваем счётчик
+                
                 current_plays = track.plays or 0
                 return {
                     "status": "ignored",
@@ -35,10 +35,10 @@ class ListenService:
                     "counted": False
                 }
 
-        # Создаём запись в Interaction
+        
         await self.repo.create_listen(user_id, track_id)
         
-        # Увеличиваем счётчик в Track
+        
         new_plays = await self.repo.increment_track_plays(track_id)
         if new_plays is None:
             raise HTTPException(status_code=500, detail="Failed to update track plays")

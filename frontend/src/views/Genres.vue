@@ -39,14 +39,14 @@ const DEFAULT_GENRE_COVER = 'https://images.unsplash.com/photo-1511379938547-c1f
  */
 const getGenreImageUrl = (genre) => {
   if (genre.image_url) {
-    // Абсолютный URL
+    
     if (genre.image_url.startsWith('http')) {
       return genre.image_url;
     }
-    // Относительный – добавляем базовый адрес бэкенда
+    
     return `${BASE_URL}${genre.image_url}`;
   }
-  // Нет изображения – используем заглушку
+  
   return DEFAULT_GENRE_COVER;
 };
 
@@ -74,7 +74,7 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* Ваши стили остаются без изменений */
+
 .genres-page {
   max-width: 1400px;
   margin: 0 auto;

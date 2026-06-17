@@ -15,9 +15,9 @@ class InteractionType(enum.Enum):
     purchase = "purchase"
 
 class UserRole(enum.Enum):
-    user = "user"      # обычный покупатель
-    author = "author"  # автор
-    admin = "admin"    # администратор
+    user = "user"      
+    author = "author"  
+    admin = "admin"    
 class LicenseType(enum.Enum):
     standard = "standard"
     extended = "extended"
@@ -36,13 +36,13 @@ class User(Base):
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
 
-    # Связи
+    
     favorites = relationship("Favorite", back_populates="user", cascade="all, delete-orphan")
     purchases = relationship("Purchase", back_populates="user", cascade="all, delete-orphan")
     interactions = relationship("Interaction", back_populates="user", cascade="all, delete-orphan")
     subscriptions = relationship("Subscription", back_populates="user", cascade="all, delete-orphan")
     author_profile = relationship("Author", back_populates="user", uselist=False, cascade="all, delete-orphan")
-    # внутри класса User
+    
     contact_messages = relationship("ContactMessage", back_populates="user", foreign_keys="[ContactMessage.user_id]")
 class Subscription(Base):
     __tablename__ = 'subscriptions'
@@ -61,12 +61,12 @@ class Subscription(Base):
 class Author(Base):
     __tablename__ = 'authors'
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id'), unique=True, nullable=False)  # добавлено
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id'), unique=True, nullable=False)  
     full_name: Mapped[str] = mapped_column(String(150), nullable=False)
     photo_url: Mapped[str | None] = mapped_column(String(200))
     bio: Mapped[str | None] = mapped_column(Text)
 
-    # Связи
+    
     user = relationship("User", back_populates="author_profile")
     tracks = relationship("Track", back_populates="author", cascade="all, delete-orphan")
     subscribers = relationship("Subscription", back_populates="author", cascade="all, delete-orphan")
@@ -95,18 +95,18 @@ class Track(Base):
     is_exclusive_sold: Mapped[bool] = mapped_column(Boolean, default=False, nullable=True)
     
 
-    # Внешние ключи
+    
     genre_id: Mapped[int] = mapped_column(Integer, ForeignKey('genres.id'), nullable=False)
     author_id: Mapped[int] = mapped_column(Integer, ForeignKey('authors.id'), nullable=False)
 
-    # Связи
+    
     genre = relationship("Genre", back_populates="tracks")
     author = relationship("Author", back_populates="tracks")
     favorites = relationship("Favorite", back_populates="track", cascade="all, delete-orphan")
     purchases = relationship("Purchase", back_populates="track", cascade="all, delete-orphan")
     interactions = relationship("Interaction", back_populates="track", cascade="all, delete-orphan")
 
-    # Индекс для поиска
+    
     __table_args__ = (
         Index('idx_track_title', 'title'),
     )
@@ -122,7 +122,7 @@ class Favorite(Base):
     user = relationship("User", back_populates="favorites")
     track = relationship("Track", back_populates="favorites")
 
-    # Уникальность пары пользователь-трек
+    
     __table_args__ = (
         UniqueConstraint('user_id', 'track_id', name='unique_user_track_favorite'),
     )
@@ -144,9 +144,9 @@ class Purchase(Base):
     contract = relationship("Contract", uselist=False, back_populates="purchase", cascade="all, delete-orphan")
 
 
-    # __table_args__ = (
-    #     UniqueConstraint('user_id', 'track_id', name='unique_user_track_purchase'),
-    # )
+    
+    
+    
 
 class Contract(Base):
     __tablename__ = 'contracts'
@@ -185,7 +185,7 @@ class ContactMessage(Base):
     created_at: Mapped[DateTime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     is_read: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
 
-    # Опционально: если хотите привязывать сообщения к зарегистрированным пользователям
+    
     user_id: Mapped[int | None] = mapped_column(Integer, ForeignKey('users.id'), nullable=True)
     user = relationship("User", back_populates="contact_messages", foreign_keys=[user_id])
 

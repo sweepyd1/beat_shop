@@ -19,14 +19,14 @@ class StatsService:
 
     async def get_author_stats(self, author_id: int):
        
-        # общая выручка (не используется в ответе StatsResponse, но может понадобиться для AuthorDetailResponse)
+        
         total_earnings = await self.purchase_repo.get_author_total_earnings(author_id)
-        # продажи и доход за месяц
+        
         sales_count, monthly_earnings = await self.purchase_repo.get_author_monthly_stats(author_id)
-        # график продаж за последние 7 дней
+        
         chart = await self.purchase_repo.get_last_7_days_sales(author_id)
 
-        # средний рейтинг – заглушка (можно вычислить из отзывов или соотношения лайков/прослушиваний)
+        
         average_rating = 0.0
 
         return StatsResponse(
@@ -48,11 +48,11 @@ class StatsService:
         return result
     
     async def get_author_full_stats(self, author_id: int) -> AuthorFullStatsResponse:
-        # Параллельный вызов всех методов
+        
         total_tracks = await self.track_repo.count_by_author(author_id)
         total_plays = await self.interaction_repo.count_plays_by_author(author_id)
         total_favorites = await self.favorite_repo.count_favorites_by_author(author_id)
-        # total_subscribers = await self.subscription_repo.count_subscribers(author_id)
+        
         total_earnings = await self.purchase_repo.get_author_total_earnings(author_id)
         sales_this_month, monthly_earnings = await self.purchase_repo.get_author_monthly_stats(author_id)
         sales_chart = await self.purchase_repo.get_last_7_days_sales_count(author_id)
@@ -62,7 +62,7 @@ class StatsService:
         top_tracks_sales = await self.purchase_repo.get_top_tracks_by_sales(author_id, 5)
         top_tracks_plays = await self.track_repo.get_top_tracks_by_plays(author_id, 5)
 
-        # Преобразуем в Pydantic модели
+        
         sales_by_license_models = [
             LicenseSalesStats(license_type=item['license_type'], count=item['count'], total_amount=item['total_amount'])
             for item in sales_by_license
@@ -70,7 +70,7 @@ class StatsService:
         top_tracks_sales_models = [
             TopTrackStats(
                 track_id=item['track_id'], title=item['title'], cover_url=item.get('cover_url'),
-                sales_count=item['sales_count'], plays=0,  # plays можно подтянуть отдельно или оставить 0
+                sales_count=item['sales_count'], plays=0,  
                 revenue=item['revenue']
             ) for item in top_tracks_sales
         ]
@@ -99,5 +99,5 @@ class StatsService:
             sales_by_license=sales_by_license_models,
             top_tracks_by_sales=top_tracks_sales_models,
             top_tracks_by_plays=top_tracks_plays_models,
-            average_rating=0.0  # заменить на реальный, когда появится
+            average_rating=0.0  
         )

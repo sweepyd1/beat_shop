@@ -42,7 +42,7 @@ class ListenRepository(BaseRepository[Interaction]):
             timestamp=timestamp or datetime.utcnow()
         )
         self.session.add(interaction)
-        await self.session.flush()  # чтобы получить ID, если нужно
+        await self.session.flush()  
         await self.session.commit()
         return interaction
 

@@ -7,7 +7,7 @@
       <p class="text-gray-400">Управление треками</p>
     </div>
 
-    <!-- Вкладки -->
+    
     <div class="tabs">
       <button 
         :class="['tab', { active: activeTab === 'add' }]"
@@ -23,7 +23,7 @@
       </button>
     </div>
 
-    <!-- Добавление трека -->
+    
     <div v-if="activeTab === 'add'" class="card add-card">
       <form @submit.prevent="submitTrack" class="space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -109,7 +109,7 @@
       </form>
     </div>
 
-    <!-- Список треков -->
+    
     <div v-if="activeTab === 'list'" class="card">
       <div class="flex justify-between items-center mb-4">
         <input v-model="searchQuery" placeholder="Поиск по названию или автору..." class="search-input" />
@@ -151,7 +151,7 @@
       </div>
     </div>
 
-    <!-- Модальное окно редактирования -->
+    
     <teleport to="body">
       <div v-if="showEditModal" class="modal-overlay" @click.self="closeEditModal">
         <div class="modal-content">
@@ -243,7 +243,7 @@ import { ref, computed, onMounted } from 'vue';
 import api from '@/api';
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
-import { showError, showSuccess } from '@/utils/alert';  // <-- импорт
+import { showError, showSuccess } from '@/utils/alert';  
 const authStore = useAuthStore();
 const router = useRouter();
 
@@ -389,11 +389,11 @@ const submitTrack = async () => {
   }
 };
 
-// Редактирование
+
 const openEditModal = async (track) => {
  
   
-  // 👇 2. Теперь проверяем продажи и эксклюзивность
+  
   if (track && (track.sales > 0 || track.is_exclusive_sold)) {
     showError('❌ Этот трек уже был продан. Удаление невозможно.');
     return;
@@ -491,7 +491,7 @@ const fetchAuthors = async () => {
 const fetchTracks = async () => {
   tracksLoading.value = true;
   try {
-    const res = await api.get('/admin/tracks');  // ← изменено на /list
+    const res = await api.get('/admin/tracks');  
     tracks.value = res.data;
   } catch (err) {
     console.error(err);
@@ -501,10 +501,10 @@ const fetchTracks = async () => {
 };
 
 const deleteTrack = async (id) => {
-  // 👇 1. Сначала находим сам объект трека в массиве по его id
+  
   const track = tracks.value.find(t => t.id === id);
   
-  // 👇 2. Теперь проверяем продажи и эксклюзивность
+  
   if (track && (track.sales > 0 || track.is_exclusive_sold)) {
     showError('❌ Этот трек уже был продан. Удаление невозможно.');
     return;
@@ -515,7 +515,7 @@ const deleteTrack = async (id) => {
   try {
     await api.delete(`/admin/tracks/${id}`);
     showSuccess('Трек удалён');
-    fetchTracks(); // Обновляем список
+    fetchTracks(); 
   } catch (err) { 
     console.error(err); 
     showError(err.response?.data?.detail || 'Ошибка удаления'); 
@@ -707,7 +707,7 @@ onMounted(() => {
   color: #a0a0b0;
 }
 
-/* Кнопки действий (редактировать/удалить) */
+
 .action-buttons {
   position: absolute;
   top: 0.5rem;
@@ -741,7 +741,7 @@ onMounted(() => {
   background: #ff4d4d;
 }
 
-/* Модальное окно */
+
 .modal-overlay {
   position: fixed;
   top: 0;

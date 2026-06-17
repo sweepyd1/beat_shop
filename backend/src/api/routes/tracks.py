@@ -17,27 +17,27 @@ from fastapi import status
 router = APIRouter(prefix="/tracks", tags=["tracks"])
 
 # @router.get("/me", response_model=List[TrackResponse])
-# async def get_my_tracks(
-#     request:Request,
-#     track_service: TrackService = Depends(get_track_service),
-#     auth_service: AuthService = Depends(get_auth_service),
 
-# ):
-#     access_token = request.cookies.get("access_token")
-#     if not access_token:
-#         raise HTTPException(status_code=401, detail="Not authenticated")
-#     user = await auth_service.get_user_from_token(access_token)
-#     print(user.role.name)
-#     if user.role.name != "author":
-#         raise HTTPException(status_code=403, detail="Только авторы могут просматривать свои треки")
-#     tracks = await track_service.get_tracks_by_user(user.id)
-#     return tracks
-@router.get("/me", response_model=List[AuthorTrackResponse]) # <-- Меняем response_model
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@router.get("/me", response_model=List[AuthorTrackResponse]) 
 async def get_my_tracks(
     request: Request,
     track_service: TrackService = Depends(get_track_service),
     auth_service: AuthService = Depends(get_auth_service),
-    author_service: AuthorService = Depends(get_author_service), # <-- Добавляем зависимость
+    author_service: AuthorService = Depends(get_author_service), 
 ):
     access_token = request.cookies.get("access_token")
     if not access_token:
@@ -47,12 +47,12 @@ async def get_my_tracks(
     if user.role.name != "author":
         raise HTTPException(status_code=403, detail="Только авторы могут просматривать свои треки")
     
-    # Получаем автора, чтобы передать его ID в правильный метод
+    
     author = await author_service.get_author_by_user_id(user.id)
     if not author:
         raise HTTPException(status_code=404, detail="Профиль автора не найден")
 
-    # ВЫЗЫВАЕМ МЕТОД, КОТОРЫЙ УЖЕ УМЕЕТ СЧИТАТЬ ПРОДАЖИ (sales)
+    
     tracks = await track_service.get_author_tracks(author.id)
     return tracks
 @router.get("/search", response_model=list[TrackResponse])
@@ -119,13 +119,13 @@ async def get_trends(
     """
     from datetime import datetime, timedelta, timezone
     
-    # Определяем дату начала периода
+    
     now = datetime.now(timezone.utc)
     if period == "day":
         start_date = now - timedelta(days=1)
     elif period == "week":
         start_date = now - timedelta(weeks=1)
-    else:  # month
+    else:  
         start_date = now - timedelta(days=30)
     
     trends = await service.repo.get_trends(start_date=start_date, limit=limit)
@@ -163,7 +163,7 @@ async def create_track(
     try:
         duration, bpm,created_date = analyze_mp3(tmp_path)
     finally:
-        # 🧹 Удаляем временный файл
+        
         if tmp_path.exists():
             tmp_path.unlink()
     print(created_date)
@@ -208,38 +208,38 @@ async def download_track(
     raw_path = track.mp3_file_url.lstrip("/")
     safe_path = os.path.normpath(raw_path)
 
-    # 2. Превращаем в абсолютный путь относительно корня приложения (или текущей директории)
-    storage_root = os.path.abspath("storage")  # папка, где лежат mp3-файлы
+    
+    storage_root = os.path.abspath("storage")  
     full_path = os.path.abspath(safe_path)
 
-    # 3. Проверка, что файл действительно внутри storage_root
+    
     if not full_path.startswith(storage_root):
         raise HTTPException(status_code=403, detail="Invalid file path")
 
-    # 4. Теперь проверяем существование
+    
     if not os.path.exists(full_path):
         raise HTTPException(status_code=404, detail="Файл трека отсутствует на сервере")
 
-    file_path = full_path   # используем проверенный путь
+    file_path = full_path   
 
     filename = f"{track.id}_{track.title.replace(' ', '_')}.mp3"
     return FileResponse(file_path, media_type="audio/mpeg", filename=filename)
 
 # @router.get("/{track_id}/stream")
-# async def stream_track(
-#     track_id: int,
-#     service: TrackService = Depends(get_track_service)
-# ):
-#     track = await service.get_track(track_id)
-#     if not track:
-#         raise HTTPException(status_code=404, detail="Track not found")
+
+
+
+
+
+
+
     
     
-#     file_path = track.mp3_file_url  
-#     if not os.path.exists(file_path):
-#         raise HTTPException(status_code=404, detail="Audio file not found")
+
+
+
     
-#     return FileResponse(file_path, media_type="audio/mpeg", filename=f"{track.title}.mp3")
+
 
 @router.put("/{track_id}", response_model=TrackResponse)
 async def update_track(
@@ -247,32 +247,32 @@ async def update_track(
     track_id: int,
     auth_service: AuthService = Depends(get_auth_service),
     service: TrackService = Depends(get_track_service),
-    # Данные из формы (Pydantic модель принимаем как Form-поля, либо используем JSON)
+    
     title: Optional[str] = Form(None),
     genre_id: Optional[int] = Form(None),
     price: Optional[float] = Form(None),
     bpm: Optional[int] = Form(None),
     duration: Optional[int] = Form(None),
-    # Файлы (опционально)
+    
     cover: Optional[UploadFile] = File(None),
     mp3: Optional[UploadFile] = File(None),
 ):
-    # 1. Аутентификация
+    
     access_token = request.cookies.get("access_token")
     if not access_token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     user = await auth_service.get_user_from_token(access_token)
     
-    # 2. Получаем существующий трек (без изменений)
+    
     track = await service.get_track(track_id)
     if not track:
         raise HTTPException(status_code=404, detail="Track not found")
     
-    # 3. Проверка прав
+    
     if track.author.user_id != user.id and not user.is_admin:
         raise HTTPException(403, "Нет прав на редактирование этого трека")
     
-    # 4. Собираем данные для обновления (только переданные)
+    
     update_data = {}
     if title is not None:
         update_data["title"] = title
@@ -285,7 +285,7 @@ async def update_track(
     if duration is not None:
         update_data["duration_seconds"] = duration
     
-    # 5. Вызываем сервис обновления (передаём файлы отдельно)
+    
     updated_track = await service.update_track(
         track_id=track_id,
         update_data=update_data,
@@ -295,7 +295,7 @@ async def update_track(
     return updated_track
 
 
-# В файле tracks.py
+
 
 @router.delete("/{track_id}", status_code=204)
 async def delete_track(
@@ -304,19 +304,19 @@ async def delete_track(
     auth_service: AuthService = Depends(get_auth_service),
     service: TrackService = Depends(get_track_service)
 ):
-    # 1. Аутентификация
+    
     access_token = request.cookies.get("access_token")
     if not access_token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
     user = await auth_service.get_user_from_token(access_token)
     
-    # 2. Получаем трек ДО удаления
+    
     track = await service.get_track(track_id)
     if not track:
         raise HTTPException(status_code=404, detail="Track not found")
 
-    # 3. Проверка прав
+    
     if track.author.user_id != user.id and not user.is_admin:
         raise HTTPException(403, "Нет прав на удаление этого трека")
 
@@ -329,19 +329,19 @@ async def delete_track(
             detail="Нельзя удалить трек, который уже был продан"
         )
     
-    # Дополнительная проверка на эксклюзивную продажу (если такое поле есть в модели)
+    
     if getattr(track, 'is_exclusive_sold', False):
         raise HTTPException(
             status_code=400, 
             detail="Нельзя удалить трек с эксклюзивной продажей"
         )
 
-    # 5. Если все проверки пройдены, удаляем
+    
     deleted = await service.delete_track(track_id)
     if not deleted:
         raise HTTPException(status_code=404, detail="Track not found")
 
-    return None  # status_code=204, тело пустое
+    return None  
 
 @router.get("/{track_id}", response_model=TrackResponse)
 async def get_track(

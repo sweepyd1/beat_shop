@@ -14,7 +14,7 @@ router = APIRouter(prefix="/recommendations", tags=["recommendations"])
 @router.get("/personal", response_model=List[TrackResponse])
 async def personal_recommendations(
     limit: int = 1,
-    exclude: str = "",   # список ID через запятую, например "5,12,23"
+    exclude: str = "",   
     session: AsyncSession = Depends(get_db_session),
     current_user: Optional[User] = Depends(get_current_user_optional)
 ):
@@ -60,7 +60,7 @@ async def stream_track(
     if not track:
         raise HTTPException(status_code=404, detail="Track not found")
 
-    # Извлекаем имя файла из URL
+    
     mp3_file_url = track.mp3_file_url
     if mp3_file_url.startswith('/storage/tracks/'):
         filename = mp3_file_url.replace('/storage/tracks/', '')

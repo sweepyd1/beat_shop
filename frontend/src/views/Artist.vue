@@ -1,4 +1,4 @@
-<!-- Файл: Artist.vue (обновлённый) -->
+
 <template>
   <div class="artist-profile">
     <div v-if="loading" class="loading-state">
@@ -51,7 +51,7 @@
         </div>
       </div>
 
-      <!-- Биты артиста -->
+      
       <div class="beats-section">
         <h2><i class="fas fa-headphones"></i> Биты артиста</h2>
         <div v-if="!tracks || tracks.length === 0" class="empty-state">
@@ -98,11 +98,11 @@ const avatarUrl = computed(() => {
     url = artist.value.photo_url;
   } else {
     const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
-    // нормализуем baseUrl (убираем завершающий слеш)
+    
     const normalizedBase = baseUrl.endsWith("/")
       ? baseUrl.slice(0, -1)
       : baseUrl;
-    // добавляем слеш к path, если его нет
+    
     const path = artist.value.photo_url.startsWith("/")
       ? artist.value.photo_url
       : "/" + artist.value.photo_url;
@@ -155,7 +155,7 @@ const fetchArtistData = async () => {
     console.log("Full response:", response.data);
     console.log("photo_url:", response.data.photo_url);
 
-    // Генерируем случайные данные для графика
+    
     salesChart.value = Array.from(
       { length: 7 },
       () => Math.floor(Math.random() * 80) + 20
@@ -471,7 +471,7 @@ onMounted(() => {
   font-size: 1.2rem;
 }
 
-/* Loading and error states */
+
 .loading-state,
 .error-state {
   text-align: center;

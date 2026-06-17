@@ -1,6 +1,6 @@
 <template>
   <div v-if="track && isPlayerVisible" class="player">
-    <!-- Кнопка закрытия (крестик) -->
+    
     <button class="close-btn" @click="closePlayer">
       <i class="fas fa-times"></i>
     </button>
@@ -18,7 +18,7 @@
       </button>
     </div>
 
-    <!-- Остальная часть шаблона без изменений -->
+    
     <div class="player-controls">
       <button @click="prev" class="control-btn">
         <i class="fas fa-step-backward"></i>
@@ -82,33 +82,33 @@ const logListen = async () => {
   }
 };
 
-// Глобальное состояние плеера
+
 const player = inject("player");
 if (!player) {
   console.error("Player: no player injected");
 }
 const { currentTrack, isPlaying, nextTrack, prevTrack, togglePlay: globalTogglePlay } = player || {};
 
-// Локальный трек
+
 const track = computed(() => currentTrack?.value);
 
-// Управление видимостью плеера
-const isPlayerVisible = ref(true); // показываем по умолчанию
 
-// Закрыть плеер
+const isPlayerVisible = ref(true); 
+
+
 const closePlayer = () => {
   isPlayerVisible.value = false;
-  // Остановить воспроизведение
+  
   if (audio) {
     audio.pause();
     audio.currentTime = 0;
   }
   if (isPlaying) isPlaying.value = false;
-  // Сбросить текущий трек, чтобы избежать фонового проигрывания при повторном открытии
+  
   if (currentTrack) currentTrack.value = null;
 };
 
-// Избранное
+
 const isFavorite = ref(false);
 const isLoggedIn = isAuthenticated;
 
@@ -191,7 +191,7 @@ watch(track, (newTrack, oldTrack) => {
     listenLoggedForTrack.value = null;
   }
   if (newTrack) {
-    isPlayerVisible.value = true; // показываем плеер при смене трека
+    isPlayerVisible.value = true; 
     initAudio();
     checkFavorite();
     if (isPlaying?.value) {
@@ -286,7 +286,7 @@ const prev = () => {
   z-index: 200;
 }
 
-/* Стили кнопки закрытия */
+
 .close-btn {
   position: absolute;
   top: 10px;
@@ -303,7 +303,7 @@ const prev = () => {
   color: #ffffff;
 }
 
-/* Остальные стили */
+
 .track-info {
   display: flex;
   align-items: center;
@@ -412,9 +412,9 @@ const prev = () => {
   height: 5px;
 }
 
-/* ===== АДАПТИВНЫЕ СТИЛИ ===== */
 
-/* Планшеты и небольшие десктопы */
+
+
 @media (max-width: 768px) {
   .player {
     padding: 0.75rem 1rem;
@@ -436,7 +436,7 @@ const prev = () => {
 
   .details {
     flex: 1;
-    min-width: 0; /* позволяет обрезать текст */
+    min-width: 0; 
   }
 
   .details .title,
@@ -478,7 +478,7 @@ const prev = () => {
   }
 }
 
-/* Мобильные телефоны (до 480px) */
+
 @media (max-width: 480px) {
   .player {
     padding: 0.5rem 0.75rem;
@@ -541,7 +541,7 @@ const prev = () => {
   }
 
   .volume-control input {
-    display: none; /* скрываем ползунок, оставляем только иконку */
+    display: none; 
   }
 
   .volume-control i {
@@ -549,7 +549,7 @@ const prev = () => {
   }
 }
 
-/* Для устройств без hover (touch) — делаем кнопки всегда видимыми/активными */
+
 @media (hover: none) {
   .close-btn:active {
     color: white;

@@ -1,4 +1,4 @@
-# core/services/purchase_service.py
+
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException, status
 from schemas.track import TrackResponse
@@ -38,7 +38,7 @@ class PurchaseService:
             return track.price
         elif license_type == LicenseType.extended:
             return track.price * 2
-        else:  # exclusive
+        else:  
             return track.price * 5
 
     async def _get_or_create_guest_user(self, name: str, email: str) -> User:
@@ -46,11 +46,11 @@ class PurchaseService:
         user = await self.user_repo.get_by_email(email)
         if user:
             return user
-        # Создаём гостя
-        hashed_password = pwd_context.hash("")  # пустой пароль, гость не может войти
+        
+        hashed_password = pwd_context.hash("")  
         user = User(
             full_name=name,
-            login=email.split('@')[0],  # может быть коллизия, но для гостя сойдёт
+            login=email.split('@')[0],  
             password_hash=hashed_password,
             email=email,
             role=UserRole.user,
@@ -70,16 +70,16 @@ class PurchaseService:
         current_user: User = None
     ) -> dict:
         """Универсальный метод покупки, работающий как для авторизованных, так и для гостей."""
-        # 1. Проверяем существование трека
-        # track = await self.track_repo.get(track_id)
+        
+        
         stmt = (
             select(Track)
-            .where(Track.id == track_id)  # Исправлена опечатка: было id, стало track_id
+            .where(Track.id == track_id)  
             .options(
-                selectinload(Track.genre),   # Возвращаем загрузку связанных данных
-                selectinload(Track.author)   # Возвращаем загрузку связанных данных
+                selectinload(Track.genre),   
+                selectinload(Track.author)   
             )
-            .with_for_update()               # КЛЮЧЕВОЙ МОМЕНТ: Блокировка строки до конца транзакции
+            .with_for_update()               
         )
         result = await self.session.execute(stmt)
         track = result.scalar_one_or_none()
@@ -96,15 +96,15 @@ class PurchaseService:
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Вы не можете купить собственный трек"
             )
-        # 3. Определяем пользователя
+        
         if current_user:
             user = current_user
-            # Дополнительно обновим имя/email, если они переданы и отличаются
+            
             if buyer_name and buyer_name != user.full_name:
                 user.full_name = buyer_name
             if buyer_email and buyer_email != user.email:
                 user.email = buyer_email
-                # Можно также обновить логин, но это сложнее, опустим
+                
             self.session.add(user)
         else:
             user = await self._get_or_create_guest_user(buyer_name, buyer_email)
@@ -119,7 +119,7 @@ class PurchaseService:
                 )
 
         amount = self._get_price_for_license(track, license_type)
-        amount = round(amount, 2)  # добавляем эту строку
+        amount = round(amount, 2)  
 
         try:
             purchase = await self.purchase_repo.create(

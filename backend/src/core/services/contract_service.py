@@ -20,7 +20,7 @@ class PDFContract(FPDF):
         self.bold_font_path = bold_font_path
         self.contract_number = contract_number
 
-        # Добавляем шрифты
+        
         if font_path and os.path.exists(font_path):
             self.add_font('DejaVu', '', font_path, uni=True)
         else:
@@ -29,7 +29,7 @@ class PDFContract(FPDF):
         if bold_font_path and os.path.exists(bold_font_path):
             self.add_font('DejaVu', 'B', bold_font_path, uni=True)
         else:
-            # Если жирного нет – будем использовать обычный
+            
             self.add_font('DejaVu', 'B', font_path, uni=True)
 
         self.set_font('DejaVu', '', 10)
@@ -43,7 +43,7 @@ class PDFContract(FPDF):
         self.cell(0, 5, f"ДОГОВОР № {self.contract_number}", 0, 0, 'L')
         self.cell(0, 5, "Экземпляр № 1", 0, 0, 'R')
         self.ln(8)
-        # Линия
+        
         self.set_draw_color(180, 180, 180)
         self.line(10, 18, 200, 18)
         self.set_y(22)
@@ -90,7 +90,7 @@ class ContractService:
         self.user_repo = UserRepository(session)
         self.file_service = file_service
 
-        # Пути к шрифтам
+        
         base_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
         fonts_dir = os.path.join(base_dir, "fonts")
         self.font_path = os.path.join(fonts_dir, "DejaVuSans.ttf")
@@ -118,20 +118,20 @@ class ContractService:
         pdf = PDFContract(self.font_path, self.bold_font_path, contract_number)
         pdf.add_page()
 
-        # Шапка
+        
         pdf.set_font('DejaVu', 'B', 16)
         pdf.cell(0, 12, "ДОГОВОР КУПЛИ-ПРОДАЖИ ИСКЛЮЧИТЕЛЬНЫХ ПРАВ", 0, 1, 'C')
         pdf.set_font('DejaVu', '', 10)
         pdf.cell(0, 6, f"г. Москва                                    {current_date.strftime('%d.%m.%Y')}", 0, 1, 'C')
         pdf.ln(6)
 
-        # Преамбула
+        
         pdf.paragraph(
             "Общество с ограниченной ответственностью «БитМаркет», действующее через платформу beatmarket.ru, в интересах Продавца, "
             "и Покупатель, именуемые в дальнейшем «Стороны», заключили настоящий договор о нижеследующем:"
         )
 
-        # 1. Предмет
+        
         pdf.section_title("1. ПРЕДМЕТ ДОГОВОРА")
         pdf.paragraph(
             "Продавец передает, а Покупатель принимает исключительное право на использование музыкального произведения "
@@ -139,7 +139,7 @@ class ContractService:
         )
         pdf.official_line("Название:", track.title)
         pdf.official_line("Автор:", track.author.full_name)
-        # Жанр: track.genre.name, но нужно быть уверенным, что жанр подгружен
+        
         genre_name = track.genre.name if track.genre else "Не указан"
         pdf.official_line("Жанр:", genre_name)
         pdf.official_line("Длительность:", f"{track.duration_seconds or 0} сек.")
@@ -153,7 +153,7 @@ class ContractService:
         license_str = license_types.get(purchase.license_type.value, purchase.license_type.value)
         pdf.official_line("Тип лицензии:", license_str)
 
-        # 2. Цена
+        
         pdf.section_title("2. ЦЕНА И ПОРЯДОК РАСЧЕТОВ")
         amount_text = self._amount_to_text(purchase.amount)
         pdf.paragraph(
@@ -166,7 +166,7 @@ class ContractService:
         )
         pdf.official_line("Дата платежа:", purchase.purchase_date.strftime('%d.%m.%Y'))
 
-        # 3. Передача прав
+        
         pdf.section_title("3. ПЕРЕДАЧА ИСКЛЮЧИТЕЛЬНЫХ ПРАВ")
         pdf.paragraph(
             "Права считаются переданными с момента подписания Сторонами акта приема-передачи, который одновременно "
@@ -179,7 +179,7 @@ class ContractService:
             "а также использование в аудиовизуальных произведениях (YouTube, TikTok, Instagram Reels и др.)."
         )
 
-        # 4. Ответственность
+        
         pdf.section_title("4. ОТВЕТСТВЕННОСТЬ СТОРОН")
         pdf.paragraph(
             "Продавец гарантирует, что является законным правообладателем Произведения и что Произведение не нарушает "
@@ -192,7 +192,7 @@ class ContractService:
             "действующим законодательством РФ."
         )
 
-        # 5. Срок действия
+        
         pdf.section_title("5. СРОК ДЕЙСТВИЯ И РАСТОРЖЕНИЕ")
         if purchase.license_type.value == "exclusive":
             pdf.paragraph(
@@ -205,15 +205,15 @@ class ContractService:
                 "право многократной продажи неисключительных лицензий на данное Произведение другим лицам."
             )
 
-        # 6. Реквизиты и подписи
+        
         pdf.section_title("6. РЕКВИЗИТЫ И ПОДПИСИ СТОРОН")
         pdf.set_font('DejaVu', 'B', 10)
         pdf.cell(0, 7, "ПРОДАВЕЦ:", 0, 1)
         pdf.set_font('DejaVu', '', 10)
         pdf.official_line("Полное имя:", track.author.full_name)
-        # ✅ Исправлено: email у пользователя
+        
         pdf.official_line("Email:", track.author.user.email)
-        # ✅ Исправлено: login вместо username
+        
         login = track.author.user.login
         pdf.official_line("Аккаунт на BeatMarket:", f"beatmarket.ru/@{login}")
         pdf.ln(4)
@@ -225,7 +225,7 @@ class ContractService:
         pdf.official_line("Email:", user.email)
         pdf.ln(6)
 
-        # Подписи
+        
         pdf.set_font('DejaVu', '', 10)
         pdf.cell(80, 10, "Подпись Продавца: ____________________", 0, 0, 'L')
         pdf.cell(80, 10, "Подпись Покупателя: ____________________", 0, 1, 'L')
@@ -234,7 +234,7 @@ class ContractService:
         pdf.ln(5)
         pdf.cell(0, 6, "Место для печати (при наличии)", 0, 1, 'C')
 
-        # Сохранение
+        
         upload_dir = os.path.join("uploads", "contracts", datetime.now().strftime("%Y/%m"))
         os.makedirs(upload_dir, exist_ok=True)
         filename = f"contract_{contract_number}.pdf"
@@ -258,7 +258,7 @@ class ContractService:
         if rub == 0:
             return "ноль рублей"
 
-        # Словари для чисел
+        
         units = ["", "один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять"]
         units_female = ["", "одна", "две", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять"]
         teens = ["десять", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать", "пятнадцать",
@@ -286,7 +286,7 @@ class ContractService:
                 result.append(units_female[n] if female else units[n])
             return " ".join(result)
 
-        # Разбиваем на классы: миллионы, тысячи, единицы
+        
         millions = rub // 1_000_000
         rub %= 1_000_000
         thousands = rub // 1_000
@@ -294,7 +294,7 @@ class ContractService:
 
         parts = []
 
-        # Миллионы
+        
         if millions > 0:
             parts.append(convert_three(millions, female=False))
             if millions % 10 == 1 and millions % 100 != 11:
@@ -304,7 +304,7 @@ class ContractService:
             else:
                 parts.append("миллионов")
 
-        # Тысячи
+        
         if thousands > 0:
             parts.append(convert_three(thousands, female=True))
             if thousands % 10 == 1 and thousands % 100 != 11:
@@ -314,7 +314,7 @@ class ContractService:
             else:
                 parts.append("тысяч")
 
-        # Единицы (рубли)
+        
         if rub > 0:
             parts.append(convert_three(rub, female=False))
             if rub % 10 == 1 and rub % 100 != 11:
@@ -324,7 +324,7 @@ class ContractService:
             else:
                 parts.append("рублей")
         else:
-            # Если сумма заканчивается на тысячи или миллионы, добавляем "рублей"
+            
             parts.append("рублей")
 
         result = " ".join(parts)

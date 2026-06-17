@@ -6,7 +6,7 @@ class ContactMessageCreate(BaseModel):
     name: str
     email: EmailStr
     message: str
-    # user_id может быть передан из токена, но необязателен
+    
 
 class ContactMessageResponse(BaseModel):
     id: int

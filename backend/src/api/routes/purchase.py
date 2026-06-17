@@ -1,4 +1,4 @@
-# api/routes/purchase.py
+
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -41,10 +41,10 @@ async def create_purchase(
         )
         return result
     except HTTPException as e:
-        # Пробрасываем HTTP-исключения как есть (сохраняем статус и детали)
+        
         raise e
     except Exception as e:
-        # Логируем неожиданную ошибку
+        
         print(f"Неожиданная ошибка при создании покупки: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -86,7 +86,7 @@ async def get_contract_file(
 
     return FileResponse(file_path, media_type="application/pdf", filename=f"contract_{contract.contract_number}.pdf")
 
-# Эндпоинт для скачивания договора по ID покупки (используется клиентом)
+
 @router.get("/{purchase_id}/contract")
 async def download_contract(
     purchase_id: int,

@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <!-- Hero-секция с анимированным градиентом -->
+    
     <section class="hero">
       <div class="hero-content">
         <h1>Покупай биты напрямую у авторов</h1>
@@ -15,7 +15,7 @@
       <div class="hero-wave"></div>
     </section>
 
-    <!-- Популярные биты -->
+    
     <section class="section">
       <div class="section-header">
         <h2>Популярные биты</h2>
@@ -31,7 +31,7 @@
       </div>
     </section>
 
-    <!-- Коллекции по жанрам (виниловые пластинки) -->
+    
     <section class="section">
     <div class="section-header">
       <h2>Подборки по жанрам</h2>
@@ -61,7 +61,7 @@
     </div>
   </section>
 
-    <!-- Новые релизы -->
+    
     <section class="section">
       <div class="section-header">
         <h2>Новые релизы</h2>
@@ -93,7 +93,7 @@ const genreCollections = ref([]);
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
-// Маппинг жанров на красивые обложки (fallback, если image_url не задан)
+
 const genreCoverMap = {
   'hip-hop': 'https://images.unsplash.com/photo-1614680376408-81e91ffe3db7?w=300&h=300&fit=crop',
   'trap': 'https://images.unsplash.com/photo-1598387993281-cecf8b71a8f8?w=300&h=300&fit=crop',
@@ -121,24 +121,24 @@ const DEFAULT_GENRE_COVER = 'https://images.unsplash.com/photo-1511379938547-c1f
  * - иначе дефолтная картинка
  */
 const getGenreImageUrl = (genre) => {
-  // Приоритет: image_url с бэкенда
+  
   if (genre.image_url) {
     if (genre.image_url.startsWith('http')) {
       return genre.image_url;
     }
     return `${BASE_URL}${genre.image_url}`;
   }
-  // Fallback по названию
+  
   const key = genre.name?.toLowerCase() || '';
   return genreCoverMap[key] || DEFAULT_GENRE_COVER;
 };
 
-// Обработчик ошибки загрузки изображения жанра
+
 const handleGenreImageError = (collection) => {
   collection.cover = DEFAULT_GENRE_COVER;
 };
 
-// Обработчик ошибок для треков
+
 const handleImageError = (event) => {
   event.target.src = 'https://via.placeholder.com/300x300?text=No+Image';
 };
@@ -164,16 +164,16 @@ const fetchNew = async () => {
 const fetchGenres = async () => {
   try {
     const { data } = await api.get('/genres');
-    // Берём первые 4 жанра и преобразуем в формат коллекций
+    
     genreCollections.value = data.slice(0, 4).map(g => ({
       id: g.id,
       genre: g.name,
-      cover: getGenreImageUrl(g),   // ← теперь используется image_url (если есть)
+      cover: getGenreImageUrl(g),   
       tracks: g.tracks_count || 0
     }));
   } catch (error) {
     console.error('Ошибка загрузки жанров:', error);
-    // Fallback: демо-данные (на случай, если API не отвечает)
+    
     const fallbackGenres = [
       { id: 1, name: 'Hip-Hop', image_url: null },
       { id: 2, name: 'Electronic', image_url: null },
@@ -198,7 +198,7 @@ onMounted(() => {
 
 
 <style scoped>
-/* Глобальные переменные (можно вынести в отдельный файл) */
+
 :root {
   --bg-primary: #0a0a0f;
   --bg-secondary: #14141f;
@@ -216,7 +216,7 @@ onMounted(() => {
   padding: 2rem;
 }
 
-/* Hero секция */
+
 .hero {
   position: relative;
   text-align: center;
@@ -307,7 +307,7 @@ onMounted(() => {
   z-index: 1;
 }
 
-/* Заголовки секций */
+
 .section {
   margin-bottom: 4rem;
 }
@@ -339,14 +339,14 @@ onMounted(() => {
   transform: translateX(3px);
 }
 
-/* Сетка треков */
+
 .track-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 2rem;
 }
 
-/* Коллекции (винил) */
+
 .genre-collections {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -419,7 +419,7 @@ onMounted(() => {
   font-size: 0.9rem;
 }
 
-/* Адаптивность */
+
 @media (max-width: 768px) {
   .hero h1 {
     font-size: 2.5rem;

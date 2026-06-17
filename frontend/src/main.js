@@ -9,7 +9,7 @@ const pinia = createPinia();
 app.use(pinia);
 app.use(router);
 
-// Загружаем данные о пользователе
+
 const authStore = useAuthStore();
 authStore.fetchUser();
 

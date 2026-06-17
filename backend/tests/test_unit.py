@@ -1,10 +1,10 @@
-# test_unit.py
+
 import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 import sys
 import os
 
-# Добавляем путь к исходному коду
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
 from core.services.auth import AuthService
@@ -130,7 +130,7 @@ class TestAuthLogin:
         mock_author_repo = AsyncMock()
         service = AuthService(repo=mock_repo, author_repo=mock_author_repo)
         
-        # Патчим проверку пароля
+        
         with patch.object(service, 'verify_password', return_value=True):
             result = await service.login(UserLogin(login='testuser', password='password123'))
         
@@ -260,7 +260,7 @@ class TestTokenOperations:
         service = AuthService(repo=mock_repo, author_repo=mock_author_repo)
         
         access_token = service.create_access_token(user_id=42)
-        # Пытаемся проверить access токен как refresh
+        
         result = await service.verify_token(access_token, token_type="refresh")
         
         assert result is None
@@ -303,7 +303,7 @@ class TestPasswordHashing:
         mock_author_repo = AsyncMock()
         service = AuthService(repo=mock_repo, author_repo=mock_author_repo)
         
-        # Создаем очень длинный пароль
+        
         long_password = "a" * 100
         hashed = service.get_password_hash(long_password)
         

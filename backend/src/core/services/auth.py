@@ -1,4 +1,4 @@
-# src/core/services/auth.py
+
 
 from datetime import datetime, timedelta
 from typing import Optional
@@ -13,11 +13,11 @@ from core.repositories.user import UserRepository
 from schemas.user import UserCreate, UserLogin, TokenPayload
 
 
-# Настраиваем CryptContext с правильными параметрами
+
 pwd_context = CryptContext(
     schemes=["argon2", "bcrypt"],
     deprecated="auto",
-    bcrypt__rounds=cfg.security.bcrypt_rounds  # используем из конфига
+    bcrypt__rounds=cfg.security.bcrypt_rounds  
 )
 
 
@@ -81,7 +81,7 @@ class AuthService:
                 algorithms=[cfg.security.jwt_algorithm]
             )
             
-            # Проверяем тип токена
+            
             if payload.get("type") != token_type:
                 return None
             
@@ -91,10 +91,10 @@ class AuthService:
         except (JWTError, ValueError, TypeError):
             return None
 
-    # ---------- Бизнес-логика ----------
+    
     async def register(self, user_data: UserCreate) -> User:
         """Регистрация нового пользователя"""
-        # Проверяем, не занят ли логин или email
+        
         exists = await self.repo.check_exists(user_data.login, user_data.email)
         if exists:
             raise HTTPException(
@@ -102,10 +102,10 @@ class AuthService:
                 detail="Пользователь с таким логином или email уже существует"
             )
         
-        # Хешируем пароль
+        
         hashed_password = self.get_password_hash(user_data.password)
         
-        # Создаём пользователя
+        
         user = await self.repo.create(
             full_name=user_data.full_name,
             login=user_data.login,
@@ -114,7 +114,7 @@ class AuthService:
             role=user_data.role
         )
         
-        # Если пользователь выбрал роль "author", создаём профиль автора
+        
         print(f"Role received: {user_data.role}")
         print(f"UserRole.author value: {UserRole.author}")
         print(f"Are they equal? {user_data.role == UserRole.author}")
@@ -132,7 +132,7 @@ class AuthService:
 
     async def login(self, login_data: UserLogin) -> dict:
         """Вход пользователя"""
-        # Ищем пользователя по логину или email
+        
         user = await self.repo.get_by_login(login_data.login)
         
         if not user:
@@ -141,21 +141,21 @@ class AuthService:
                 detail="Неверный логин или пароль"
             )
         
-        # Проверяем пароль
+        
         if not self.verify_password(login_data.password, user.password_hash):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Неверный логин или пароль"
             )
         
-        # Проверяем активен ли пользователь
+        
         if not user.is_active:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Пользователь заблокирован"
             )
         
-        # Создаём токены
+        
         access_token = self.create_access_token(user.id)
         refresh_token = self.create_refresh_token(user.id)
         
@@ -176,7 +176,7 @@ class AuthService:
                 detail="Недействительный refresh токен"
             )
         
-        # Проверяем, что пользователь существует
+        
         user = await self.repo.get(user_id)
         if not user or not user.is_active:
             raise HTTPException(
@@ -184,7 +184,7 @@ class AuthService:
                 detail="Пользователь не найден или заблокирован"
             )
         
-        # Создаём новые токены
+        
         access_token = self.create_access_token(user.id)
         refresh_token = self.create_refresh_token(user.id)
         
@@ -194,7 +194,7 @@ class AuthService:
             "token_type": "bearer"
         }
     async def authenticate(self, email: str, password: str) -> Optional[User]:
-        # Поиск пользователя по email или username
+        
         user = await self.repo.get_by_email(email=email)
     
         if not user or not self.verify_password(password, hashed_password=user.password_hash):

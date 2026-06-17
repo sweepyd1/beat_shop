@@ -1,6 +1,6 @@
 import Swal from 'sweetalert2';
 
-// Базовая настройка SweetAlert2 (единоразово)
+
 const Toast = Swal.mixin({
   toast: true,
   position: 'top-end',
@@ -26,21 +26,21 @@ export function showError(error) {
   } else if (error.response) {
     const data = error.response.data;
 
-    // FastAPI: ошибка может быть {"detail": "строка"} или {"detail": [...]}
+    
     if (data.detail) {
       if (typeof data.detail === 'string') {
         message = data.detail;
       } else if (Array.isArray(data.detail)) {
-        // Массив объектов ошибок валидации: [{msg: "...", loc: [...]}, ...]
+        
         message = data.detail
           .map(err => {
-            // Формируем читаемое сообщение: поле (если есть) + текст ошибки
-            const field = err.loc?.slice(1).join('.') || ''; // убираем "body"
+            
+            const field = err.loc?.slice(1).join('.') || ''; 
             return field ? `${field}: ${err.msg}` : err.msg;
           })
           .join('; ');
       } else {
-        // На всякий случай – любой другой объект
+        
         message = JSON.stringify(data.detail);
       }
     } else if (data.message) {

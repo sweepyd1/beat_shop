@@ -1,10 +1,10 @@
 <template>
   <div class="admin-dashboard">
-    <!-- Анимированный фон -->
+    
     <div class="dashboard-glow"></div>
 
     <div class="container">
-      <!-- Заголовок -->
+      
       <div class="dashboard-header" data-aos="fade-up">
         <div class="badge">Административная панель</div>
         <h1 class="title">
@@ -13,9 +13,9 @@
         <p class="subtitle">Быстрый доступ к основным функциям управления</p>
       </div>
 
-      <!-- Сетка карточек -->
+      
       <div class="cards-grid" data-aos="fade-up" data-aos-delay="100">
-        <!-- Карточка: Треки -->
+        
         <router-link to="/admin/tracks" class="dashboard-card">
           <div class="card-icon music">
             <i class="fas fa-headphones"></i>
@@ -25,7 +25,7 @@
           <span class="card-link">Перейти →</span>
         </router-link>
 
-        <!-- Карточка: Статистика -->
+        
         <router-link to="/admin/stats" class="dashboard-card">
           <div class="card-icon stats">
             <i class="fas fa-chart-line"></i>
@@ -35,7 +35,7 @@
           <span class="card-link">Перейти →</span>
         </router-link>
 
-        <!-- Карточка: Статистика пользователей -->
+        
         <router-link to="/admin/user-stats" class="dashboard-card">
           <div class="card-icon user-stats">
             <i class="fas fa-users"></i>
@@ -45,7 +45,7 @@
           <span class="card-link">Перейти →</span>
         </router-link>
 
-        <!-- Карточка: Пользователи -->
+        
         <router-link to="/admin/users" class="dashboard-card">
           <div class="card-icon users">
             <i class="fas fa-user-cog"></i>
@@ -55,7 +55,7 @@
           <span class="card-link">Перейти →</span>
         </router-link>
 
-        <!-- Новая карточка: Сообщения -->
+        
         <router-link to="/admin/message" class="dashboard-card">
           <div class="card-icon messages">
             <i class="fas fa-envelope"></i>
@@ -65,7 +65,7 @@
           <span class="card-link">Перейти →</span>
         </router-link>
 
-        <!-- Новая карточка: Жанры -->
+        
         <router-link to="/admin/genres" class="dashboard-card">
           <div class="card-icon genres">
             <i class="fas fa-tags"></i>
@@ -76,7 +76,7 @@
         </router-link>
       </div>
 
-      <!-- Блок с дополнительной информацией (опционально) -->
+      
       <div class="info-section" data-aos="fade-up" data-aos-delay="200">
         <div class="info-card">
           <i class="fas fa-shield-alt"></i>
@@ -91,18 +91,18 @@
 </template>
 
 <script setup>
-// Если используется AOS для анимаций, можно подключить, но не обязательно
-// import AOS from 'aos'; onMounted(() => AOS.refresh());
+
+
 </script>
 
 <style scoped>
-/* ... остальные стили остаются без изменений ... */
 
-/* Добавляем стили для иконок новых карточек */
+
+
 .card-icon.messages { background: linear-gradient(135deg, #f43f5e, #e11d48); }
 .card-icon.genres { background: linear-gradient(135deg, #06b6d4, #3b82f6); }
 
-/* Остальные стили из вашего компонента (они уже есть, здесь для полноты) */
+
 .admin-dashboard {
   min-height: 100vh;
   background: linear-gradient(135deg, #0a0a0f 0%, #12121a 100%);
@@ -231,7 +231,7 @@
 .card-icon.stats { background: linear-gradient(135deg, #10b981, #34d399); }
 .card-icon.user-stats { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
 .card-icon.users { background: linear-gradient(135deg, #ef4444, #f97316); }
-/* Новые стили для сообщений и жанров */
+
 .card-icon.messages { background: linear-gradient(135deg, #f43f5e, #e11d48); }
 .card-icon.genres { background: linear-gradient(135deg, #06b6d4, #3b82f6); }
 

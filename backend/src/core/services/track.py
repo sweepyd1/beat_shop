@@ -34,24 +34,24 @@ class TrackService:
         duration: Optional[int] = None,
         created_date: Optional[datetime] = None
     ) -> Track:
-        # 1. Проверяем, что пользователь является автором
+        
         author = await self.author_service.get_author_by_user_id(user.id)
         if not author:
             raise HTTPException(status_code=403, detail="Только авторы могут загружать треки")
 
-        # 2. Проверяем существование жанра
+        
         genre = await self.genre_service.get_genre(genre_id)
         if not genre:
             raise HTTPException(status_code=404, detail="Жанр не найден")
 
-        # 3. Сохраняем файлы
+        
         try:
             cover_url = await self.file_service.save_cover(cover)
             mp3_url = await self.file_service.save_track(mp3)
         except HTTPException as e:
             raise e
 
-        # 4. Создаём трек
+        
         track = await self.repo.create(
             title=title,
             genre_id=genre_id,
@@ -87,7 +87,7 @@ class TrackService:
                 self.file_service.delete_file(track.cover_url)
             update_data['cover_url'] = await self.file_service.save_cover(cover_file)
         
-        # Обработка нового mp3
+        
         if mp3_file:
             if track.mp3_file_url:
                 self.file_service.delete_file(track.mp3_file_url)
@@ -100,13 +100,13 @@ class TrackService:
         if not track:
             return False
         
-        # Удаляем связанные файлы
+        
         if track.cover_url:
             self.file_service.delete_file(track.cover_url)
         if track.mp3_file_url:
             self.file_service.delete_file(track.mp3_file_url)
         
-        # Также нужно удалить зависимости (избранное, покупки, взаимодействия) – каскадно в БД
+        
         return await self.repo.delete(track_id)
     
     async def get_track(self, track_id: int):
@@ -152,12 +152,12 @@ class TrackService:
         )
     async def get_tracks_by_user(self, user_id: int) -> List[Track]:
         """Получение треков текущего автора по user_id"""
-        # Получаем автора по user_id
+        
         author = await self.author_service.get_author_by_user_id(user_id)
         if not author:
             return []
         
-        # Получаем треки автора с подгрузкой жанра
+        
         tracks = await self.repo.get_by_author_id(author.id)
         return tracks
     async def get_author_tracks(self, author_id: int) -> List[AuthorTrackResponse]:
@@ -165,7 +165,7 @@ class TrackService:
         result = []
         for track in tracks:
             sales = await self.repo.get_sales_count(track.id)
-            # Получаем жанр и автора для трека
+            
             genre = None
             if hasattr(track, 'genre') and track.genre:
                 from schemas.track import GenreShortResponse
@@ -199,9 +199,9 @@ class TrackService:
         response_list = []
         
         for track, sales_count in rows:
-            # Pydantic сам подхватит все поля из ORM (включая is_exclusive_sold)
+            
             track_resp = TrackResponse.model_validate(track)
-            # Но поле sales в ORM нет, поэтому проставляем его вручную из запроса
+            
             track_resp.sales = sales_count
             response_list.append(track_resp)
             

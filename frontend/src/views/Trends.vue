@@ -1,11 +1,11 @@
 <template>
   <div class="trends-page">
-    <!-- Фоновый градиент и эффекты -->
+    
     <div class="bg-glow"></div>
     <div class="bg-noise"></div>
 
     <div class="container">
-      <!-- Хедер с анимацией -->
+      
       <div class="header">
         <h1 class="title">
           <span class="fire-icon">🔥</span> Музыкальные тренды
@@ -14,7 +14,7 @@
         <p class="subtitle">Популярное прямо сейчас — обновляется ежедневно</p>
       </div>
 
-      <!-- Период с премиум-переключателем -->
+      
       <div class="period-wrapper">
         <div class="period-selector">
           <button
@@ -33,7 +33,7 @@
         </div>
       </div>
 
-      <!-- Анимированный список -->
+      
       <TransitionGroup name="trend-list" tag="div" class="trends-list">
         <div
           v-for="(track, index) in trends"
@@ -41,13 +41,13 @@
           class="trend-card"
           :style="{ animationDelay: `${index * 0.03}s` }"
         >
-          <!-- Ранговый индикатор с огоньком для топ-3 -->
+          
           <div class="rank-badge" :class="getRankClass(index)">
             <span class="rank-number">{{ index + 1 }}</span>
             <span v-if="index < 3" class="crown-icon">👑</span>
           </div>
 
-          <!-- Обложка с эффектом свечения -->
+          
           <div class="cover-wrapper">
             <img 
   :src="getCoverUrl(track)" 
@@ -61,7 +61,7 @@
             </div>
           </div>
 
-          <!-- Информация о треке -->
+          
           <div class="track-info">
             <div class="track-title-wrapper">
               <h3 class="track-title">{{ track.title }}</h3>
@@ -72,7 +72,7 @@
             </p>
           </div>
 
-          <!-- Статистика с динамикой -->
+          
           <div class="stats-wrapper">
             <div class="stat-item">
               <i class="fas fa-headphones stat-icon"></i>
@@ -84,7 +84,7 @@
       
           </div>
 
-          <!-- Премиум-кнопка действия -->
+          
           <div class="action-buttons">
 
             <button class="btn-icon" @click="buyTrack(track)" title="Купить">
@@ -99,7 +99,7 @@
 
 
 
-      <!-- Сообщение о загрузке или отсутствии данных -->
+      
       <div v-if="loading" class="loading-message">
         <i class="fas fa-spinner fa-spin"></i>
         <p>Загрузка трендов...</p>
@@ -116,13 +116,13 @@
 import { ref, computed, onMounted, inject } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
-// import { usePlayerStore } from '@/stores/player';
+
 import { useAuthStore } from '@/stores/auth';
-import { showError, showSuccess } from '@/utils/alert';  // <-- импорт
+import { showError, showSuccess } from '@/utils/alert';  
 const router = useRouter();
-// const playerStore = usePlayerStore();
+
 const authStore = useAuthStore();
-const player = inject('player');   // ← получаем плеер из композабла
+const player = inject('player');   
 const period = ref('week');
 const periods = [
   { value: 'day', label: 'За день' },
@@ -204,12 +204,12 @@ const getTrendIcon = (trend) => {
 };
 
 const playTrack = (track) => {
-  // Создаем копию трека, чтобы не мутировать исходные данные из trends
+  
   const trackForPlayer = {
     ...track,
-    // 🎯 Подменяем путь к файлу на путь к API-эндпоинту стриминга.
-    // Player.vue сам добавит baseUrl (http://localhost:8000) 
-    // и запросит: http://localhost:8000/tracks/{id}/stream
+    
+    
+    
     mp3_file_url: `http://localhost:8000${track.mp3_file_url}`
   };
   
@@ -245,7 +245,7 @@ const goToAuthor = (authorId) => {
 </script>
 
 <style scoped>
-/* Общий фон */
+
 .trends-page {
   min-height: 100vh;
   background: radial-gradient(circle at 10% 20%, #0a0a1a, #02020a);
@@ -285,7 +285,7 @@ const goToAuthor = (authorId) => {
   z-index: 2;
 }
 
-/* Хедер */
+
 .header {
   text-align: center;
   margin-bottom: 3rem;
@@ -327,7 +327,7 @@ const goToAuthor = (authorId) => {
   font-size: 1.1rem;
 }
 
-/* Переключатель периода */
+
 .period-wrapper {
   display: flex;
   justify-content: space-between;
@@ -382,7 +382,7 @@ const goToAuthor = (authorId) => {
   padding: 0.4rem 1.2rem;
 }
 
-/* Список трендов */
+
 .trends-list {
   display: flex;
   flex-direction: column;
@@ -418,7 +418,7 @@ const goToAuthor = (authorId) => {
   }
 }
 
-/* Ранговый бейдж */
+
 .rank-badge {
   width: 70px;
   text-align: center;
@@ -457,7 +457,7 @@ const goToAuthor = (authorId) => {
   filter: drop-shadow(0 0 4px gold);
 }
 
-/* Обложка */
+
 .cover-wrapper {
   position: relative;
   margin: 0 1rem;
@@ -506,7 +506,7 @@ const goToAuthor = (authorId) => {
   transform: scale(1.1);
 }
 
-/* Информация */
+
 .track-info {
   flex: 2;
   margin-left: 0.5rem;
@@ -540,7 +540,7 @@ const goToAuthor = (authorId) => {
   margin-top: 0.2rem;
 }
 
-/* Статистика */
+
 .stats-wrapper {
   flex: 3;
   display: flex;
@@ -592,7 +592,7 @@ const goToAuthor = (authorId) => {
   color: #f59e0b;
 }
 
-/* Кнопки действий */
+
 .action-buttons {
   display: flex;
   align-items: center;
@@ -630,7 +630,7 @@ const goToAuthor = (authorId) => {
   box-shadow: 0 8px 20px rgba(168,85,247,0.4);
 }
 
-/* Аналитическая карточка */
+
 .analytics-card {
   background: rgba(20,20,30,0.6);
   backdrop-filter: blur(12px);
@@ -666,7 +666,7 @@ const goToAuthor = (authorId) => {
   color: #a0a0b0;
 }
 
-/* Анимации для списка */
+
 .trend-list-move, .trend-list-enter-active, .trend-list-leave-active {
   transition: all 0.4s ease;
 }
@@ -705,7 +705,7 @@ const goToAuthor = (authorId) => {
   }
 }
 
-/* Сообщения о загрузке и пустом состоянии */
+
 .loading-message,
 .empty-message {
   text-align: center;

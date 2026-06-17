@@ -87,19 +87,19 @@ async def create_track(
     current_user: User = Depends(get_current_admin),
     session: AsyncSession = Depends(get_db_session),
 ):
-    # ... проверки расширений ...
+    
     if not mp3_file.filename.endswith('.mp3'):
         raise HTTPException(400, "Только MP3")
     if not cover.filename.lower().endswith(('.jpg','.jpeg','.png')):
         raise HTTPException(400, "Только изображения (jpg,png)")
 
-    # Генерация имён
+    
     mp3_filename = f"{uuid.uuid4().hex}.mp3"
     cover_filename = f"{uuid.uuid4().hex}{Path(cover.filename).suffix}"
     mp3_path = UPLOAD_DIR / mp3_filename
     cover_path = COVER_DIR / cover_filename
 
-    # Сохраняем файлы
+    
     try:
         with open(mp3_path, "wb") as f:
             shutil.copyfileobj(mp3_file.file, f)
@@ -108,26 +108,26 @@ async def create_track(
     except Exception as e:
         raise HTTPException(500, f"Ошибка сохранения: {str(e)}")
 
-    # 🎯 Автоматически определяем длительность и BPM
+    
     duration_seconds, bpm, created_date = analyze_mp3(mp3_path)
 
-    # Если длительность не удалось определить – можно вернуть ошибку
+    
     if duration_seconds == 0:
-        # Удаляем уже сохранённые файлы, чтобы не мусорить
+        
         mp3_path.unlink(missing_ok=True)
         cover_path.unlink(missing_ok=True)
         raise HTTPException(400, "Не удалось прочитать длительность трека (файл повреждён?)")
 
-    # Создаём запись в БД
+    
     track_data = {
         "title": title,
         "cover_url": f"/storage/covers/{cover_filename}",
-        "duration_seconds": int(duration_seconds),  # округляем до секунд
+        "duration_seconds": int(duration_seconds),  
         "created_date": datetime.utcnow(),
         "mp3_file_url": f"/storage/tracks/{mp3_filename}",
         "price": price,
         "plays": 0,
-        "bpm": bpm,          # может быть None, если BPM не определился
+        "bpm": bpm,          
         "genre_id": genre_id,
         "author_id": author_id,
     }

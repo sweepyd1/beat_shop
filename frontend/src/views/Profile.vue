@@ -1,6 +1,6 @@
 <template>
   <div class="profile">
-    <!-- Hero section -->
+    
     <div class="hero-section">
       <div class="hero-background"></div>
       <div class="hero-content">
@@ -33,7 +33,7 @@
       </div>
     </div>
 
-    <!-- Tabs -->
+    
     <div class="tabs-container">
       <div class="tabs">
         <button
@@ -48,10 +48,10 @@
       </div>
     </div>
 
-    <!-- Tab content -->
+    
     <div class="content-container">
       <transition-group name="fade" mode="out-in" tag="div">
-        <!-- Мои данные -->
+        
         <div v-if="activeTab === 'info'" class="tab-pane info-pane" key="info">
           <div class="info-card glass-card">
             <div class="info-grid">
@@ -83,7 +83,7 @@
           </div>
         </div>
 
-        <!-- Мои покупки -->
+        
         <div v-if="activeTab === 'purchases'" class="tab-pane" key="purchases">
           <div v-if="purchases.length === 0" class="empty-state">
             <i class="fas fa-shopping-cart empty-icon"></i>
@@ -130,7 +130,7 @@
           </div>
         </div>
 
-        <!-- Избранное -->
+        
         <div v-if="activeTab === 'favorites'" class="tab-pane" key="favorites">
           <div v-if="favorites.length === 0" class="empty-state">
             <i class="fas fa-heart empty-icon"></i>
@@ -145,7 +145,7 @@
           </div>
         </div>
 
-        <!-- Подписки -->
+        
         <!-- <div
           v-if="activeTab === 'subscriptions'"
           class="tab-pane"
@@ -175,7 +175,7 @@
           </div>
         </div> -->
 
-        <!-- Студия продюсера -->
+        
         <div
           v-if="activeTab === 'studio' && user.role === 'author'"
           class="tab-pane studio-pane"
@@ -184,7 +184,7 @@
           <ArtistDashboard />
         </div>
 
-        <!-- Мои треки -->
+        
         <div
           v-if="activeTab === 'my-tracks' && user.role === 'author'"
           class="tab-pane"
@@ -236,7 +236,7 @@
           </div>
         </div>
 
-        <!-- Загрузка трека -->
+        
         <div
           v-if="activeTab === 'upload' && user.role === 'author'"
           class="tab-pane"
@@ -340,7 +340,7 @@
       </transition-group>
     </div>
 
-    <!-- Modal for profile edit -->
+    
     <transition name="modal-fade">
       <div
         v-if="showEditModal"
@@ -499,7 +499,7 @@
       </div>
     </transition>
   </div>
-  <!-- Modal for track edit -->
+  
 </template>
 
 <script setup>
@@ -510,7 +510,7 @@ import ArtistDashboard from "../components/ArtistDashboard.vue";
 import { useProfile } from "../composables/useProfile";
 import api from "../api";
 import router from "@/router";
-import { showError, showSuccess } from "@/utils/alert"; // <-- импорт
+import { showError, showSuccess } from "@/utils/alert"; 
 const authStore = useAuthStore();
 const user = computed(() => authStore.user);
 
@@ -521,10 +521,10 @@ const ALLOWED_IMAGE_TYPES = [
   "image/gif",
   "image/webp",
 ];
-const MAX_MP3_SIZE = 50 * 1024 * 1024;   // 50 МБ для MP3
-const MAX_COVER_SIZE = 5 * 1024 * 1024;  // 5 МБ для обложки
-const MAX_AVATAR_SIZE = 2 * 1024 * 1024; // 2 МБ для аватара
-const ALLOWED_AUDIO_TYPES = ["audio/mpeg", "audio/mp3"]; // audio/mpeg — это и есть MP3
+const MAX_MP3_SIZE = 50 * 1024 * 1024;   
+const MAX_COVER_SIZE = 5 * 1024 * 1024;  
+const MAX_AVATAR_SIZE = 2 * 1024 * 1024; 
+const ALLOWED_AUDIO_TYPES = ["audio/mpeg", "audio/mp3"]; 
 const showEditTrackModal = ref(false);
 const editingTrack = ref(null);
 const editTrackForm = ref({
@@ -548,9 +548,9 @@ const {
   downloadTrack,
   unsubscribe,
 } = useProfile();
-// Открыть модалку с данными трека
 
-// Закрыть модалку
+
+
 const closeEditTrackModal = () => {
   showEditTrackModal.value = false;
   editingTrack.value = null;
@@ -563,14 +563,14 @@ const closeEditTrackModal = () => {
     mp3_file: null,
   };
   editCoverPreview.value = null;
-  // очистить input файлы, чтобы можно было выбрать заново
+  
   const coverInput = document.getElementById("edit-cover-input");
   const mp3Input = document.getElementById("edit-mp3-input");
   if (coverInput) coverInput.value = "";
   if (mp3Input) mp3Input.value = "";
 };
 
-// Обработчики выбора новых файлов
+
 const handleEditCoverChange = (event) => {
   const file = event.target.files[0];
   if (!file) return;
@@ -598,7 +598,7 @@ const handleEditMp3Change = (event) => {
   editTrackForm.value.mp3_file = file;
 };
 
-// Сохранить изменения трека
+
 const saveTrackEdit = async () => {
   if (!editingTrack.value) return;
   if (
@@ -629,7 +629,7 @@ const saveTrackEdit = async () => {
 
     showSuccess("Трек обновлён");
     closeEditTrackModal();
-    await fetchAuthorTracks(); // обновить список треков
+    await fetchAuthorTracks(); 
   } catch (err) {
     console.error("Update failed", err);
     const message = err.response?.data?.detail || "Ошибка обновления трека";
@@ -638,7 +638,7 @@ const saveTrackEdit = async () => {
     editUploading.value = false;
   }
 };
-// Дополнительные данные для автора
+
 const authorTracks = ref([]);
 const genres = ref([]);
 const newTrack = ref({
@@ -652,13 +652,13 @@ const newTrack = ref({
 const coverPreview = ref(null);
 const uploading = ref(false);
 
-// Вкладки
+
 const tabs = computed(() => {
   const baseTabs = [
     { key: "info", label: "Мои данные" },
     { key: "purchases", label: "Мои покупки" },
     { key: "favorites", label: "Избранное" },
-    // { key: "subscriptions", label: "Подписки" },
+    
   ];
   if (user.value?.role === "author") {
     baseTabs.push(
@@ -672,7 +672,7 @@ const tabs = computed(() => {
 
 const activeTab = ref("info");
 
-// Редактирование профиля
+
 const showEditModal = ref(false);
 const editForm = ref({ full_name: "", email: "", avatar_file: null });
 const previewAvatar = ref(null);
@@ -750,7 +750,7 @@ const saveProfile = async () => {
   }
 };
 
-// Загрузка треков автора
+
 const fetchAuthorTracks = async () => {
   try {
     const response = await api.get("/tracks/me");
@@ -781,7 +781,7 @@ const handleCoverChange = (event) => {
         event.target.value = "";
         return;
     }
-    // Очищаем input, чтобы можно было выбрать заново
+    
     event.target.value = "";
     return;
   }
@@ -894,7 +894,7 @@ const deleteTrack = async (trackId) => {
   const track = authorTracks.value.find((t) => t.id === trackId);
   console.log(track)
   console.log(track.sales)
-  // Проверяем продажи на фронтенде для быстрого UX
+  
   if (track?.sales > 0 || track?.is_exclusive_sold) {
     showError("❌ Этот трек уже был продан. Удаление невозможно.");
     return;
@@ -960,7 +960,7 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* ========== GLOBAL & UTILITIES ========== */
+
 .profile {
   max-width: 1280px;
   margin: 0 auto;
@@ -1041,7 +1041,7 @@ onMounted(async () => {
   color: white;
 }
 
-/* ========== HERO SECTION ========== */
+
 .hero-section {
   position: relative;
   margin-bottom: 2rem;
@@ -1152,7 +1152,7 @@ onMounted(async () => {
   color: #a0a0b0;
 }
 
-/* ========== TABS ========== */
+
 .tabs-container {
   margin-bottom: 2rem;
   overflow-x: auto;
@@ -1201,7 +1201,7 @@ onMounted(async () => {
   background: rgba(255, 255, 255, 0.05);
 }
 
-/* ========== TAB CONTENT ========== */
+
 .content-container {
   min-height: 500px;
 }
@@ -1232,7 +1232,7 @@ onMounted(async () => {
   transform: translateY(8px);
 }
 
-/* Info Pane */
+
 .info-pane .info-card {
   padding: 2rem;
 }
@@ -1274,7 +1274,7 @@ onMounted(async () => {
   justify-content: center;
 }
 
-/* Purchases Grid */
+
 .purchases-grid {
   display: flex;
   flex-direction: column;
@@ -1358,7 +1358,7 @@ onMounted(async () => {
   flex-shrink: 0;
 }
 
-/* Track Grid */
+
 .track-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -1413,7 +1413,7 @@ onMounted(async () => {
   transform: scale(1.05);
 }
 
-/* Authors Grid */
+
 .authors-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -1464,7 +1464,7 @@ onMounted(async () => {
   border-color: #ff4444;
 }
 
-/* Empty State */
+
 .empty-state {
   text-align: center;
   padding: 3rem 1rem;
@@ -1484,7 +1484,7 @@ onMounted(async () => {
   color: #a0a0b0;
 }
 
-/* Upload Form */
+
 .upload-form-container {
   max-width: 600px;
   margin: 0 auto;
@@ -1595,7 +1595,7 @@ onMounted(async () => {
   justify-content: center;
 }
 
-/* Section Header */
+
 .section-header {
   display: flex;
   justify-content: space-between;
@@ -1620,7 +1620,7 @@ onMounted(async () => {
   font-size: 2rem;
 }
 
-/* Modal */
+
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -1730,7 +1730,7 @@ onMounted(async () => {
   margin-top: 1.5rem;
 }
 
-/* Responsive */
+
 @media (max-width: 768px) {
   .profile {
     padding: 0 1rem 3rem;

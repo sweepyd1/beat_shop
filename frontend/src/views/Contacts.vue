@@ -39,9 +39,9 @@
 
 <script setup>
 import { ref } from 'vue';
-import api from '@/api'; // путь к вашему api.js (уточните импорт)
-// или import api from '../api';
-import { showError, showSuccess } from '@/utils/alert';  // <-- импорт
+import api from '@/api'; 
+
+import { showError, showSuccess } from '@/utils/alert';  
 const form = ref({ name: '', email: '', message: '' });
 const isLoading = ref(false);
 

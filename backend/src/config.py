@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 
 
 load_dotenv()
-PROJECT_ROOT = Path(__file__).resolve().parent.parent   # если config.py лежит в src
+PROJECT_ROOT = Path(__file__).resolve().parent.parent   
 STORAGE_PATH = PROJECT_ROOT / "storage"
 
 class DatabaseConfig(BaseModel):
@@ -81,7 +81,7 @@ class SecurityConfig(BaseModel):
 
 class LoggingConfig(BaseModel):
     level: str = "INFO"
-    format: str = "json"  # json или console
+    format: str = "json"  
     folder: Path = Path("logs")
 
     @field_validator("folder", mode="before")
@@ -145,7 +145,7 @@ def setup_environment():
     if cfg.is_development:
         os.environ.setdefault("PYTHONASYNCIODEBUG", "1")
 
-    # Настройка базового логирования
+    
     import logging as std_logging
     std_logging.basicConfig(
         level=getattr(std_logging, cfg.logging.level),

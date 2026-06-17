@@ -20,7 +20,7 @@ class FavoriteService:
         exists = await self.repo.exists(user_id, track_id)
         if exists:
             raise HTTPException(status_code=400, detail="Track already in favorites")
-        # Добавляем
+        
         favorite = await self.repo.create(user_id=user_id, track_id=track_id)
         return favorite
 

@@ -1,9 +1,9 @@
-# locustfile.py
+
 from locust import HttpUser, task, between, events
 import random
 
 class BeatMarketUser(HttpUser):
-    wait_time = between(1, 3)  # Пауза между действиями 1-3 сек
+    wait_time = between(1, 3)  
     
     @task(3)
     def view_popular_tracks(self):
@@ -16,7 +16,7 @@ class BeatMarketUser(HttpUser):
         
     @task(2)
     def stream_track(self):
-        # Эмуляция получения ID трека из каталога
+        
         track_id = random.randint(1, 100)
         self.client.get(f"/tracks/{track_id}/stream", name="/tracks/{id}/stream")
         
@@ -32,7 +32,7 @@ class BeatMarketUser(HttpUser):
 
     @task(1)
     def auth_flow(self):
-        # 10% запросов будут регистрацией/входом
+        
         self.client.post("/auth/register", json={
             "full_name": "Load User", "login": f"loaduser_{random.randint(100,999)}",
             "email": f"load{random.randint(1,999)}@test.com", "password": "12345678", "role": "user"

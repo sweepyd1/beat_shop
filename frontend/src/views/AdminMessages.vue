@@ -5,7 +5,7 @@
       <p>Управление сообщениями с сайта</p>
     </div>
 
-    <!-- Фильтры -->
+    
     <div class="filters">
       <button 
         :class="['filter-btn', { active: filter === 'all' }]"
@@ -27,7 +27,7 @@
       </button>
     </div>
 
-    <!-- Список сообщений -->
+    
     <div class="messages-list">
       <div v-if="loading" class="loading">
         <i class="fas fa-spinner fa-spin"></i>
@@ -68,7 +68,7 @@
       </div>
     </div>
 
-    <!-- Модальное окно просмотра -->
+    
     <teleport to="body">
       <div v-if="selectedMessage" class="modal-overlay" @click.self="selectedMessage = null">
         <div class="modal-content message-modal">
@@ -346,7 +346,7 @@ onMounted(fetchMessages);
   background: rgba(239, 68, 68, 0.3);
 }
 
-/* Modal */
+
 .modal-overlay {
   position: fixed;
   top: 0;

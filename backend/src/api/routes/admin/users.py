@@ -56,17 +56,17 @@ async def create_user(
     """Создание нового пользователя администратором"""
     repo = UserRepository(session)
 
-    # Проверка уникальности
+    
     exists = await repo.check_exists(login, email)
     if exists:
         raise HTTPException(status_code=400, detail="Пользователь с таким логином или email уже существует")
 
-    # Загрузка аватара
+    
     avatar_url = None
     if avatar:
         avatar_url = await file_service.save_avatar(avatar)
 
-    # Создание пользователя
+    
     user_data = {
         "full_name": full_name,
         "login": login,
@@ -113,7 +113,7 @@ async def update_user(
     if password is not None and password.strip():
         update_data["password_hash"] = auth_service.get_password_hash(password)
 
-    # Аватар
+    
     if avatar:
         if user.avatar_url:
             file_service.delete_file(user.avatar_url)
@@ -139,7 +139,7 @@ class UserProfileResponse(UserResponse):
     subscriptions_count: int
     total_spent: float
     last_listen: Optional[datetime] = None
-    top_genres: list[dict] = []   # [{genre_name: str, count: int}]
+    top_genres: list[dict] = []   
     recent_purchases: list[PurchaseResponse] = []
     recent_favorites: list[FavoriteResponse] = []
     subscriptions: list[SubscriptionResponse] = []
@@ -155,7 +155,7 @@ async def get_user_profile(
     if not user:
         raise HTTPException(404, detail="Пользователь не найден")
 
-    # Агрегируем статистику
+    
     purchases = user.purchases
     favorites = user.favorites
     subs = user.subscriptions
@@ -167,12 +167,12 @@ async def get_user_profile(
         if listen_interactions:
             last_listen = max(i.timestamp for i in listen_interactions)
 
-    # Топ жанров по покупкам и прослушиваниям
+    
     genre_counter = {}
     for p in purchases:
         genre = p.track.genre.name if p.track.genre else 'Без жанра'
         genre_counter[genre] = genre_counter.get(genre, 0) + 1
-    # Добавляем прослушивания
+    
     for i in user.interactions:
         if i.interaction_type == 'listen':
             genre = i.track.genre.name if i.track.genre else 'Без жанра'
@@ -181,7 +181,7 @@ async def get_user_profile(
     top_genres = sorted(genre_counter.items(), key=lambda x: x[1], reverse=True)[:5]
     top_genres = [{"genre_name": g, "count": c} for g, c in top_genres]
 
-    # Последние 5 покупок и избранного
+    
     recent_purchases = sorted(purchases, key=lambda x: x.purchase_date, reverse=True)[:5]
     recent_favorites = sorted(favorites, key=lambda x: x.added_at, reverse=True)[:5]
 

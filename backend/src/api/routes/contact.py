@@ -33,17 +33,17 @@ async def send_contact_message(
             if user:
                 user_id = user.id
         except:
-            pass  # не фатально, сообщение всё равно сохранится
+            pass  
     result = await service.send_message(data, user_id)
     return result
 
-# Ниже – дополнительные админские эндпоинты (опционально)
+
 @router.get("/admin/", response_model=list[ContactMessageResponse])
 async def get_all_messages(
     skip: int = 0,
     limit: int = 100,
     unread_only: bool = False,
-    current_user: User = Depends(get_current_user),  # ← получаем пользователя
+    current_user: User = Depends(get_current_user),  
     service: ContactMessageService = Depends(get_contact_service),
 ):
     if current_user.role.value != "admin":

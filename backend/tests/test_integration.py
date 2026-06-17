@@ -1,10 +1,10 @@
-# test_integration.py
+
 import pytest
 import sys
 import os
 from unittest.mock import AsyncMock, patch, MagicMock
 
-# Добавляем путь к исходному коду
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
 from httpx import AsyncClient, ASGITransport
@@ -39,7 +39,7 @@ class TestAuthEndpoints:
     @pytest.mark.asyncio
     async def test_register_user_success(self):
         """Регистрация нового пользователя - успех"""
-        # Мокаем зависимости чтобы не требовалась БД
+        
         with patch('src.core.services.auth.AuthService') as MockAuthService:
             mock_service = MagicMock()
             mock_service.register = AsyncMock(return_value=MagicMock(
@@ -99,7 +99,7 @@ class TestGenresEndpoint:
         transport = ASGITransport(app=app)
         async with AsyncClient(transport=transport, base_url="http://test") as client:
             response = await client.get("/genres/")
-            # Может вернуть 200 с пустым списком или ошибку БД
+            
             assert response.status_code in [200, 500]
         print("✅ Endpoint получения жанров работает")
 
@@ -113,7 +113,7 @@ class TestTracksEndpoint:
         transport = ASGITransport(app=app)
         async with AsyncClient(transport=transport, base_url="http://test") as client:
             response = await client.get("/tracks/")
-            # Может вернуть 200 или ошибку БД
+            
             assert response.status_code in [200, 500]
         print("✅ Endpoint получения треков работает")
 
@@ -123,7 +123,7 @@ class TestTracksEndpoint:
         transport = ASGITransport(app=app)
         async with AsyncClient(transport=transport, base_url="http://test") as client:
             response = await client.get("/tracks/search?query=test")
-            # Может вернуть 200 или ошибку БД
+            
             assert response.status_code in [200, 500]
         print("✅ Поиск треков работает")
 
@@ -137,7 +137,7 @@ class TestRecommendationsEndpoint:
         transport = ASGITransport(app=app)
         async with AsyncClient(transport=transport, base_url="http://test") as client:
             response = await client.get("/recommendations/")
-            # Может вернуть 200 или ошибку БД
+            
             assert response.status_code in [200, 500]
         print("✅ Endpoint рекомендаций работает")
 
@@ -151,7 +151,7 @@ class TestUserEndpoint:
         transport = ASGITransport(app=app)
         async with AsyncClient(transport=transport, base_url="http://test") as client:
             response = await client.get("/users/me")
-            # Должен вернуть 401 Unauthorized
+            
             assert response.status_code == 401
         print("✅ Проверка авторизации пользователя работает")
 
@@ -204,7 +204,7 @@ class TestAuthorEndpoint:
         transport = ASGITransport(app=app)
         async with AsyncClient(transport=transport, base_url="http://test") as client:
             response = await client.get("/authors/1")
-            # Может вернуть 200, 404 или 500
+            
             assert response.status_code in [200, 404, 500]
         print("✅ Получение информации об авторе работает")
 
@@ -268,9 +268,9 @@ class TestAPIValidation:
         async with AsyncClient(transport=transport, base_url="http://test") as client:
             response = await client.post("/auth/register", json={
                 "login": "test"
-                # Отсутствуют обязательные поля
+                
             })
-            assert response.status_code == 422  # Validation Error
+            assert response.status_code == 422  
         print("✅ Валидация регистрации работает")
 
     @pytest.mark.asyncio
@@ -285,7 +285,7 @@ class TestAPIValidation:
                 "password": "password123",
                 "role": "user"
             })
-            assert response.status_code == 422  # Validation Error
+            assert response.status_code == 422  
         print("✅ Валидация email работает")
 
     @pytest.mark.asyncio
@@ -297,8 +297,8 @@ class TestAPIValidation:
                 "full_name": "Test User",
                 "login": "testuser",
                 "email": "test@example.com",
-                "password": "123",  # Слишком короткий
+                "password": "123",  
                 "role": "user"
             })
-            assert response.status_code == 422  # Validation Error
+            assert response.status_code == 422  
         print("✅ Валидация длины пароля работает")

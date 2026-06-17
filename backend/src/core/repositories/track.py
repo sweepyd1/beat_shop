@@ -15,8 +15,8 @@ class TrackRepository(BaseRepository[Track]):
             select(Track)
             .where(Track.id == id)
             .options(
-                selectinload(Track.genre),   # 👈 загружаем жанр
-                selectinload(Track.author)   # 👈 загружаем автора
+                selectinload(Track.genre),   
+                selectinload(Track.author)   
             )
         )
         return result.scalar_one_or_none()
@@ -59,9 +59,9 @@ class TrackRepository(BaseRepository[Track]):
         genre_ids: Optional[List[int]] = None,
         bpm_min: Optional[int] = None,
         bpm_max: Optional[int] = None,
-        duration_min: Optional[int] = None,  # в секундах
+        duration_min: Optional[int] = None,  
         duration_max: Optional[int] = None,
-        sort_by: str = "popular",  # popular, newest, price_asc, price_desc
+        sort_by: str = "popular",  
         skip: int = 0,
         limit: int = 20
     ) -> List[Track]:
@@ -70,7 +70,7 @@ class TrackRepository(BaseRepository[Track]):
             selectinload(Track.author)
         )
 
-        # Фильтр по поисковому запросу (по названию трека или имени автора)
+        
         if query:
             stmt = stmt.join(Track.author).where(
                 or_(
@@ -79,30 +79,30 @@ class TrackRepository(BaseRepository[Track]):
                 )
             )
 
-        # Фильтр по жанрам
+        
         if genre_ids:
             stmt = stmt.where(Track.genre_id.in_(genre_ids))
 
-        # Фильтр по BPM
+        
         if bpm_min is not None:
             stmt = stmt.where(Track.bpm >= bpm_min)
         if bpm_max is not None:
             stmt = stmt.where(Track.bpm <= bpm_max)
 
-        # Фильтр по длительности (в секундах)
+        
         if duration_min is not None:
             stmt = stmt.where(Track.duration_seconds >= duration_min)
         if duration_max is not None:
             stmt = stmt.where(Track.duration_seconds <= duration_max)
 
-        # Сортировка
+        
         if sort_by == "newest":
             stmt = stmt.order_by(Track.added_date.desc())
         elif sort_by == "price_asc":
             stmt = stmt.order_by(Track.price.asc())
         elif sort_by == "price_desc":
             stmt = stmt.order_by(Track.price.desc())
-        else:  # popular по умолчанию
+        else:  
             stmt = stmt.order_by(Track.plays.desc())
 
         stmt = stmt.offset(skip).limit(limit)
@@ -149,7 +149,7 @@ class TrackRepository(BaseRepository[Track]):
                 Author.full_name.label('author_name'),
                 Genre.name.label('genre_name'),
                 func.count(Purchase.id).label('sales_count'),
-                func.coalesce(func.sum(Purchase.amount), 0).label('revenue'),  # ← ключевое изменение
+                func.coalesce(func.sum(Purchase.amount), 0).label('revenue'),  
                 Track.cover_url
             )
             .outerjoin(Purchase, Purchase.track_id == Track.id)
@@ -193,7 +193,7 @@ class TrackRepository(BaseRepository[Track]):
         )
         result = await self.session.execute(stmt)
         rows = {row[0]: row[1] for row in result.all()}
-        # массив за последние 7 дней
+        
         today = datetime.now().date()
         return [rows.get(today - timedelta(days=i), 0) for i in range(6, -1, -1)]
 
@@ -240,7 +240,7 @@ class TrackRepository(BaseRepository[Track]):
         return result.scalars().all()
     async def get_all_admin_tracks(self, skip: int = 0, limit: int = 1000):
         """Получение всех треков с подсчетом продаж через JOIN (быстро, без N+1)"""
-        # Подзапрос для подсчета продаж
+        
         sales_subq = (
             select(
                 Purchase.track_id,
@@ -266,5 +266,5 @@ class TrackRepository(BaseRepository[Track]):
         )
         
         result = await self.session.execute(stmt)
-        # Возвращает список кортежей: [(Track, sales_count), ...]
+        
         return result.all()

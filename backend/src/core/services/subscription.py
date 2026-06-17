@@ -5,10 +5,10 @@ class SubscriptionService:
         self.repo = repo
 
     async def subscribe(self, user_id: int, author_id: int):
-        # Проверить, не подписан ли уже
+        
         existing = await self.repo.get_by_user_and_author(user_id, author_id)
         if existing:
-            return existing  # уже подписан
+            return existing  
         subscription = await self.repo.create(user_id=user_id, author_id=author_id)
         return subscription
 

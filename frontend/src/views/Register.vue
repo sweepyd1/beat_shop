@@ -95,7 +95,7 @@
 import { ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
-import { showError, showSuccess } from '@/utils/alert';  // <-- импорт
+import { showError, showSuccess } from '@/utils/alert';  
 const authStore = useAuthStore();
 const router = useRouter();
 
@@ -103,7 +103,7 @@ const username = ref('');
 const email = ref('');
 const password = ref('');
 const confirmPassword = ref('');
-const role = ref('user');      // по умолчанию "Покупатель"
+const role = ref('user');      
 const agree = ref(false);
 const isLoading = ref(false);
 
@@ -130,7 +130,7 @@ const handleRegister = async () => {
     router.push('/');
   } catch (error) {
     console.error('Registration error:', error);
-    showError(error);   // Функция сама извлечёт понятное сообщение
+    showError(error);   
   } finally {
     isLoading.value = false;
   }

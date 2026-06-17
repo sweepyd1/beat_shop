@@ -11,7 +11,7 @@
       </p>
     </div>
 
-    <!-- Карточки с ключевыми метриками -->
+    
     <div class="stats-grid" v-if="!loading.metrics">
       <div class="stat-card">
         <div class="stat-icon"><i class="fas fa-users"></i></div>
@@ -48,7 +48,7 @@
     </div>
     <div v-else class="loading-placeholder">Загрузка метрик...</div>
 
-    <!-- Графики -->
+    
     <div class="charts-row">
       <div class="chart-card">
         <h3>Регистрации по дням (последние 30 дней)</h3>
@@ -71,7 +71,7 @@
       </div>
     </div>
 
-    <!-- Таблица топ слушателей -->
+    
     <div class="card">
       <h3>🎧 Топ-10 самых активных слушателей</h3>
       <div class="table-wrapper">
@@ -96,7 +96,7 @@
       </div>
     </div>
 
-    <!-- Дополнительная таблица топ покупателей (можно вынести в отдельную) -->
+    
     <div class="card">
       <h3>💰 Топ-10 покупателей по сумме трат</h3>
       <div class="table-wrapper">
@@ -132,7 +132,7 @@ import api from "../api";
 
 Chart.register(...registerables);
 
-// Состояния
+
 const metrics = ref({
   total_users: 0,
   new_users_last_week: 0,
@@ -141,11 +141,11 @@ const metrics = ref({
   avg_purchases_per_user: 0,
   total_purchases_amount: 0,
 });
-const dailyRegistrations = ref([]);   // { date, count }
-const dailyPurchases = ref([]);       // { date, purchase_count, total_amount }
-const roleDistribution = ref([]);     // { role, count }
-const topBuyers = ref([]);            // TopBuyerResponse[]
-const topListeners = ref([]);         // TopListenerResponse[]
+const dailyRegistrations = ref([]);   
+const dailyPurchases = ref([]);       
+const roleDistribution = ref([]);     
+const topBuyers = ref([]);            
+const topListeners = ref([]);         
 
 const loading = ref({
   metrics: true,
@@ -156,7 +156,7 @@ const loading = ref({
   topListeners: true,
 });
 
-// Рефы для графиков
+
 const registrationsChartRef = ref(null);
 const purchasesChartRef = ref(null);
 const rolesChartRef = ref(null);
@@ -172,7 +172,7 @@ const formatNumber = (num) => {
   return new Intl.NumberFormat('ru-RU').format(num);
 };
 
-// Загрузка метрик
+
 const fetchUserMetrics = async () => {
   try {
     const { data } = await api.get('/admin/stats/user-metrics');
@@ -184,7 +184,7 @@ const fetchUserMetrics = async () => {
   }
 };
 
-// Загрузка ежедневных регистраций
+
 const fetchDailyRegistrations = async () => {
   try {
     const { data } = await api.get('/admin/stats/user-daily-registrations?days=30');
@@ -196,7 +196,7 @@ const fetchDailyRegistrations = async () => {
   }
 };
 
-// Загрузка ежедневных покупок
+
 const fetchDailyPurchases = async () => {
   try {
     const { data } = await api.get('/admin/stats/user-daily-purchases?days=30');
@@ -208,7 +208,7 @@ const fetchDailyPurchases = async () => {
   }
 };
 
-// Загрузка распределения ролей
+
 const fetchRoleDistribution = async () => {
   try {
     const { data } = await api.get('/admin/stats/user-role-distribution');
@@ -220,7 +220,7 @@ const fetchRoleDistribution = async () => {
   }
 };
 
-// Загрузка топ покупателей
+
 const fetchTopBuyers = async () => {
   try {
     const { data } = await api.get('/admin/stats/user-top-buyers?limit=10');
@@ -232,7 +232,7 @@ const fetchTopBuyers = async () => {
   }
 };
 
-// Загрузка топ слушателей
+
 const fetchTopListeners = async () => {
   try {
     const { data } = await api.get('/admin/stats/user-top-listeners?limit=10');
@@ -244,9 +244,9 @@ const fetchTopListeners = async () => {
   }
 };
 
-// Инициализация графиков
+
 const initCharts = () => {
-  // 1. График регистраций (линия)
+  
   if (dailyRegistrations.value.length && registrationsChartRef.value) {
     const labels = dailyRegistrations.value.map(item => {
       const d = new Date(item.date);
@@ -271,7 +271,7 @@ const initCharts = () => {
     });
   }
 
-  // 2. График покупок (столбцы + линия суммы)
+  
   if (dailyPurchases.value.length && purchasesChartRef.value) {
     const labels = dailyPurchases.value.map(item => {
       const d = new Date(item.date);
@@ -317,7 +317,7 @@ const initCharts = () => {
     });
   }
 
-  // 3. Распределение ролей (круговая диаграмма)
+  
   if (roleDistribution.value.length && rolesChartRef.value) {
     const labels = roleDistribution.value.map(r => r.role);
     const counts = roleDistribution.value.map(r => r.count);
@@ -333,7 +333,7 @@ const initCharts = () => {
     });
   }
 
-  // 4. Топ покупателей (горизонтальные столбцы)
+  
   if (topBuyers.value.length && topBuyersChartRef.value) {
     const labels = topBuyers.value.map(b => b.full_name.length > 20 ? b.full_name.slice(0,20)+'…' : b.full_name);
     const amounts = topBuyers.value.map(b => b.total_spent);
@@ -353,7 +353,7 @@ const initCharts = () => {
   }
 };
 
-// Загрузка всех данных
+
 const loadAllData = async () => {
   await Promise.all([
     fetchUserMetrics(),
@@ -372,7 +372,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* Стили полностью копируем из AdminStats.vue, можно оставить те же самые */
+
 .stats-container {
   max-width: 1400px;
   margin: 2rem auto;

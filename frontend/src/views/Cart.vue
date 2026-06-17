@@ -50,7 +50,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 
-// Мок-данные корзины (в реальном проекте берутся из store/pinia)
+
 const cartItems = ref([
   { id: 1, title: 'Neon Dreams', artist: 'Arctica', cover: 'https://picsum.photos/200/200?random=1', price: 1.99 },
   { id: 2, title: 'Lost in Space', artist: 'Cosmic', cover: 'https://picsum.photos/200/200?random=2', price: 1.49 },

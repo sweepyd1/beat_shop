@@ -1,4 +1,4 @@
-# src/schemas/user.py
+
 
 from datetime import datetime
 from typing import Optional
@@ -57,7 +57,7 @@ class UserProfileResponse(UserResponse):
     model_config = ConfigDict(from_attributes=True)
 
 
-# Токены
+
 class TokenResponse(BaseModel):
     access_token: str
     refresh_token: Optional[str] = None
@@ -65,6 +65,6 @@ class TokenResponse(BaseModel):
 
 
 class TokenPayload(BaseModel):
-    sub: str  # user_id
-    exp: int  # expiration
-    type: str = "access"  # access или refresh
+    sub: str  
+    exp: int  
+    type: str = "access"  

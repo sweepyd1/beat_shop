@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from schemas.admin_stats import (
     MetricsResponse, DailySalesResponse, DailyUsersResponse,
     TopTrackResponse, GenreSalesResponse,
-    # Новые схемы (добавьте в schemas/admin_stats.py)
+    
     UserMetricsResponse, DailyUserRegistrationsResponse,
     DailyUserPurchasesResponse, TopBuyerResponse,
     TopListenerResponse, UserRoleDistributionResponse
@@ -19,14 +19,14 @@ class AdminStatsService:
         user_repo: UserRepository,
         purchase_repo: PurchaseRepository,
         track_repo: TrackRepository,
-        interaction_repo: InteractionRepository   # новый
+        interaction_repo: InteractionRepository   
     ):
         self.user_repo = user_repo
         self.purchase_repo = purchase_repo
         self.track_repo = track_repo
         self.interaction_repo = interaction_repo
 
-    # ========== Существующие методы (без изменений, но исправлен get_daily_users) ==========
+    
     async def get_metrics(self) -> MetricsResponse:
         total_users = await self.user_repo.count_all()
         week_ago = datetime.now() - timedelta(days=7)
@@ -54,7 +54,7 @@ class AdminStatsService:
         return [DailySalesResponse(date=d, revenue=round(r, 2)) for d, r in data]
 
     async def get_daily_users(self, days: int = 7) -> list[DailyUsersResponse]:
-        # Исправленный метод, использует count_registered_on_date
+        
         result = []
         for i in range(days-1, -1, -1):
             day = datetime.now().date() - timedelta(days=i)
@@ -86,14 +86,14 @@ class AdminStatsService:
             ) for row in rows
         ]
 
-    # ========== Новые методы для статистики по пользователям ==========
+    
     async def get_user_metrics(self) -> UserMetricsResponse:
         total_users = await self.user_repo.count_all()
         week_ago = datetime.now() - timedelta(days=7)
         new_users = await self.user_repo.count_registered_since(week_ago)
         active_users = await self.interaction_repo.get_active_users_count_since(30)
-        # total_subscriptions = await self.user_repo.total_subscriptions()  # нужно добавить
-        avg_purchases = await self.purchase_repo.average_purchases_per_user()  # новый метод
+        
+        avg_purchases = await self.purchase_repo.average_purchases_per_user()  
         total_purchases_amount = await self.purchase_repo.total_revenue()
         return UserMetricsResponse(
             total_users=total_users,

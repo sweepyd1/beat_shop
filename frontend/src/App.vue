@@ -5,7 +5,7 @@
       <router-view />
     </main>
 
-    <!-- Глобальный плеер всегда здесь, но он сам решит, показываться или нет -->
+    
     <Player />
   </div>
 </template>
@@ -16,13 +16,13 @@ import Player from "./components/Player.vue";
 import Header from "./components/Header.vue";
 import { usePlayer } from '@/composables/usePlayer';
 
-// Инициализация плеера (один раз для всего приложения)
+
 usePlayer();
 
 
 </script>
 <style>
-/* Глобальные стили */
+
 * {
   margin: 0;
   padding: 0;
@@ -41,7 +41,7 @@ body {
   border-radius: 16px !important;
   box-shadow: 0 20px 40px rgba(0,0,0,0.5) !important;
 }
-/* Стили для скроллбара */
+
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -60,7 +60,7 @@ body {
   background: rgba(255, 255, 255, 0.3);
 }
 
-/* Анимации */
+
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.2s ease;
@@ -80,7 +80,7 @@ body {
   background: linear-gradient(135deg, #0b0b0f 0%, #1a1a24 100%);
 }
 
-/* Навбар */
+
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -170,12 +170,12 @@ body {
 
 .main-content {
   flex: 1;
-  min-height: calc(100vh - 70px - 90px); /* вычитаем высоту навбара и плеера */
+  min-height: calc(100vh - 70px - 90px); 
   padding: 0;
   margin: 0;
 }
 
-/* Медиа-запросы для мобилок */
+
 @media (max-width: 768px) {
   .navbar {
     padding: 1rem;

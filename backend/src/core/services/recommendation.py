@@ -20,7 +20,7 @@ class RecommendationService:
         limit: int = 1,
         exclude_ids: Optional[List[int]] = None
     ) -> List[Track]:
-        # 1. Любимые жанры (из покупок и прослушиваний)
+        
         genre_query = (
             select(Track.genre_id, func.count(Track.id).label('cnt'))
             .join(Purchase, Purchase.track_id == Track.id)
@@ -42,7 +42,7 @@ class RecommendationService:
         fav_genres = await self.session.execute(stmt_genre)
         fav_genre_ids = [row[0] for row in fav_genres if row[0] is not None]
 
-        # 2. Любимые авторы
+        
         author_query = (
             select(Track.author_id, func.count(Track.id))
             .join(Purchase, Purchase.track_id == Track.id)
@@ -64,7 +64,7 @@ class RecommendationService:
         fav_authors = await self.session.execute(stmt_author)
         fav_author_ids = [row[0] for row in fav_authors if row[0] is not None]
 
-        # 3. Исключаем уже купленные/прослушанные треки
+        
         purchased = await self.session.execute(select(Purchase.track_id).where(Purchase.user_id == user_id))
         listened = await self.session.execute(
             select(Interaction.track_id).where(
@@ -85,7 +85,7 @@ class RecommendationService:
         if not conditions:
             return await self.get_popular_tracks(limit, exclude_ids)
 
-        # Получаем только ID подходящих треков (без подгрузки отношений)
+        
         query_ids = select(Track.id).where(or_(*conditions))
         if exclude_owned:
             query_ids = query_ids.where(Track.id.not_in(list(exclude_owned)))
@@ -93,7 +93,7 @@ class RecommendationService:
         result_ids = await self.session.execute(query_ids)
         track_ids = result_ids.scalars().all()
 
-        # Если ничего не нашли, пробуем без исключений
+        
         if not track_ids:
             query_ids = select(Track.id).where(or_(*conditions)).order_by(func.random()).limit(limit)
             result_ids = await self.session.execute(query_ids)
@@ -102,7 +102,7 @@ class RecommendationService:
         if not track_ids:
             return []
 
-        # Загружаем полные объекты треков с подгрузкой отношений
+        
         query = select(Track).where(Track.id.in_(track_ids)).options(
             selectinload(Track.genre),
             selectinload(Track.author)
@@ -111,7 +111,7 @@ class RecommendationService:
         return result.scalars().all()
 
     async def get_popular_tracks(self, limit: int = 1, exclude_ids: Optional[List[int]] = None) -> List[Track]:
-        # Получаем ID популярных треков (топ-20 по прослушиваниям, затем случайный выбор)
+        
         subq = select(Track.id).order_by(desc(Track.plays)).limit(20).subquery()
         query_ids = select(subq.c.id).order_by(func.random()).limit(limit)
         if exclude_ids:

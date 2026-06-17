@@ -55,7 +55,7 @@ def get_purchase_repository(session: AsyncSession = Depends(get_db_session)) -> 
 async def get_interaction_repository(session: AsyncSession = Depends(get_db_session)) -> InteractionRepository:
     return InteractionRepository(session)
 
-# ---------- Сервисы ----------
+
 def get_auth_service(repo: UserRepository = Depends(get_user_repository),  author_repo: AuthorRepository = Depends(get_author_repository),) -> AuthService:
     return AuthService(repo, author_repo)
 def get_file_service() -> FileService:
@@ -105,12 +105,12 @@ async def get_listen_service(
 def get_subscription_repository(session: AsyncSession = Depends(get_db_session)) -> SubscriptionRepository:
     return SubscriptionRepository(session)
 
-# Сервис статистики
-# dependencies.py
+
+
 def get_stats_service(
     purchase_repo: PurchaseRepository = Depends(get_purchase_repository),
     subscription_repo: SubscriptionRepository = Depends(get_subscription_repository),
-    track_repo: TrackRepository = Depends(get_track_repository),              # добавить
+    track_repo: TrackRepository = Depends(get_track_repository),              
     interaction_repo: InteractionRepository = Depends(get_interaction_repository),
     favorite_repo: FavoriteRepository = Depends(get_favorite_repository)
 ) -> StatsService:
@@ -122,7 +122,7 @@ async def get_admin_stats_service(
     interaction_repo: InteractionRepository = Depends(get_interaction_repository),
 ) -> AdminStatsService:
     return AdminStatsService(user_repo, purchase_repo, track_repo, interaction_repo)
-# ---------- Текущий пользователь (из JWT) ----------
+
 async def get_current_user(
     request: Request,
     auth_service: AuthService = Depends(get_auth_service),
@@ -224,19 +224,19 @@ def analyze_mp3(file_path: Path) -> Tuple[float, Optional[int], Optional[datetim
     bpm = None
     created_date = None
 
-    # 1. Длительность и метаданные через mutagen
+    
     try:
         audio = File(file_path)
         if audio and hasattr(audio.info, 'length'):
             duration = audio.info.length
 
-        # Пытаемся извлечь дату из ID3-тегов
+        
         if audio is not None and hasattr(audio, 'tags'):
             tags = audio.tags
-            # TDRC – запись даты/времени (предпочтительно)
+            
             if 'TDRC' in tags:
                 date_str = tags['TDRC'].text[0]
-                # Пример: "2023-12-31" или "2023-12-31T12:00:00"
+                
                 try:
                     created_date = datetime.fromisoformat(date_str[:19])
                 except:
@@ -244,23 +244,23 @@ def analyze_mp3(file_path: Path) -> Tuple[float, Optional[int], Optional[datetim
                         created_date = datetime.strptime(date_str[:10], "%Y-%m-%d")
                     except:
                         pass
-            # Если нет TDRC, пробуем TYER (год) + TDAT (день-месяц)
+            
             elif 'TYER' in tags:
                 year = int(tags['TYER'].text[0])
                 month, day = 1, 1
                 if 'TDAT' in tags:
-                    # TDAT: формат DDMM (строкой)
+                    
                     tdat = tags['TDAT'].text[0].zfill(4)
                     day = int(tdat[0:2])
                     month = int(tdat[2:4])
-                    # Корректировка возможных некорректных значений
+                    
                     if not (1 <= month <= 12 and 1 <= day <= 31):
                         month, day = 1, 1
                 created_date = datetime(year, month, day)
     except Exception as e:
         print(f"Mutagen analysis failed: {e}")
 
-    # 2. BPM через librosa (как у вас, без изменений)
+    
     try:
         y, sr = librosa.load(file_path, sr=22050, duration=30, mono=True)
         if len(y) > 0:
@@ -273,7 +273,7 @@ def analyze_mp3(file_path: Path) -> Tuple[float, Optional[int], Optional[datetim
         print(f"BPM analysis failed: {e}")
         bpm = None
 
-    # Если длительность не получилась – пробуем через librosa
+    
     if duration == 0.0:
         try:
             duration = librosa.get_duration(filename=str(file_path))

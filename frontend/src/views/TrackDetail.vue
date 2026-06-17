@@ -1,7 +1,7 @@
 <template>
   <div class="track-detail" v-if="track">
     <div class="track-detail-container">
-      <!-- Левая колонка: обложка и аудио-плеер -->
+      
       <div class="track-cover-section">
         <div class="cover-large">
           <img :src="coverUrl" alt="cover" @error="handleImageError" />
@@ -21,7 +21,7 @@
         </div>
       </div>
 
-      <!-- Правая колонка: информация о треке -->
+      
       <div class="track-info-section">
         <h1>{{ track.title }}</h1>
         <div class="author">
@@ -64,7 +64,7 @@
       </div>
     </div>
 
-    <!-- Модальное окно покупки и оформления договора -->
+    
     <PurchaseModal
       v-model="showPurchaseModal"
       :track="track"
@@ -83,7 +83,7 @@ import { ref, onMounted, computed, inject } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import api from '../api';
 import { useAuthStore } from '../stores/auth';  
-import { showError, showSuccess } from '@/utils/alert';  // <-- импорт
+import { showError, showSuccess } from '@/utils/alert';  
 
 import PurchaseModal from '../components/PurchaseModal.vue';
 
@@ -108,7 +108,7 @@ const fetchTrack = async () => {
     track.value = data;
   } catch (error) {
     console.error('Ошибка загрузки трека:', error);
-    // Можно перенаправить на страницу 404
+    
     router.push('/404');
   }
 };
@@ -134,7 +134,7 @@ const openPurchaseModal = () => {
   showPurchaseModal.value = true;
 };
 const handlePurchaseComplete = (purchaseData) => {
-  // Можно показать уведомление об успешной покупке
+  
   showSuccess(`Покупка успешно оформлена! Договор можно получить в личном кабинете`);
   showPurchaseModal.value = false;
 };
@@ -164,7 +164,7 @@ onMounted(() => {
   gap: 2rem;
 }
 
-/* Левая колонка */
+
 .track-cover-section {
   position: sticky;
   top: 2rem;
@@ -225,7 +225,7 @@ onMounted(() => {
   font-size: 1.2rem;
 }
 
-/* Правая колонка */
+
 .track-info-section h1 {
   font-size: 2.5rem;
   font-weight: 800;

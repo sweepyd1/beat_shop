@@ -5,14 +5,14 @@
       <p>Добавление, редактирование, удаление музыкальных жанров</p>
     </div>
 
-    <!-- Кнопка добавления -->
+    
     <div class="actions">
       <button class="btn-primary" @click="openCreateModal">
         <i class="fas fa-plus"></i> Добавить жанр
       </button>
     </div>
 
-    <!-- Таблица жанров -->
+    
     <div class="genres-table-container">
       <table class="genres-table">
         <thead>
@@ -57,7 +57,7 @@
       </table>
     </div>
 
-    <!-- Модальное окно создания/редактирования -->
+    
     <teleport to="body">
       <div v-if="modalVisible" class="modal-overlay" @click.self="closeModal">
         <div class="modal-content genre-modal">
@@ -133,7 +133,7 @@ const fileInput = ref(null);
 
 const fetchGenres = async () => {
   try {
-    const { data } = await api.get('/admin/genres/');  // эндпоинт GET /admin/genres/
+    const { data } = await api.get('/admin/genres/');  
     genres.value = data;
   } catch (error) {
     console.error(error);
@@ -172,7 +172,7 @@ const handleImageUpload = async (event) => {
   const file = event.target.files[0];
   if (!file) return;
   
-  // Проверка типа
+  
   if (!file.type.startsWith('image/')) {
     showError('Можно загружать только изображения');
     return;
@@ -312,14 +312,14 @@ onMounted(() => {
 .genres-table td {
   padding: 1rem;
   text-align: left;
-  vertical-align: middle;          /* ✅ добавлено */
+  vertical-align: middle;          
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .actions-cell {
   display: flex;
   gap: 0.5rem;
-  align-items: center;             /* ✅ добавлено */
+  align-items: center;             
 }
 
 /* Опционально – чтобы граница была у всей строки, а не у ячейки,
@@ -328,7 +328,7 @@ onMounted(() => {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 .genres-table td {
-  border-bottom: none;            /* если используете вариант с tr */
+  border-bottom: none;            
 }
 .actions-cell {
   display: flex;
@@ -363,7 +363,7 @@ onMounted(() => {
   color: #9ca3af;
 }
 
-/* Modal styles */
+
 .modal-overlay {
   position: fixed;
   top: 0;

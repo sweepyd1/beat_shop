@@ -21,7 +21,7 @@ async def create_author(
 ):
     """Создание автора (только для админа)"""
     repo = AuthorRepository(session)
-    service = AuthorService(repo, file_service)  # передаём file_service
+    service = AuthorService(repo, file_service)  
     
     author_data = AuthorCreate(full_name=full_name, bio=bio)
     author = await service.create_author(author_data, photo)

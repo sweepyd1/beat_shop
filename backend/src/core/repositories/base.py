@@ -15,9 +15,9 @@ class BaseRepository(Generic[ModelType]):
         """Создание записи с автоматическим commit"""
         instance = self.model(**kwargs)
         self.session.add(instance)
-        await self.session.flush()  # отправляем в БД, но не коммитим
-        await self.session.refresh(instance)  # обновляем объект (получаем id)
-        await self.session.commit()  # 👈 ВАЖНО: фиксируем транзакцию
+        await self.session.flush()  
+        await self.session.refresh(instance)  
+        await self.session.commit()  
         return instance
 
     async def get(self, id: int) -> Optional[ModelType]:
@@ -36,18 +36,18 @@ class BaseRepository(Generic[ModelType]):
 
     async def update(self, id: int, **kwargs) -> Optional[ModelType]:
         """Обновление записи"""
-        # Сначала получаем объект
+        
         instance = await self.get(id)
         if not instance:
             return None
         
-        # Обновляем поля
+        
         for key, value in kwargs.items():
             if hasattr(instance, key):
                 setattr(instance, key, value)
         
         await self.session.flush()
-        await self.session.commit()  # 👈 фиксируем изменения
+        await self.session.commit()  
         await self.session.refresh(instance)
         return instance
 
@@ -59,5 +59,5 @@ class BaseRepository(Generic[ModelType]):
         
         await self.session.delete(instance)
         await self.session.flush()
-        await self.session.commit()  # 👈 фиксируем удаление
+        await self.session.commit()  
         return True

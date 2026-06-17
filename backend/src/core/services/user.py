@@ -23,12 +23,12 @@ class UserService:
                 self.file_service.delete_file(user.avatar_url)
             update_data['avatar_url'] = await self.file_service.save_avatar(avatar_file)
 
-        # Обновляем остальные поля (full_name, email и т.д.)
+        
         updated_user = await self.repo.update(user_id, **update_data)
         return updated_user
 
     async def get_purchases(self, user_id: int):
-        # Можно через репозиторий Purchase
+        
         pass
 
-    # Аналогично для favorites, subscriptions
+    

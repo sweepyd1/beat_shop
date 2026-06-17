@@ -11,8 +11,8 @@ class DatabaseManager:
         self.engine = create_async_engine(
             database_url,
             echo=False,
-            pool_size=20,  # базовых соединений
-            max_overflow=10,  # доп. при пике
+            pool_size=20,  
+            max_overflow=10,  
             pool_pre_ping=True,
         )
         self.AsyncSession = sessionmaker(
@@ -40,13 +40,13 @@ class DatabaseManager:
             AsyncIterator[AsyncSession]: An asynchronous session that can be used to execute queries.
 
         Example:
-            # Using a new session (automatically managed)
+            
             async with db_manager.get_session() as session:
                 result = await session.execute(select(User).where(User.id == 1))
                 user = result.scalars().first()
                 print(user)
 
-            # Using an existing session (lifecycle managed externally)
+            
             async with db_manager.get_session() as outer_session:
                 await some_function(outer_session)
 

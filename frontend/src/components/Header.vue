@@ -90,34 +90,34 @@ import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
 import RecommendationModal from "@/components/RecommendationModal.vue";
 
-// --- Модалка AI ---
+
 const showRecommendationModal = ref(false);
 const openRecommendationModal = () => {
   showRecommendationModal.value = true;
 };
 
-// --- Мобильное меню бургера ---
+
 const menuOpen = ref(false);
 const isMobile = ref(window.innerWidth <= 768);
 
-// --- Выпадающее меню аватарки (для мобилок) ---
+
 const isDropdownOpen = ref(false);
 
-// --- Auth store ---
+
 const authStore = useAuthStore();
 const { user } = storeToRefs(authStore);
 const router = useRouter();
 
-// --- Аватарка ---
+
 const avatarUrl = computed(() => {
-  if (!user.value?.avatar_url) return "default-avatar.png"; // показываем инициал
+  if (!user.value?.avatar_url) return "default-avatar.png"; 
   if (user.value.avatar_url.startsWith("http")) return user.value.avatar_url;
   const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
   return `${baseUrl}${user.value.avatar_url}`;
 });
 
 const onAvatarError = (event) => {
-  // При ошибке загрузки скрываем img и показываем span с инициалом
+  
   event.target.style.display = "none";
 };
 
@@ -126,16 +126,16 @@ const userInitial = computed(() => {
   return user.value.name ? user.value.name.charAt(0).toUpperCase() : "U";
 });
 
-// --- Права администратора ---
+
 const isAdmin = computed(() => user.value && user.value.role === "admin");
 
-// --- Выход из системы ---
+
 const handleLogout = async () => {
   await authStore.logout();
   router.push("/login");
 };
 
-// --- Логика открытия/закрытия выпадающего меню на мобилках ---
+
 const toggleDropdown = (event) => {
   if (isMobile.value) {
     isDropdownOpen.value = !isDropdownOpen.value;
@@ -155,16 +155,16 @@ const handleClickOutside = (event) => {
   }
 };
 
-// --- Адаптив (смена десктоп/мобила) ---
+
 const checkMobile = () => {
   isMobile.value = window.innerWidth <= 768;
   if (!isMobile.value) {
     menuOpen.value = false;
-    closeDropdown(); // закрываем выпадайку при переходе на десктоп
+    closeDropdown(); 
   }
 };
 
-// --- Жизненный цикл ---
+
 onMounted(() => {
   window.addEventListener("resize", checkMobile);
   document.addEventListener("click", handleClickOutside);
@@ -258,7 +258,7 @@ onUnmounted(() => {
   gap: 1.2rem;
 }
 
-/* Кнопки входа/регистрации */
+
 .btn-login,
 .btn-register {
   text-decoration: none;
@@ -292,7 +292,7 @@ onUnmounted(() => {
   box-shadow: 0 6px 18px rgba(168, 85, 247, 0.5);
 }
 
-/* Аватарка и выпадающее меню */
+
 .avatar-circle {
   width: 36px;
   height: 36px;
@@ -341,7 +341,7 @@ onUnmounted(() => {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-/* На десктопе открываем по hover */
+
 @media (min-width: 769px) {
   .avatar-wrapper:hover .dropdown-menu {
     opacity: 1;
@@ -384,7 +384,7 @@ onUnmounted(() => {
   color: #ff8e8e;
 }
 
-/* AI кнопка */
+
 .ai-recommend-btn {
   background: linear-gradient(45deg, #a855f7, #3b82f6);
   border: none;
@@ -414,7 +414,7 @@ onUnmounted(() => {
   cursor: pointer;
 }
 
-/* Адаптив под мобильные устройства */
+
 @media (max-width: 768px) {
   .app-header {
     padding: 0.8rem 1rem;
@@ -461,19 +461,19 @@ onUnmounted(() => {
     font-size: 0.9rem;
   }
 
-  /* Убираем hover-открытие на мобилках */
+  
   .avatar-wrapper:hover .dropdown-menu {
     opacity: 0;
     visibility: hidden;
   }
 
-  /* Открываем через класс active (ставится при клике) */
+  
   .dropdown-menu.active {
     opacity: 1;
     visibility: visible;
   }
 
-  /* Корректируем позицию и размер для тача */
+  
   .dropdown-menu {
     min-width: 170px;
     right: 0;

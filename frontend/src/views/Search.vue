@@ -15,7 +15,7 @@
       </button>
     </div>
 
-    <!-- Активные фильтры в виде чипсов -->
+    
     <div class="active-filters" v-if="hasActiveFilters">
       <span
         class="chip"
@@ -56,7 +56,7 @@
             v-model="selectedGenres"
           />
           <label :for="'genre-' + genre.id">{{ genre.name }}</label>
-          <!-- Если нужно количество треков, можно добавить отдельный эндпоинт -->
+          
         </div>
 
         <h3>BPM</h3>
@@ -185,7 +185,7 @@
           </div>
         </div>
 
-        <!-- Пагинация (если нужно) -->
+        
       </main>
     </div>
   </div>
@@ -213,7 +213,7 @@ const {
   fetchTracks,
 } = useSearch();
 
-// Загружаем жанры при монтировании
+
 onMounted(() => {
   fetchGenres();
   fetchTracks();
@@ -228,7 +228,7 @@ const updateMax = (val) => {
   durationRange.value = [durationRange.value[0], newMax];
 };
 
-// Защита для ползунков BPM (добавьте аналогично)
+
 const updateBpmMin = (val) => {
   let newMin = Math.min(val, bpmRange.value[1]);
   bpmRange.value = [newMin, bpmRange.value[1]];
@@ -238,7 +238,7 @@ const updateBpmMax = (val) => {
   let newMax = Math.max(val, bpmRange.value[0]);
   bpmRange.value = [bpmRange.value[0], newMax];
 };
-// Проверка, есть ли активные фильтры
+
 const hasActiveFilters = computed(() => {
   return (
     selectedGenres.value.length > 0 ||
@@ -249,7 +249,7 @@ const hasActiveFilters = computed(() => {
   );
 });
 
-// Методы для сброса фильтров
+
 const removeGenre = (genre) => {
   selectedGenres.value = selectedGenres.value.filter((g) => g.id !== genre.id);
 };
@@ -266,7 +266,7 @@ const clearAllFilters = () => {
 };
 
 const playTrack = (track) => {
-  // Реализовать проигрывание
+  
   console.log("Play", track);
 };
 
@@ -277,7 +277,7 @@ const handleImageError = (e) => {
 </script>
 
 <style scoped>
-/* ===== Базовые стили ===== */
+
 .search {
   max-width: 1400px;
   margin: 0 auto;
@@ -326,7 +326,7 @@ const handleImageError = (e) => {
   background: rgba(255, 255, 255, 0.1);
 }
 
-/* ===== Активные фильтры (чипсы) ===== */
+
 .active-filters {
   display: flex;
   flex-wrap: wrap;
@@ -369,7 +369,7 @@ const handleImageError = (e) => {
   color: white;
 }
 
-/* ===== Сетка поиска ===== */
+
 .search-content {
   display: grid;
   gap: 2rem;
@@ -379,7 +379,7 @@ const handleImageError = (e) => {
   grid-template-columns: 300px 1fr;
 }
 
-/* ===== Стилизация фильтров ===== */
+
 .filters {
   background: rgba(255, 255, 255, 0.02);
   border-radius: 20px;
@@ -398,7 +398,7 @@ const handleImageError = (e) => {
   margin-top: 0;
 }
 
-/* Кастомные чекбоксы */
+
 .filter-option {
   display: flex;
   align-items: center;
@@ -448,7 +448,7 @@ const handleImageError = (e) => {
   border-color: #a855f7;
 }
 
-/* Стилизация range слайдеров */
+
 .range {
   margin-bottom: 1rem;
 }
@@ -500,7 +500,7 @@ const handleImageError = (e) => {
   margin-top: 1rem;
 }
 
-/* ===== Результаты ===== */
+
 .results-header {
   display: flex;
   justify-content: space-between;
@@ -531,7 +531,7 @@ const handleImageError = (e) => {
   border-color: #a855f7;
 }
 
-/* Кастомный select */
+
 .view-options select {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -547,11 +547,11 @@ const handleImageError = (e) => {
   background-size: 12px;
 }
 .view-options select option {
-  background: #1a1a2e; /* тёмный фон */
+  background: #1a1a2e; 
   color: white;
 }
 
-/* Отображение сетки/списка */
+
 .track-grid.grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -622,7 +622,7 @@ const handleImageError = (e) => {
   opacity: 1;
 }
 
-/* Состояния загрузки/ошибки */
+
 .loading,
 .error,
 .empty {
@@ -634,9 +634,9 @@ const handleImageError = (e) => {
   color: #ff4d4d;
 }
 
-/* ===== АДАПТИВНЫЕ СТИЛИ ===== */
 
-/* Планшеты и небольшие десктопы */
+
+
 @media (max-width: 1024px) {
   .search {
     padding: 1.5rem;
@@ -647,7 +647,7 @@ const handleImageError = (e) => {
   }
 }
 
-/* Мобильные устройства (горизонтальная ориентация и узкие планшеты) */
+
 @media (max-width: 768px) {
   .search {
     padding: 1rem;
@@ -674,7 +674,7 @@ const handleImageError = (e) => {
     font-size: 0.9rem;
   }
 
-  /* Фильтры: при открытии занимают всю ширину, сетка становится блоком */
+  
   .search-content.filters-open {
     display: block;
   }
@@ -708,7 +708,7 @@ const handleImageError = (e) => {
     gap: 1rem;
   }
 
-  /* Список: перестраиваем в две строки для экономии места */
+  
   .track-row {
     flex-wrap: wrap;
     align-items: flex-start;
@@ -742,13 +742,13 @@ const handleImageError = (e) => {
     border-radius: 20px;
   }
 
-  /* Помещаем genre, bpm, price в строку после обложки */
+  
   .track-row .genre {
     margin-left: 2rem;
   }
 
   .more {
-    opacity: 1; /* всегда видно на таче */
+    opacity: 1; 
     margin-left: auto;
   }
 
@@ -767,7 +767,7 @@ const handleImageError = (e) => {
   }
 }
 
-/* Очень маленькие телефоны (<480px) */
+
 @media (max-width: 480px) {
   .track-grid.grid {
     grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
@@ -776,7 +776,7 @@ const handleImageError = (e) => {
 
   .track-row .genre,
   .track-row .bpm {
-    display: none; /* скрываем жанр и BPM на узких экранах */
+    display: none; 
   }
 
   .track-row .price {
@@ -789,10 +789,10 @@ const handleImageError = (e) => {
   }
 
   .view-options button:first-of-type {
-    display: none; /* скрываем кнопку сетки, если места мало — оставляем только список? Лучше оставить обе, но уменьшить */
+    display: none; 
   }
 
-  /* Возвращаем обе кнопки, но уменьшаем */
+  
   .view-options button {
     width: 32px;
     height: 32px;
@@ -800,7 +800,7 @@ const handleImageError = (e) => {
   }
 
   .view-options button:first-of-type {
-    display: inline-flex; /* отменяем скрытие */
+    display: inline-flex; 
   }
 
   .result-count {
@@ -817,7 +817,7 @@ const handleImageError = (e) => {
   }
 }
 
-/* Для устройств, где hover не поддерживается (touch) */
+
 @media (hover: none) {
   .more {
     opacity: 1;

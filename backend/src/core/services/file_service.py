@@ -15,7 +15,7 @@ class FileService:
         self.tracks_path = storage_path / "tracks"
         self.avatars_path = storage_path / "avatars"
         
-        # Создаём папки при инициализации
+        
         self.covers_path.mkdir(parents=True, exist_ok=True)
         self.tracks_path.mkdir(parents=True, exist_ok=True)
 
@@ -31,16 +31,16 @@ class FileService:
         return await self._save_file(file, self.avatars_path, ALLOWED_IMAGE_EXTENSIONS)
 
     async def _save_file(self, file: UploadFile, target_dir: Path, allowed_extensions: set) -> str:
-        # Проверяем расширение
+        
         ext = Path(file.filename).suffix.lower()
         if ext not in allowed_extensions:
             raise HTTPException(status_code=400, detail=f"Недопустимый формат файла. Разрешены: {allowed_extensions}")
         
-        # Генерируем уникальное имя
+        
         unique_name = f"{uuid.uuid4().hex}{ext}"
         file_path = target_dir / unique_name
         
-        # Сохраняем файл асинхронно
+        
         try:
             async with aiofiles.open(file_path, 'wb') as buffer:
                 content = await file.read()
@@ -48,7 +48,7 @@ class FileService:
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Ошибка сохранения файла: {str(e)}")
         
-        # Возвращаем относительный URL (начиная со /storage)
+        
         relative_path = f"/storage/{target_dir.name}/{unique_name}"
         return relative_path
 
@@ -56,7 +56,7 @@ class FileService:
         """Удаляет файл по URL (если нужно)"""
         if not file_url.startswith("/storage/"):
             return
-        # Преобразуем URL в путь относительно storage
+        
         relative = file_url.replace("/storage/", "")
         file_path = self.storage_path / relative
         if file_path.exists():

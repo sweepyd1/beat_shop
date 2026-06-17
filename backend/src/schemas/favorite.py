@@ -7,7 +7,7 @@ class FavoriteResponse(BaseModel):
     user_id: int
     track_id: int
     added_at: datetime
-    track: TrackResponse  # вложенная информация о треке
+    track: TrackResponse  
 
     class Config:
         from_attributes = True

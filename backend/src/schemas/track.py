@@ -5,7 +5,7 @@ from database.models import InteractionType
 from enum import Enum
 
 
-# ---------- Genre Schemas ----------
+
 class GenreBase(BaseModel):
     name: str = Field(..., min_length=1, max_length=50, description="Название жанра")
 
@@ -24,7 +24,7 @@ class GenreResponse(GenreBase):
     model_config = ConfigDict(from_attributes=True)
 
 
-# ---------- Author Schemas ----------
+
 class AuthorBase(BaseModel):
     full_name: str = Field(..., min_length=1, max_length=150, description="ФИО автора")
     photo_url: Optional[str] = Field(None, description="Ссылка на фото автора")
@@ -55,7 +55,7 @@ class AuthorDetailResponse(AuthorBase):
     model_config = ConfigDict(from_attributes=True)
 
 
-# ---------- Track Schemas ----------
+
 class TrackBase(BaseModel):
     title: str = Field(..., min_length=1, max_length=200, description="Название трека")
     cover_url: Optional[str] = Field(None, description="Ссылка на обложку")
@@ -97,8 +97,8 @@ class TrackResponse(BaseModel):
     price: float
     plays: int
     bpm: Optional[int]
-    genre: GenreShortResponse   # вместо genre_id
-    author: AuthorShortResponse # вместо author_id
+    genre: GenreShortResponse   
+    author: AuthorShortResponse 
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -135,7 +135,7 @@ class TrackWithInteractionResponse(TrackShortResponse):
     interaction_count: Optional[int] = None
 
 
-# ---------- Favorite Schemas ----------
+
 class FavoriteBase(BaseModel):
     user_id: int
     track_id: int
@@ -155,7 +155,7 @@ class FavoriteResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-# ---------- Purchase Schemas ----------
+
 class PurchaseBase(BaseModel):
     user_id: int
     track_id: int
@@ -180,7 +180,7 @@ class PurchaseResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-# ---------- Contract Schemas ----------
+
 class ContractResponse(BaseModel):
     id: int
     purchase_id: int
@@ -191,9 +191,9 @@ class ContractResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-# ---------- Interaction Schemas ----------
 
-# Для совместимости с Pydantic v2 определим Enum строк
+
+
 class InteractionTypeEnum(str, Enum):
     listen = "listen"
     favorite = "favorite"
@@ -220,7 +220,7 @@ class InteractionResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-# ---------- Search/Filter Schemas ----------
+
 class TrackFilterParams(BaseModel):
     query: Optional[str] = Field(None, description="Поисковый запрос")
     genre_id: Optional[int] = Field(None, description="Фильтр по жанру")
@@ -233,7 +233,7 @@ class TrackFilterParams(BaseModel):
     limit: int = Field(100, ge=1, le=1000)
 
 
-# ---------- Recommendation Schemas ----------
+
 class RecommendationResponse(BaseModel):
     track_id: int
     score: Optional[float] = None

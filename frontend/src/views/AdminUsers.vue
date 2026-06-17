@@ -1,9 +1,9 @@
 <template>
   <div class="admin-container">
-    <!-- Анимированный градиентный фон -->
+    
     <div class="hero-glow"></div>
 
-    <!-- Заголовок -->
+    
     <div class="header" data-aos="fade-up">
       <div class="badge">Администрирование</div>
       <h1 class="title">
@@ -12,7 +12,7 @@
       <p class="subtitle">Просмотр, создание, редактирование и блокировка пользователей</p>
     </div>
 
-    <!-- Панель инструментов -->
+    
     <div class="toolbar" data-aos="fade-up" data-aos-delay="100">
       <div class="toolbar-left">
         <div class="search-wrapper">
@@ -37,9 +37,9 @@
       </button>
     </div>
 
-    <!-- Таблица пользователей -->
+    
     <div class="card" data-aos="fade-up" data-aos-delay="200">
-      <!-- Скелетон загрузки -->
+      
       <div v-if="loading" class="skeleton-container">
         <div v-for="i in 5" :key="i" class="skeleton-row">
           <div class="skeleton-avatar"></div>
@@ -52,7 +52,7 @@
         </div>
       </div>
 
-      <!-- Таблица -->
+      
       <div v-else class="table-wrapper">
         <table class="users-table">
           <thead>
@@ -141,7 +141,7 @@
           </tbody>
         </table>
 
-        <!-- Пагинация -->
+        
         <div class="pagination" v-if="totalPages > 1">
           <button @click="currentPage--" :disabled="currentPage === 1" class="page-btn">
             <i class="fas fa-chevron-left"></i>
@@ -154,7 +154,7 @@
       </div>
     </div>
 
-    <!-- Модалка создания/редактирования -->
+    
     <Teleport to="body">
       <Transition name="modal-fade">
         <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
@@ -226,7 +226,7 @@
       </Transition>
     </Teleport>
 
-    <!-- Модалка статистики -->
+    
     <Teleport to="body">
       <Transition name="modal-fade">
         <div v-if="showStatsModal" class="modal-overlay" @click.self="showStatsModal = false">
@@ -323,12 +323,12 @@ import { showError, showSuccess } from '@/utils/alert';
 const router = useRouter();
 const authStore = useAuthStore();
 
-// Проверка прав
+
 if (authStore.user?.role !== 'admin') {
   router.replace('/');
 }
 
-// Данные
+
 const users = ref([]);
 const loading = ref(false);
 const searchQuery = ref('');
@@ -340,13 +340,13 @@ const statsUser = ref(null);
 const showStatsModal = ref(false);
 const statsLoading = ref(false);
 
-// Пагинация и сортировка
+
 const currentPage = ref(1);
 const pageSize = ref(10);
 const sortKey = ref('full_name');
 const sortOrder = ref('asc');
 
-// Форма
+
 const form = ref({
   full_name: '',
   login: '',
@@ -358,7 +358,7 @@ const form = ref({
 const avatarFile = ref(null);
 const avatarPreview = ref(null);
 
-// Получение URL аватара
+
 const getAvatarUrl = (url) => {
   if (!url) return '/default-avatar.png';
   if (url.startsWith('http')) return url;
@@ -366,7 +366,7 @@ const getAvatarUrl = (url) => {
   return `${baseUrl}${url}`;
 };
 
-// Роль: иконка и название
+
 const roleIcon = (role) => {
   const icons = { user: 'fas fa-user', author: 'fas fa-microphone-alt', admin: 'fas fa-crown' };
   return icons[role] || 'fas fa-user';
@@ -376,7 +376,7 @@ const roleName = (role) => {
   return names[role] || role;
 };
 
-// Фильтрация и сортировка
+
 const filteredUsers = computed(() => {
   let result = users.value;
   if (searchQuery.value) {
@@ -390,7 +390,7 @@ const filteredUsers = computed(() => {
   if (filterRole.value) {
     result = result.filter(u => u.role === filterRole.value);
   }
-  // Сортировка
+  
   return [...result].sort((a, b) => {
     let aVal = a[sortKey.value];
     let bVal = b[sortKey.value];
@@ -419,10 +419,10 @@ const sortBy = (key) => {
     sortKey.value = key;
     sortOrder.value = 'asc';
   }
-  currentPage.value = 1; // сброс страницы при сортировке
+  currentPage.value = 1; 
 };
 
-// Загрузка пользователей
+
 const fetchUsers = async () => {
   loading.value = true;
   try {
@@ -436,7 +436,7 @@ const fetchUsers = async () => {
   }
 };
 
-// Модалка создания
+
 const openCreateModal = () => {
   editingUserId.value = null;
   form.value = { full_name: '', login: '', email: '', password: '', role: 'user', is_active: true };
@@ -445,7 +445,7 @@ const openCreateModal = () => {
   showModal.value = true;
 };
 
-// Редактирование
+
 const openEditModal = (user) => {
   editingUserId.value = user.id;
   form.value = {
@@ -461,7 +461,7 @@ const openEditModal = (user) => {
   showModal.value = true;
 };
 
-// Загрузка аватара
+
 const onAvatarChange = (e) => {
   const file = e.target.files[0];
   if (file) {
@@ -470,7 +470,7 @@ const onAvatarChange = (e) => {
   }
 };
 
-// Отправка формы
+
 const submitUser = async () => {
   saving.value = true;
   const fd = new FormData();
@@ -507,7 +507,7 @@ const submitUser = async () => {
   }
 };
 
-// Блокировка/разблокировка
+
 const toggleActive = async (user) => {
   const fd = new FormData();
   fd.append('is_active', !user.is_active);
@@ -521,7 +521,7 @@ const toggleActive = async (user) => {
   }
 };
 
-// Удаление
+
 const deleteUser = async (id) => {
   if (!confirm('Удалить пользователя? Это действие необратимо.')) return;
   try {
@@ -533,7 +533,7 @@ const deleteUser = async (id) => {
   }
 };
 
-// Статистика
+
 const openStats = async (user) => {
   statsLoading.value = true;
   showStatsModal.value = true;
@@ -548,7 +548,7 @@ const openStats = async (user) => {
   }
 };
 
-// Закрытие модалок
+
 const closeModal = () => {
   showModal.value = false;
   if (avatarPreview.value && avatarFile.value) {
@@ -560,7 +560,7 @@ onMounted(fetchUsers);
 </script>
 
 <style scoped>
-/* Глобальные переменные и анимации */
+
 .admin-container {
   max-width: 1400px;
   margin: 2rem auto;
@@ -580,7 +580,7 @@ onMounted(fetchUsers);
   z-index: 0;
 }
 
-/* Заголовок */
+
 .header {
   text-align: center;
   margin-bottom: 3rem;
@@ -619,7 +619,7 @@ onMounted(fetchUsers);
   font-size: 1.1rem;
 }
 
-/* Панель инструментов */
+
 .toolbar {
   display: flex;
   justify-content: space-between;
@@ -710,7 +710,7 @@ onMounted(fetchUsers);
   background: rgba(255,255,255,0.2);
 }
 
-/* Карточка таблицы */
+
 .card {
   background: rgba(20, 20, 30, 0.7);
   backdrop-filter: blur(12px);
@@ -876,7 +876,7 @@ onMounted(fetchUsers);
   margin-bottom: 1rem;
 }
 
-/* Пагинация */
+
 .pagination {
   display: flex;
   justify-content: center;
@@ -912,7 +912,7 @@ onMounted(fetchUsers);
   color: #c084fc;
 }
 
-/* Скелетон */
+
 .skeleton-container {
   padding: 1rem;
 }
@@ -957,7 +957,7 @@ onMounted(fetchUsers);
   50% { opacity: 0.6; }
 }
 
-/* Модалки */
+
 .modal-fade-enter-active,
 .modal-fade-leave-active {
   transition: opacity 0.3s ease;
@@ -1113,7 +1113,7 @@ onMounted(fetchUsers);
   margin-top: 2rem;
 }
 
-/* Статистика модалка */
+
 .stats-modal {
   max-width: 800px;
 }
@@ -1227,7 +1227,7 @@ onMounted(fetchUsers);
   color: #10b981;
 }
 
-/* Адаптив */
+
 @media (max-width: 768px) {
   .toolbar {
     flex-direction: column;

@@ -15,7 +15,7 @@
     </div>
 
     <div class="track-list">
-      <!-- Заголовок (без лайков) -->
+      
       <div class="track-list-header">
         <span class="index">#</span>
         <span class="cover-placeholder"></span>
@@ -141,7 +141,7 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* Базовые стили (десктоп) */
+
 .track-list-header,
 .track-item {
   display: grid;
@@ -300,7 +300,7 @@ onMounted(async () => {
   color: #a855f7;
 }
 
-/* Адаптивность для телефонов */
+
 @media (max-width: 768px) {
   .genre-detail {
     padding: 1rem;
@@ -333,7 +333,7 @@ onMounted(async () => {
     flex-wrap: wrap;
   }
   
-  /* Горизонтальная прокрутка для таблицы треков */
+  
   .track-list {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -341,18 +341,18 @@ onMounted(async () => {
   
   .track-list-header,
   .track-item {
-    min-width: 500px; /* фиксируем минимальную ширину, чтобы не сжимались слишком сильно */
+    min-width: 500px; 
     gap: 0.8rem;
     padding: 0.6rem 0.8rem;
   }
   
-  /* Скрываем колонку "Прослушивания" на телефонах (опционально) */
+  
   .track-list-header .plays,
   .track-item .plays {
     display: none;
   }
   
-  /* Переопределяем грид без колонки plays (она скрыта) */
+  
   .track-list-header,
   .track-item {
     grid-template-columns: 30px 50px 1fr 70px 40px;

@@ -86,7 +86,7 @@ const handleLogin = async () => {
   try {
     await authStore.login({ login: login.value, password: password.value });
     console.log('Login successful, redirecting...');
-    // Перенаправляем на главную
+    
     router.push('/');
   } catch (error) {
     console.error('Login error:', error);
@@ -102,7 +102,7 @@ const handleLogin = async () => {
 </script>
 
 <style scoped>
-/* Ваши стили остаются */
+
 .auth-page {
   min-height: calc(100vh - 80px);
   display: flex;

@@ -13,7 +13,7 @@ class AuthorService:
     async def create_author(self, author_data: AuthorCreate, photo_file=None):
         photo_url = None
         if photo_file:
-            photo_url = await self.file_service.save_cover(photo_file)  # используем как обложку
+            photo_url = await self.file_service.save_cover(photo_file)  
         
         return await self.repo.create(
             full_name=author_data.full_name,
@@ -29,7 +29,7 @@ class AuthorService:
         update_data = author_data.dict(exclude_unset=True)
         
         if photo_file:
-            # Если было старое фото, удаляем (опционально)
+            
             if author.photo_url:
                 self.file_service.delete_file(author.photo_url)
             update_data['photo_url'] = await self.file_service.save_cover(photo_file)
@@ -41,13 +41,13 @@ class AuthorService:
         if not author:
             return False
         
-        # Удаляем фото автора
+        
         if author.photo_url:
             self.file_service.delete_file(author.photo_url)
         
-        # Также нужно решить, что делать с треками автора. По условию диплома, возможно, запретим удаление, если есть треки.
-        # Для простоты пока разрешим, но треки останутся без автора? Лучше запретить.
-        # Добавим проверку
+        
+        
+        
         if author.tracks:
             raise HTTPException(status_code=400, detail="Нельзя удалить автора, у которого есть треки")
         

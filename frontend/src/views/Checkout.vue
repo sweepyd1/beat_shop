@@ -75,7 +75,7 @@ const form = ref({
 const submitOrder = () => {
   console.log('Order submitted', form.value);
   alert('Заказ оформлен! (имитация)');
-  // здесь будет отправка на бэкенд и перенаправление на страницу успеха
+  
 };
 </script>
 

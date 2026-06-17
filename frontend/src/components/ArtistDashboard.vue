@@ -1,6 +1,6 @@
 <template>
   <div class="artist-dashboard">
-    <!-- Хедер с информацией об авторе -->
+    
     <div class="artist-header">
       <!-- <div class="avatar-wrapper">
         <img :src="authorAvatar" alt="avatar" class="avatar" @error="handleImageError" />
@@ -44,7 +44,7 @@
       </div>
     </div>
 
-    <!-- Общая статистика (карточки) -->
+    
     <div class="sales-stats">
       <h2><i class="fas fa-chart-line"></i> Общая статистика</h2>
       <div class="stats-grid">
@@ -88,7 +88,7 @@
       </div>
     </div>
 
-    <!-- Графики за 7 дней -->
+    
     <div class="charts-row">
       <div class="chart-card">
         <h3>Продажи за 7 дней</h3>
@@ -112,7 +112,7 @@
       </div>
     </div>
 
-    <!-- Выручка по месяцам (последние 6 месяцев) -->
+    
     <div class="chart-card full-width">
       <h3>Динамика выручки по месяцам</h3>
       <canvas ref="monthlyEarningsCanvas"></canvas>
@@ -121,7 +121,7 @@
       </div>
     </div>
 
-    <!-- Топ треков -->
+    
     <div class="top-tracks-row">
       <div class="top-tracks-card">
         <h3>🏆 Топ треков по продажам</h3>
@@ -163,7 +163,7 @@
       </div>
     </div>
 
-    <!-- Продажи по типам лицензий -->
+    
     <div class="chart-card">
       <h3>Продажи по типам лицензий</h3>
       <div class="license-stats" v-if="fullStats.sales_by_license?.length">
@@ -180,7 +180,7 @@
       <div v-else class="empty-state">Нет продаж по лицензиям</div>
     </div>
 
-    <!-- Список битов автора -->
+    
     <div class="beats-section">
       <h2><i class="fas fa-drumstick-bite"></i> Мои биты</h2>
       <div class="beats-grid">
@@ -213,7 +213,7 @@
       </div>
     </div>
 
-    <!-- Ссылка на загрузку нового бита -->
+    
     <div class="upload-link">
       <router-link to="/profile?tab=upload" class="upload-trigger">
         <i class="fas fa-plus-circle"></i> Загрузить новый бит
@@ -229,7 +229,7 @@ import api from "../api";
 
 Chart.register(...registerables);
 
-// Плеер из инжекта
+
 const { playTrack } = inject("player", {
   playTrack: (t) => console.log("play", t),
 });
@@ -254,7 +254,7 @@ const saveBio = async () => {
 const cancelEditBio = () => {
   editingBio.value = false;
 };
-// Данные
+
 const author = ref({});
 const tracks = ref([]);
 const fullStats = ref({
@@ -274,7 +274,7 @@ const fullStats = ref({
   average_rating: 0,
 });
 
-// Refs для canvas
+
 const salesChartCanvas = ref(null);
 const playsChartCanvas = ref(null);
 const monthlyEarningsCanvas = ref(null);
@@ -283,7 +283,7 @@ let salesChart = null;
 let playsChart = null;
 let monthlyChart = null;
 
-// Аватар автора
+
 const authorAvatar = computed(() => {
   if (!author.value.photo_url) return "/default-avatar.png";
   if (author.value.photo_url.startsWith("http")) return author.value.photo_url;
@@ -291,17 +291,17 @@ const authorAvatar = computed(() => {
   return `${baseUrl}${author.value.photo_url}`;
 });
 
-// Форматирование чисел
+
 const formatNumber = (num) => {
   return new Intl.NumberFormat("ru-RU").format(num);
 };
 
-// Обработчик ошибок изображений
+
 const handleImageError = (e) => {
   e.target.src = "/default-cover.jpg";
 };
 
-// Загрузка профиля и треков (существующие методы)
+
 const fetchAuthorData = async () => {
   try {
     const { data: authorData } = await api.get("/authors/me");
@@ -313,7 +313,7 @@ const fetchAuthorData = async () => {
   }
 };
 
-// Загрузка расширенной статистики
+
 const fetchFullStats = async () => {
   try {
     const { data } = await api.get("/authors/me/full-stats");
@@ -325,9 +325,9 @@ const fetchFullStats = async () => {
   }
 };
 
-// Отрисовка графиков через Chart.js
+
 const renderCharts = () => {
-  // Продажи за 7 дней (bar)
+  
   if (
     salesChartCanvas.value &&
     fullStats.value.sales_chart_last_7_days?.length
@@ -363,7 +363,7 @@ const renderCharts = () => {
     });
   }
 
-  // Прослушивания за 7 дней (line)
+  
   if (
     playsChartCanvas.value &&
     fullStats.value.plays_chart_last_7_days?.length
@@ -397,7 +397,7 @@ const renderCharts = () => {
     });
   }
 
-  // Выручка по месяцам
+  
   if (
     monthlyEarningsCanvas.value &&
     fullStats.value.earnings_last_6_months?.length
@@ -432,7 +432,7 @@ const getCoverUrl = (coverUrl) => {
   const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
   return `${baseUrl}${coverUrl}`;
 };
-// Лайк (заглушка)
+
 const toggleFavorite = (trackId) => {
   console.log("toggle favorite", trackId);
 };

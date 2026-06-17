@@ -21,7 +21,7 @@ export const useFavoritesStore = defineStore('favorites', {
     async add(trackId) {
       try {
         await api.post(`/favorites/${trackId}`);
-        await this.fetch(); // обновляем список после добавления
+        await this.fetch(); 
       } catch (err) {
         console.error('Failed to add favorite', err);
         throw err;
@@ -30,7 +30,7 @@ export const useFavoritesStore = defineStore('favorites', {
     async remove(trackId) {
       try {
         await api.delete(`/favorites/${trackId}`);
-        await this.fetch(); // обновляем список после удаления
+        await this.fetch(); 
       } catch (err) {
         console.error('Failed to remove favorite', err);
         throw err;

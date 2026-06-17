@@ -1,4 +1,4 @@
-<!-- components/PurchaseModal.vue -->
+
 <template>
   <div v-if="modelValue" class="modal-overlay" @click.self="close">
     <div class="modal-container">
@@ -13,7 +13,7 @@
             <p class="track-title">{{ track.title }}</p>
             <p class="track-author">{{ track.author?.name || 'Автор' }}</p>
             <div class="price-block">
-              <!-- Зачёркнутая базовая цена (стандартная) показывается только если выбрана не стандартная лицензия -->
+              
               <span v-if="form.licenseType !== 'standard'" class="old-price">
                 {{ formatPrice(basePrice) }} ₽
               </span>
@@ -62,7 +62,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
 import api from '../api';
-import { showError, showSuccess } from '@/utils/alert';  // <-- импорт
+import { showError, showSuccess } from '@/utils/alert';  
 const props = defineProps({
   modelValue: Boolean,
   track: Object
@@ -77,12 +77,12 @@ const form = ref({
   agree: false
 });
 const loading = ref(false);
-const user = ref(null); // данные текущего пользователя
+const user = ref(null); 
 
-// Форматирование цены (без изменений)
+
 const formatPrice = (value) => Number(value).toLocaleString('ru-RU');
 
-// Обложка трека
+
 const coverUrl = computed(() => {
   if (!props.track) return '';
   const url = props.track.cover_url;
@@ -92,7 +92,7 @@ const coverUrl = computed(() => {
   return `${baseUrl}${url}`;
 });
 
-// Цены (без изменений)
+
 const prices = computed(() => {
   const base = props.track?.price || 0;
   return {
@@ -114,12 +114,12 @@ const licenseHint = computed(() => {
   return hints[form.value.licenseType] || '';
 });
 
-// Закрытие модалки
+
 const close = () => {
   emit('update:modelValue', false);
 };
 
-// Отправка формы (без изменений, кроме возможного использования user.id)
+
 const submitPurchase = async () => {
   if (!form.value.agree) {
     showError('Необходимо согласиться с условиями договора, попробуйте еще раз!');
@@ -143,18 +143,18 @@ const submitPurchase = async () => {
   } catch (error) {
     console.error('Ошибка при покупке:', error);
     
-    // Извлекаем сообщение из ответа бэкенда
+    
     let errorMessage = 'Произошла ошибка при оформлении покупки';
     
-    // FastAPI возвращает ошибки в формате { detail: "текст" }
+    
     if (error.response?.data?.detail) {
       errorMessage = error.response.data.detail;
     } 
-    // Альтернативные поля на случай других форматов
+    
     else if (error.response?.data?.message) {
       errorMessage = error.response.data.message;
     }
-    // Если сервер не ответил (сетевые ошибки)
+    
     else if (error.message) {
       errorMessage = error.message;
     }
@@ -179,7 +179,7 @@ const fetchCurrentUser = async () => {
   }
 };
 
-// Следим за открытием модалки
+
 watch(() => props.modelValue, async (isOpen) => {
   if (isOpen) {
     if (!user.value) {

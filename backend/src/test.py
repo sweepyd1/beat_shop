@@ -8,7 +8,7 @@ def fetch_jamendo_tracks(client_id, limit=200, offset=0):
     params = {
         'client_id': client_id,
         'format': 'json',
-        'limit': min(limit, 200),  # API ограничение
+        'limit': min(limit, 200),  
         'offset': offset,
         'include': 'musicinfo',
         'audioformat': 'mp32'
@@ -41,14 +41,14 @@ def fetch_all_tracks(client_id, total_needed=1000):
         print(f"  Загружено {len(batch)} треков. Всего: {len(all_tracks)}/{total_needed}")
         
         offset += batch_size
-        time.sleep(0.5)  # Пауза между запросами, чтобы не забанили
+        time.sleep(0.5)  
     
     return all_tracks[:total_needed]
 
-# Ваш Client ID
+
 CLIENT_ID = "4359b26e"
 
-# Получаем треки
+
 print("Начинаем загрузку треков...")
 tracks = fetch_all_tracks(CLIENT_ID, total_needed=1000)
 
@@ -56,7 +56,7 @@ print(f"\n{'='*80}")
 print(f"ВСЕГО ПОЛУЧЕНО ТРЕКОВ: {len(tracks)}")
 print(f"{'='*80}\n")
 
-# Выводим первые 10 треков для примера
+
 for idx, track in enumerate(tracks[:10], 1):
     print(f"🎵 ТРЕК #{idx}")
     print(f"{'─'*50}")
@@ -69,7 +69,7 @@ for idx, track in enumerate(tracks[:10], 1):
 
 print(f"... и еще {len(tracks) - 10} треков")
 
-# Сохраняем в JSON
+
 with open('jamendo_tracks_1000.json', 'w', encoding='utf-8') as f:
     json.dump(tracks, f, indent=2, ensure_ascii=False)
 print(f"\n💾 Полные данные сохранены в файл: jamendo_tracks_1000.json")

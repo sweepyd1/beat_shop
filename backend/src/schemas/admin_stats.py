@@ -7,7 +7,7 @@ class MetricsResponse(BaseModel):
     total_users: int
     new_users_last_week: int
     total_revenue: float
-    revenue_growth: float  # в процентах
+    revenue_growth: float  
     total_purchases: int
     avg_check: float
     total_listens: int
@@ -37,8 +37,8 @@ class GenreSalesResponse(BaseModel):
 class UserMetricsResponse(BaseModel):
     total_users: int
     new_users_last_week: int
-    active_users_last_month: int          # пользователи, совершившие покупку или прослушивание за последние 30 дней
-    total_subscriptions: int              # общее количество подписок на авторов
+    active_users_last_month: int          
+    total_subscriptions: int              
     avg_purchases_per_user: float
     total_purchases_amount: Decimal
 

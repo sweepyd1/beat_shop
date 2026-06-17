@@ -15,7 +15,7 @@ class PurchaseRepository(BaseRepository[Purchase]):
             .where(Purchase.user_id == user_id)
             .options(
                 selectinload(Purchase.track).selectinload(Track.author),
-                selectinload(Purchase.track).selectinload(Track.genre)   # Add this line
+                selectinload(Purchase.track).selectinload(Track.genre)   
             )
             .order_by(Purchase.purchase_date.desc())
         )
@@ -95,7 +95,7 @@ class PurchaseRepository(BaseRepository[Purchase]):
             select(
                 Genre.id,
                 Genre.name,
-                func.coalesce(func.sum(Purchase.amount), 0).label('revenue')  # ← coalesce
+                func.coalesce(func.sum(Purchase.amount), 0).label('revenue')  
             )
             .join(Track, Track.id == Purchase.track_id)
             .join(Genre, Genre.id == Track.genre_id)
@@ -130,7 +130,7 @@ class PurchaseRepository(BaseRepository[Purchase]):
         """Возвращает список {'month': 'YYYY-MM', 'amount': float} за последние N месяцев"""
         now = datetime.now()
         first_day_current = datetime(now.year, now.month, 1)
-        start_date = first_day_current - timedelta(days=(months-1)*30)  # приблизительно
+        start_date = first_day_current - timedelta(days=(months-1)*30)  
         stmt = (
             select(
                 func.to_char(Purchase.purchase_date, 'YYYY-MM').label('month'),
@@ -161,7 +161,7 @@ class PurchaseRepository(BaseRepository[Purchase]):
         rows = result.all()
         return [
             {
-                'license_type': row.license_type.value,  # если license_type это Enum
+                'license_type': row.license_type.value,  
                 'count': row.count,
                 'total_amount': float(row.total_amount)
             }

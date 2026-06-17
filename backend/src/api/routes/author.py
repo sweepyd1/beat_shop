@@ -16,7 +16,7 @@ from api.dependencies import (
 )
 from schemas.track import AuthorTrackResponse, TrackResponse
 from typing import List
-from sqlalchemy.orm import selectinload  # <-- Добавьте этот импорт в начале файла
+from sqlalchemy.orm import selectinload  
 
 
 router = APIRouter(prefix="/authors", tags=["authors"])
@@ -36,7 +36,7 @@ async def get_my_author_profile(
     current_user: User = Depends(get_current_user),
     author_service: AuthorService = Depends(get_author_service),
     stats_service: StatsService = Depends(get_stats_service),
-    track_service: TrackService = Depends(get_track_service),  # добавить
+    track_service: TrackService = Depends(get_track_service),  
 ):
     if current_user.role.value != "author":
         raise HTTPException(403, "Пользователь не является автором")
@@ -49,7 +49,7 @@ async def get_my_author_profile(
     total_earnings = await stats_service.get_total_earnings(author.id)
     tracks_count = await track_service.get_tracks_count(
         author.id
-    )  # вместо len(author.tracks)
+    )  
 
     return AuthorDetailResponse(
         id=author.id,
@@ -117,16 +117,16 @@ async def get_author_public(
     if not author:
         raise HTTPException(404, "Автор не найден")
 
-    # Получаем статистику
+    
     stats = await stats_service.get_author_stats(author.id)
     total_earnings = await stats_service.get_total_earnings(author.id)
     tracks_count = await track_service.get_tracks_count(author.id)
 
-    # Получаем треки автора
+    
     tracks = await track_service.get_author_tracks(author.id)
     user = await session.get(User, author.user_id)
     photo_url = user.avatar_url if user else None
-    # Создаем ответ
+    
     response = AuthorPublicResponse(
         id=author.id,
         user_id=author.user_id,
@@ -175,5 +175,5 @@ async def update_my_profile(
     if not updated:
         raise HTTPException(500, "Не удалось обновить профиль")
 
-    # подгрузим свежие данные (или обновишь респонс)
+    
     return updated

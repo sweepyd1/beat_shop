@@ -1,9 +1,9 @@
-# schemas/purchase.py
+
 from enum import Enum
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
 from typing import Optional
-from schemas.track import TrackResponse  # предполагается, что у вас уже есть схема трека
+from schemas.track import TrackResponse  
 
 class PurchaseResponse(BaseModel):
     id: int
@@ -22,8 +22,8 @@ class LicenseTypeEnum(str, Enum):
     extended = "extended"
     exclusive = "exclusive"
 class PurchaseRequest(BaseModel):
-    track_id: int                     # обязательно
+    track_id: int                     
     buyer_name: str
     buyer_email: EmailStr
     license_type: LicenseTypeEnum
-    comment: str | None = None       # или Optional[str] = None
+    comment: str | None = None       

@@ -12,7 +12,7 @@ export function useProfile() {
 
   const fetchUser = async () => {
     try {
-      const response = await apiClient.get('/auth/me'); // предположительный эндпоинт
+      const response = await apiClient.get('/auth/me'); 
       user.value = response.data;
     } catch (err) {
       error.value = err.response?.data?.detail || 'Ошибка загрузки пользователя';
@@ -46,7 +46,7 @@ export function useProfile() {
     }
   };
 
-  // Загрузить все данные сразу
+  
   const fetchAll = async () => {
     loading.value = true;
     error.value = null;
@@ -58,13 +58,13 @@ export function useProfile() {
         fetchSubscriptions(),
       ]);
     } catch (err) {
-      // ошибки уже обработаны в каждом методе, но можно добавить общую
+      
     } finally {
       loading.value = false;
     }
   };
 
-  // Действия
+  
   const editProfile = async (formData) => {
     try {
       const response = await apiClient.put('/auth/me', formData);
@@ -88,15 +88,15 @@ export function useProfile() {
 
   const downloadTrack = async (trackId) => {
     try {
-      // предположим, что есть эндпоинт для скачивания
+      
       const response = await apiClient.get(`/tracks/${trackId}/download`, {
         responseType: 'blob',
       });
-      // создать ссылку и скачать файл
+      
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', 'track.mp3'); // имя файла можно взять из заголовков
+      link.setAttribute('download', 'track.mp3'); 
       document.body.appendChild(link);
       link.click();
       link.remove();
