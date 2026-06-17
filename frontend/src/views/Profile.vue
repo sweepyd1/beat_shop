@@ -509,64 +509,80 @@
       </div>
     </transition>
     <transition name="modal-fade">
-  <div
-    v-if="showPurchasesModal"
-    class="modal-overlay"
-    @click.self="showPurchasesModal = false"
-  >
-    <div class="modal glass-card" style="max-width: 700px;">
-      <button class="modal-close" @click="showPurchasesModal = false">&times;</button>
-      <h2>Договоры продаж</h2>
-      
-      <div v-if="selectedTrackPurchases" class="purchases-list">
-        <div class="track-info-header">
-          <img 
-            :src="getImageUrl(selectedTrackPurchases.cover_url)" 
-            class="track-thumb"
-            @error="e => e.target.src='/default-cover.jpg'"
-          />
-          <div>
-            <h3>{{ selectedTrackPurchases.track_title }}</h3>
-            <p class="purchases-count">
-              {{ selectedTrackPurchases.purchases.length }} продаж
-            </p>
-          </div>
-        </div>
-        
-        <div class="purchases-table">
-          <div 
-            v-for="purchase in selectedTrackPurchases.purchases" 
-            :key="purchase.id"
-            class="purchase-row"
+      <div
+        v-if="showPurchasesModal"
+        class="modal-overlay"
+        @click.self="showPurchasesModal = false"
+      >
+        <div
+          class="modal glass-card"
+          style="
+            max-width: 700px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+          "
+        >
+          <button class="modal-close" @click="showPurchasesModal = false">
+            &times;
+          </button>
+          <h2 style="flex-shrink: 0">Договоры продаж</h2>
+
+          <div
+            v-if="selectedTrackPurchases"
+            class="purchases-list"
+            style="flex: 1; overflow-y: auto; min-height: 0"
           >
-            <div class="purchase-info">
-              <div class="buyer-name">{{ purchase.buyer_name }}</div>
-              <div class="purchase-meta">
-                <span class="license-badge">{{ purchase.license_type }}</span>
-                <span class="purchase-date">
-                  {{ formatDate(purchase.purchase_date) }}
-                </span>
+            <div class="track-info-header">
+              <img
+                :src="getImageUrl(selectedTrackPurchases.cover_url)"
+                class="track-thumb"
+                @error="(e) => (e.target.src = '/default-cover.jpg')"
+              />
+              <div>
+                <h3>{{ selectedTrackPurchases.track_title }}</h3>
+                <p class="purchases-count">
+                  {{ selectedTrackPurchases.purchases.length }} продаж
+                </p>
               </div>
-              <div class="purchase-amount">{{ purchase.amount }} ₽</div>
             </div>
-            <button
-              v-if="purchase.has_contract"
-              @click="downloadContract(purchase.id)"
-              class="btn-icon download-contract-btn"
-            >
-              <i class="fas fa-file-pdf"></i> Договор
-            </button>
-            <span v-else class="no-contract">Нет договора</span>
+
+            <div class="purchases-table">
+              <div
+                v-for="purchase in selectedTrackPurchases.purchases"
+                :key="purchase.id"
+                class="purchase-row"
+              >
+                <div class="purchase-info">
+                  <div class="buyer-name">{{ purchase.buyer_name }}</div>
+                  <div class="purchase-meta">
+                    <span class="license-badge">{{
+                      purchase.license_type
+                    }}</span>
+                    <span class="purchase-date">
+                      {{ formatDate(purchase.purchase_date) }}
+                    </span>
+                  </div>
+                  <div class="purchase-amount">{{ purchase.amount }} ₽</div>
+                </div>
+                <button
+                  v-if="purchase.has_contract"
+                  @click="downloadContract(purchase.id)"
+                  class="btn-icon download-contract-btn"
+                >
+                  <i class="fas fa-file-pdf"></i> Договор
+                </button>
+                <span v-else class="no-contract">Нет договора</span>
+              </div>
+            </div>
+          </div>
+
+          <div v-else class="empty-state">
+            <p>Нет данных о покупках</p>
           </div>
         </div>
       </div>
-      
-      <div v-else class="empty-state">
-        <p>Нет данных о покупках</p>
-      </div>
-    </div>
-  </div>
-</transition>
+    </transition>
   </div>
 </template>
 
