@@ -141,7 +141,13 @@ const toggleFollow = async () => {
     showError("Ошибка при изменении подписки");
   }
 };
-
+const getFullUrl = (url) => {
+  if (!url || url.startsWith("http")) return url;
+  const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
+  const normalizedBase = baseUrl.endsWith("/") ? baseUrl.slice(0, -1) : baseUrl;
+  const path = url.startsWith("/") ? url : "/" + url;
+  return normalizedBase + path;
+};
 const fetchArtistData = async () => {
   loading.value = true;
   error.value = null;
@@ -150,12 +156,18 @@ const fetchArtistData = async () => {
     const authorId = route.params.id;
     const response = await api.get(`/authors/${authorId}`);
     artist.value = response.data;
-    tracks.value = response.data.tracks || [];
+    
+   
+    tracks.value = (response.data.tracks || []).map(track => ({
+      ...track,
+      mp3_file_url: getFullUrl(track.mp3_file_url), 
+      cover_url: getFullUrl(track.cover_url)       
+    }));
+
     artistStats.value = response.data;
     console.log("Full response:", response.data);
     console.log("photo_url:", response.data.photo_url);
 
-    
     salesChart.value = Array.from(
       { length: 7 },
       () => Math.floor(Math.random() * 80) + 20

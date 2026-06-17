@@ -71,13 +71,13 @@
                 >
                   🎧
                 </button>
-                <button
+                <!-- <button
                   class="buy-btn"
                   @click="buyTrack(recommendation)"
                   title="Купить"
                 >
                   🛒
-                </button>
+                </button> -->
                 <button
                   class="next-btn"
                   @click="fetchRecommendation"
@@ -107,14 +107,24 @@ import { ref } from "vue";
 import api from "@/api";
 import { useAuthStore } from "@/stores/auth";
 import { storeToRefs } from "pinia";
-
+import { showError, showSuccess } from '@/utils/alert';  
+import { inject } from "vue"; // добавь inject в импорты
 const props = defineProps({
   visible: {
     type: Boolean,
     default: false,
   },
 });
-
+const { playTrack: globalPlayTrack } = inject("player", {
+  playTrack: (t) => console.log("play", t),
+});
+const getFullUrl = (url) => {
+  if (!url || url.startsWith("http")) return url;
+  const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
+  const normalizedBase = baseUrl.endsWith("/") ? baseUrl.slice(0, -1) : baseUrl;
+  const path = url.startsWith("/") ? url : "/" + url;
+  return normalizedBase + path;
+};
 const emit = defineEmits(["close"]);
 
 const closeModal = () => {
@@ -145,14 +155,18 @@ const { user } = storeToRefs(authStore);
 
 const playTrack = (track) => {
   if (!track?.id) return;
-  const audioUrl = `/api/recommendations/stream/${track.id}`;
-  const audio = new Audio(audioUrl);
-  audio.play().catch((err) => {
-    console.error("Playback error:", err);
-    showError("Не удалось воспроизвести трек.");
-  });
-};
 
+  closeModal();
+  
+
+  const trackForPlayer = {
+    ...track,
+    mp3_file_url: track.mp3_file_url || getFullUrl(track.mp3_file_url),
+    cover_url: track.cover_url || getFullUrl(track.cover_url)
+  };
+  
+  globalPlayTrack(trackForPlayer);
+};
 const buyTrack = (track) => {
   showSuccess(`Добавлено в корзину: ${track.title}`);
   
@@ -170,8 +184,14 @@ const fetchRecommendation = async () => {
       url += `&exclude=${shownTrackIds.value.join(",")}`;
     }
     const response = await api.get(url);
-    const track = response.data[0];
+    let track = response.data[0];
     if (!track) throw new Error("Нет подходящих треков");
+
+    track = {
+      ...track,
+      mp3_file_url: getFullUrl(track.mp3_file_url), 
+      cover_url: getFullUrl(track.cover_url)        
+    };
 
     recommendation.value = track;
     shownTrackIds.value.push(track.id);
@@ -186,6 +206,7 @@ const fetchRecommendation = async () => {
   } catch (err) {
     console.error("Recommendation error:", err);
     error.value = "Не удалось получить рекомендацию. Попробуйте позже.";
+    
     if (process.env.NODE_ENV === "development") {
       recommendation.value = {
         id: 999,
@@ -194,6 +215,7 @@ const fetchRecommendation = async () => {
         genre: { name: "Electronic" },
         price: 99.0,
         cover_url: "/default-cover.jpg",
+        mp3_file_url: null
       };
       explanationText.value =
         "Демонстрационная рекомендация. Подключите бэкенд для реальных треков.";
