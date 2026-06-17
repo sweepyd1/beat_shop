@@ -238,3 +238,33 @@ class TrackRepository(BaseRepository[Track]):
         
         result = await self.session.execute(stmt)
         return result.scalars().all()
+    async def get_all_admin_tracks(self, skip: int = 0, limit: int = 1000):
+        """Получение всех треков с подсчетом продаж через JOIN (быстро, без N+1)"""
+        # Подзапрос для подсчета продаж
+        sales_subq = (
+            select(
+                Purchase.track_id,
+                func.count(Purchase.id).label('sales_count')
+            )
+            .group_by(Purchase.track_id)
+            .subquery()
+        )
+        
+        stmt = (
+            select(
+                Track,
+                func.coalesce(sales_subq.c.sales_count, 0).label('sales_count')
+            )
+            .outerjoin(sales_subq, Track.id == sales_subq.c.track_id)
+            .options(
+                selectinload(Track.genre),
+                selectinload(Track.author)
+            )
+            .order_by(Track.added_date.desc())
+            .offset(skip)
+            .limit(limit)
+        )
+        
+        result = await self.session.execute(stmt)
+        # Возвращает список кортежей: [(Track, sales_count), ...]
+        return result.all()

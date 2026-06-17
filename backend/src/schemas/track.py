@@ -93,6 +93,7 @@ class TrackResponse(BaseModel):
     added_date: datetime
     mp3_file_url: str
     sales: int = 0   
+    is_exclusive_sold: bool = False
     price: float
     plays: int
     bpm: Optional[int]

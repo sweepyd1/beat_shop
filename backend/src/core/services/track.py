@@ -194,3 +194,15 @@ class TrackService:
         return result
     async def get_tracks_count(self, author_id: int) -> int:
         return await self.repo.count_by_author(author_id)
+    async def get_admin_tracks(self, limit: int = 1000) -> List[TrackResponse]:
+        rows = await self.repo.get_all_admin_tracks(limit=limit)
+        response_list = []
+        
+        for track, sales_count in rows:
+            # Pydantic сам подхватит все поля из ORM (включая is_exclusive_sold)
+            track_resp = TrackResponse.model_validate(track)
+            # Но поле sales в ORM нет, поэтому проставляем его вручную из запроса
+            track_resp.sales = sales_count
+            response_list.append(track_resp)
+            
+        return response_list

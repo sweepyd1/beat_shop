@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.services.purchase_service import PurchaseService
 from core.services.contract_service import ContractService
 from core.services.file_service import FileService
-from api.dependencies import get_current_user_optional, get_db_session, get_current_user
+from api.dependencies import get_current_user_optional, get_current_user_without_active, get_db_session, get_current_user
 from database.models import LicenseType, User
 from schemas.purchase import PurchaseRequest, PurchaseResponse
 from fastapi.responses import FileResponse
@@ -90,7 +90,7 @@ async def get_contract_file(
 @router.get("/{purchase_id}/contract")
 async def download_contract(
     purchase_id: int,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user_without_active),
     session: AsyncSession = Depends(get_db_session),
     file_service: FileService = Depends(lambda: FileService())
 ):

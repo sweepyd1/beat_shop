@@ -391,8 +391,11 @@ const submitTrack = async () => {
 
 // Редактирование
 const openEditModal = async (track) => {
-    if (track.sales > 0 || track.is_exclusive_sold) {
-    showError('❌ Этот трек уже был продан. Редактирование невозможно.');
+ 
+  
+  // 👇 2. Теперь проверяем продажи и эксклюзивность
+  if (track && (track.sales > 0 || track.is_exclusive_sold)) {
+    showError('❌ Этот трек уже был продан. Удаление невозможно.');
     return;
   }
   try {
@@ -498,17 +501,26 @@ const fetchTracks = async () => {
 };
 
 const deleteTrack = async (id) => {
+  // 👇 1. Сначала находим сам объект трека в массиве по его id
+  const track = tracks.value.find(t => t.id === id);
+  
+  // 👇 2. Теперь проверяем продажи и эксклюзивность
   if (track && (track.sales > 0 || track.is_exclusive_sold)) {
     showError('❌ Этот трек уже был продан. Удаление невозможно.');
     return;
   }
+  
   if (!confirm('Удалить трек? Это действие необратимо.')) return;
+  
   try {
     await api.delete(`/admin/tracks/${id}`);
-    fetchTracks();
-  } catch (err) { console.error(err); alert('Ошибка удаления'); }
+    showSuccess('Трек удалён');
+    fetchTracks(); // Обновляем список
+  } catch (err) { 
+    console.error(err); 
+    showError(err.response?.data?.detail || 'Ошибка удаления'); 
+  }
 };
-
 const formatDuration = (seconds) => {
   if (!seconds) return '—';
   const mins = Math.floor(seconds / 60);

@@ -156,7 +156,35 @@ async def get_current_user(
         )
     
     return user
+async def get_current_user_without_active(
+    request: Request,
+    auth_service: AuthService = Depends(get_auth_service),
+    user_repo: UserRepository = Depends(get_user_repository)
+):
+    access_token = request.cookies.get("access_token")
+    if not access_token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Не авторизован"
+        )
+    
+    user_id = await auth_service.verify_token(access_token)
+    if not user_id:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Недействительный токен"
+        )
+    
+    user = await user_repo.get(user_id)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Пользователь не найден"
+        )
+    
 
+    
+    return user
 
 async def get_current_user_optional(
     token: str = Depends(oauth2_scheme),

@@ -35,7 +35,7 @@ async def get_all_tracks(
     admin: User = Depends(get_current_admin),
     track_service: TrackService = Depends(get_track_service)
 ):
-    tracks = await track_service.search_tracks(limit=1000)
+    tracks = await track_service.get_admin_tracks(limit=1000)
     return tracks
 
 @router.get("/stats/metrics", response_model=MetricsResponse)

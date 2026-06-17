@@ -13,6 +13,7 @@ from schemas.track import AuthorTrackResponse, TrackResponse, TrackCreate, Track
 from core.services.track import TrackService
 from api.dependencies import get_auth_service, get_author_service, get_purchase_service, get_track_service
 from api.dependencies import analyze_mp3
+from fastapi import status
 router = APIRouter(prefix="/tracks", tags=["tracks"])
 
 # @router.get("/me", response_model=List[TrackResponse])
@@ -148,6 +149,11 @@ async def create_track(
         raise HTTPException(status_code=401, detail="Not authenticated")
     user = await auth_service.get_user_from_token(access_token)
     """Создание нового трека (только для авторов)"""
+    if not user.is_active:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Пользователь заблокирован"
+            )
     mp3_content = await mp3.read()
     mp3_filename = mp3.filename or "track.mp3"
     
