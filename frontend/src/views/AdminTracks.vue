@@ -127,13 +127,16 @@
           <div class="relative">
             <img :src="track.cover_url" class="track-cover" @error="e => e.target.src='/default-cover.jpg'" />
             <div class="action-buttons">
-              <button @click.stop="openEditModal(track)" class="edit-btn" title="Редактировать">
-                <i class="fas fa-edit"></i>
-              </button>
-              <button @click.stop="deleteTrack(track.id)" class="delete-btn" title="Удалить">
-                <i class="fas fa-trash-alt"></i>
-              </button>
-            </div>
+  <button @click.stop="playTrack(track)" class="play-btn" title="Слушать">
+    <i class="fas fa-play"></i>
+  </button>
+  <button @click.stop="openEditModal(track)" class="edit-btn" title="Редактировать">
+    <i class="fas fa-edit"></i>
+  </button>
+  <button @click.stop="deleteTrack(track.id)" class="delete-btn" title="Удалить">
+    <i class="fas fa-trash-alt"></i>
+  </button>
+</div>
           </div>
           <div class="track-info">
             <h3 class="track-title">{{ track.title }}</h3>
@@ -239,14 +242,17 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, inject } from 'vue'; // добавь inject
 import api from '@/api';
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
 import { showError, showSuccess } from '@/utils/alert';  
 const authStore = useAuthStore();
 const router = useRouter();
-
+// Получаем глобальный плеер
+const { playTrack: globalPlayTrack } = inject("player", {
+  playTrack: (t) => console.log("play", t),
+});
 if (authStore.user?.role !== 'admin') {
   router.replace('/');
 }
@@ -254,7 +260,13 @@ if (authStore.user?.role !== 'admin') {
 const activeTab = ref('list');
 const dragOverMp3 = ref(false);
 const dragOverCover = ref(false);
-
+const getFullUrl = (url) => {
+  if (!url || url.startsWith("http")) return url;
+  const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
+  const normalizedBase = baseUrl.endsWith("/") ? baseUrl.slice(0, -1) : baseUrl;
+  const path = url.startsWith("/") ? url : "/" + url;
+  return normalizedBase + path;
+};
 const form = ref({
   title: '',
   genre_id: null,
@@ -491,15 +503,25 @@ const fetchAuthors = async () => {
 const fetchTracks = async () => {
   tracksLoading.value = true;
   try {
-    const res = await api.get('/admin/tracks');  
-    tracks.value = res.data;
+    const res = await api.get('/admin/tracks');
+    // Исправляем пути для всех треков
+    tracks.value = res.data.map(track => ({
+      ...track,
+      mp3_file_url: getFullUrl(track.mp3_file_url),
+      cover_url: getFullUrl(track.cover_url)
+    }));
   } catch (err) {
     console.error(err);
   } finally {
     tracksLoading.value = false;
   }
 };
-
+const playTrack = (track) => {
+  if (!track?.id) return;
+  
+  // Передаем трек в глобальный плеер
+  globalPlayTrack(track);
+};
 const deleteTrack = async (id) => {
   
   const track = tracks.value.find(t => t.id === id);
@@ -740,7 +762,24 @@ onMounted(() => {
 .delete-btn:hover {
   background: #ff4d4d;
 }
+.play-btn {
+  background: rgba(168, 85, 247, 0.9);
+  border: none;
+  color: white;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, transform 0.2s;
+}
 
+.play-btn:hover {
+  background: #a855f7;
+  transform: scale(1.1);
+}
 
 .modal-overlay {
   position: fixed;

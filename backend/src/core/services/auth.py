@@ -194,11 +194,16 @@ class AuthService:
             "token_type": "bearer"
         }
     async def authenticate(self, email: str, password: str) -> Optional[User]:
-        
         user = await self.repo.get_by_email(email=email)
-    
-        if not user or not self.verify_password(password, hashed_password=user.password_hash):
+        if not user:
+            user = await self.repo.get_by_login(login=email)
+        
+        if not user:
             return None
+        
+        if not self.verify_password(password, hashed_password=user.password_hash):
+            return None
+        
         return user
 
     async def create_tokens(self, user_id: int):

@@ -64,16 +64,16 @@
           <div class="range-slider">
             <input
               type="range"
-              min="60"
-              max="180"
+              min="40"
+              max="200"
               step="1"
               :value="bpmRange[0]"
               @input="updateBpmMin($event.target.valueAsNumber)"
             />
             <input
               type="range"
-              min="60"
-              max="180"
+              min="40"
+              max="200"
               step="1"
               :value="bpmRange[1]"
               @input="updateBpmMax($event.target.valueAsNumber)"
