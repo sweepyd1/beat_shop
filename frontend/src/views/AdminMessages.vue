@@ -5,21 +5,20 @@
       <p>Управление сообщениями с сайта</p>
     </div>
 
-    
     <div class="filters">
-      <button 
+      <button
         :class="['filter-btn', { active: filter === 'all' }]"
         @click="filter = 'all'"
       >
         Все ({{ messages.length }})
       </button>
-      <button 
+      <button
         :class="['filter-btn', { active: filter === 'unread' }]"
         @click="filter = 'unread'"
       >
         Непрочитанные ({{ unreadCount }})
       </button>
-      <button 
+      <button
         :class="['filter-btn', { active: filter === 'read' }]"
         @click="filter = 'read'"
       >
@@ -27,21 +26,20 @@
       </button>
     </div>
 
-    
     <div class="messages-list">
       <div v-if="loading" class="loading">
         <i class="fas fa-spinner fa-spin"></i>
         <span>Загрузка...</span>
       </div>
-      
+
       <div v-else-if="filteredMessages.length === 0" class="empty-state">
         <i class="fas fa-inbox"></i>
         <p>Нет сообщений</p>
       </div>
 
-      <div 
-        v-for="msg in filteredMessages" 
-        :key="msg.id" 
+      <div
+        v-for="msg in filteredMessages"
+        :key="msg.id"
         :class="['message-card', { unread: !msg.is_read }]"
         @click="selectMessage(msg)"
       >
@@ -54,8 +52,8 @@
         </div>
         <div class="message-preview">{{ msg.message }}</div>
         <div class="message-actions">
-          <button 
-            v-if="!msg.is_read" 
+          <button
+            v-if="!msg.is_read"
             class="btn-mark-read"
             @click.stop="markAsRead(msg.id)"
           >
@@ -68,21 +66,35 @@
       </div>
     </div>
 
-    
     <teleport to="body">
-      <div v-if="selectedMessage" class="modal-overlay" @click.self="selectedMessage = null">
+      <div
+        v-if="selectedMessage"
+        class="modal-overlay"
+        @click.self="selectedMessage = null"
+      >
         <div class="modal-content message-modal">
           <div class="modal-header">
             <h2>Сообщение от {{ selectedMessage.name }}</h2>
-            <button @click="selectedMessage = null" class="close-btn">&times;</button>
+            <button @click="selectedMessage = null" class="close-btn">
+              &times;
+            </button>
           </div>
           <div class="modal-body">
             <div class="message-details">
               <p><strong>Email:</strong> {{ selectedMessage.email }}</p>
-              <p><strong>Дата:</strong> {{ formatFullDate(selectedMessage.created_at) }}</p>
-              <p><strong>Статус:</strong> 
-                <span :class="['status-badge', selectedMessage.is_read ? 'read' : 'unread']">
-                  {{ selectedMessage.is_read ? 'Прочитано' : 'Не прочитано' }}
+              <p>
+                <strong>Дата:</strong>
+                {{ formatFullDate(selectedMessage.created_at) }}
+              </p>
+              <p>
+                <strong>Статус:</strong>
+                <span
+                  :class="[
+                    'status-badge',
+                    selectedMessage.is_read ? 'read' : 'unread',
+                  ]"
+                >
+                  {{ selectedMessage.is_read ? "Прочитано" : "Не прочитано" }}
                 </span>
               </p>
             </div>
@@ -91,10 +103,23 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button v-if="!selectedMessage.is_read" @click="markAsRead(selectedMessage.id); selectedMessage = null" class="btn-primary">
+            <button
+              v-if="!selectedMessage.is_read"
+              @click="
+                markAsRead(selectedMessage.id);
+                selectedMessage = null;
+              "
+              class="btn-primary"
+            >
               <i class="fas fa-check"></i> Отметить как прочитанное
             </button>
-            <button @click="deleteMessage(selectedMessage.id); selectedMessage = null" class="btn-danger">
+            <button
+              @click="
+                deleteMessage(selectedMessage.id);
+                selectedMessage = null;
+              "
+              class="btn-danger"
+            >
               <i class="fas fa-trash"></i> Удалить
             </button>
           </div>
@@ -105,32 +130,35 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import api from '@/api';
-import { showSuccess, showError } from '@/utils/alert';
+import { ref, computed, onMounted } from "vue";
+import api from "@/api";
+import { showSuccess, showError } from "@/utils/alert";
 
 const messages = ref([]);
 const loading = ref(true);
-const filter = ref('all');
+const filter = ref("all");
 const selectedMessage = ref(null);
 
-const unreadCount = computed(() => messages.value.filter(m => !m.is_read).length);
+const unreadCount = computed(
+  () => messages.value.filter((m) => !m.is_read).length
+);
 
 const filteredMessages = computed(() => {
-  if (filter.value === 'unread') return messages.value.filter(m => !m.is_read);
-  if (filter.value === 'read') return messages.value.filter(m => m.is_read);
+  if (filter.value === "unread")
+    return messages.value.filter((m) => !m.is_read);
+  if (filter.value === "read") return messages.value.filter((m) => m.is_read);
   return messages.value;
 });
 
 const fetchMessages = async () => {
   try {
-    const { data } = await api.get('/contacts/admin/', {
-      params: { limit: 100 }
+    const { data } = await api.get("/contacts/admin/", {
+      params: { limit: 100 },
     });
     messages.value = data;
   } catch (error) {
-    console.error('Ошибка загрузки сообщений:', error);
-    showError('Не удалось загрузить сообщения');
+    console.error("Ошибка загрузки сообщений:", error);
+    showError("Не удалось загрузить сообщения");
   } finally {
     loading.value = false;
   }
@@ -139,24 +167,24 @@ const fetchMessages = async () => {
 const markAsRead = async (id) => {
   try {
     await api.patch(`/contacts/admin/${id}/read`);
-    const msg = messages.value.find(m => m.id === id);
+    const msg = messages.value.find((m) => m.id === id);
     if (msg) msg.is_read = true;
-    showSuccess('Сообщение отмечено как прочитанное');
+    showSuccess("Сообщение отмечено как прочитанное");
   } catch (error) {
-    showError('Ошибка при обновлении статуса');
+    showError("Ошибка при обновлении статуса");
   }
 };
 
 const deleteMessage = async (id) => {
-  if (!confirm('Вы уверены, что хотите удалить это сообщение?')) return;
+  if (!confirm("Вы уверены, что хотите удалить это сообщение?")) return;
   try {
     await api.delete(`/contacts/admin/${id}`);
-    messages.value = messages.value.filter(m => m.id !== id);
+    messages.value = messages.value.filter((m) => m.id !== id);
     if (selectedMessage.value?.id === id) selectedMessage.value = null;
-    showSuccess('Сообщение удалено');
+    showSuccess("Сообщение удалено");
   } catch (error) {
     console.error(error);
-    showError('Ошибка при удалении');
+    showError("Ошибка при удалении");
   }
 };
 
@@ -169,12 +197,23 @@ const selectMessage = (msg) => {
 
 const formatDate = (dateStr) => {
   const date = new Date(dateStr);
-  return date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+  return date.toLocaleDateString("ru-RU", {
+    day: "numeric",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 };
 
 const formatFullDate = (dateStr) => {
   const date = new Date(dateStr);
-  return date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  return date.toLocaleDateString("ru-RU", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 };
 
 onMounted(fetchMessages);
@@ -303,6 +342,19 @@ onMounted(fetchMessages);
   color: #6b7280;
 }
 
+.message-full-text {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  color: #d1d5db;
+  line-height: 1.6;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
 .message-preview {
   color: #d1d5db;
   margin-bottom: 1rem;
@@ -310,6 +362,26 @@ onMounted(fetchMessages);
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+.message-details p {
+  margin: 0.5rem 0;
+  color: #d1d5db;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+.modal-content {
+  background: #1a1a2e;
+  border-radius: 1rem;
+  padding: 2rem;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  border: 1px solid rgba(168, 85, 247, 0.3);
 }
 
 .message-actions {
@@ -345,7 +417,6 @@ onMounted(fetchMessages);
 .btn-delete:hover {
   background: rgba(239, 68, 68, 0.3);
 }
-
 
 .modal-overlay {
   position: fixed;
