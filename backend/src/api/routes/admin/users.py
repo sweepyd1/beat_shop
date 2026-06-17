@@ -9,7 +9,7 @@ from core.services.auth import AuthService
 from schemas.favorite import FavoriteResponse
 from schemas.purchase import PurchaseResponse
 from schemas.subscription import SubscriptionResponse
-from database.models import User, UserRole
+from database.models import Author, User, UserRole
 from schemas.user import UserResponse, UserCreate
 from api.dependencies import get_auth_service, get_db_session, get_current_admin, get_file_service
 from core.services.file_service import FileService
@@ -100,6 +100,8 @@ async def update_user(
     if not user:
         raise HTTPException(status_code=404, detail="Пользователь не найден")
 
+    old_role = user.role
+
     update_data = {}
     if full_name is not None:
         update_data["full_name"] = full_name
@@ -113,13 +115,36 @@ async def update_user(
     if password is not None and password.strip():
         update_data["password_hash"] = auth_service.get_password_hash(password)
 
-    
     if avatar:
         if user.avatar_url:
             file_service.delete_file(user.avatar_url)
         update_data["avatar_url"] = await file_service.save_avatar(avatar)
 
     updated_user = await repo.update(user_id, **update_data)
+    
+    new_role = update_data.get("role", old_role)
+    
+    if new_role != old_role:
+        result = await session.execute(
+            select(Author).where(Author.user_id == user_id)
+        )
+        existing_author = result.scalar_one_or_none()
+        
+        if new_role == UserRole.author and not existing_author:
+            author = Author(
+                user_id=user_id,
+                full_name=updated_user.full_name,
+                photo_url=updated_user.avatar_url
+            )
+            session.add(author)
+            await session.commit()
+            await session.refresh(updated_user)
+            
+        elif new_role != UserRole.author and existing_author:
+            await session.delete(existing_author)
+            await session.commit()
+            await session.refresh(updated_user)
+    
     return updated_user
 
 @router.delete("/{user_id}", status_code=204)
